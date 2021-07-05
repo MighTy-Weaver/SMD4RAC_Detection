@@ -3,16 +3,7 @@ import math
 from statistics import mean
 
 import pandas as pd
-from tqdm import tqdm
-
-irradiance = pd.read_csv(
-    './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Irradiance_Minute_20201230_20210630.csv')
-precipitation = pd.read_csv(
-    './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Precipitation_Minute_20201230_20210630.csv')
-humidity = pd.read_csv(
-    './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Relative_Humidity_Minute_20201230_20210630.csv')
-temperature = pd.read_csv(
-    './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Temperature_Minute_20201230_20210630.csv')
+from tqdm import tqdm, trange
 
 
 def get_average_data(date: str, hour: str, half=False):
@@ -24,10 +15,11 @@ def get_average_data(date: str, hour: str, half=False):
     :return: The average data for four climate categories
     """
     result = []
-    time = "/".join(date.split('-')) + ' ' + hour + ":00"
+    time = "/".join(date.split('-')) + ' ' + hour + ":00" if len(hour.split(':')[0]) == 2 else "/".join(
+        date.split('-')) + ' 0' + hour + ":00"
     for data in [temperature, humidity, precipitation, irradiance]:
         end_index = data[data.Time == time].index.tolist()
-        assert len(end_index) == 1, "More than one index located in get average data!"
+        assert len(end_index) == 1, "Time {}'s data have more than one or not found!".format(time)
         end_index = end_index[0]
         start_index = end_index - 30 if half else end_index - 60
         if start_index < 0:
@@ -38,6 +30,15 @@ def get_average_data(date: str, hour: str, half=False):
 
 
 if __name__ == '__main__':
+    irradiance = pd.read_csv(
+        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Irradiance_Minute_20201230_20210630.csv')
+    precipitation = pd.read_csv(
+        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Precipitation_Minute_20201230_20210630.csv')
+    humidity = pd.read_csv(
+        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Relative_Humidity_Minute_20201230_20210630.csv')
+    temperature = pd.read_csv(
+        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Temperature_Minute_20201230_20210630.csv')
+
     half_hour = glob.glob('./electricity_data_hourly_and_half_hourly/Electricity_half_hourly_20201230-20210630/*.csv')
     hour = glob.glob('./electricity_data_hourly_and_half_hourly/Electricity_hourly_20201230-20210630/*.csv')
 
@@ -70,6 +71,20 @@ if __name__ == '__main__':
                 csv[(csv.Date == date) & (csv.Hour == hour)]['Humidity'] = h
                 csv[(csv.Date == date) & (csv.Hour == hour)]['Irradiance'] = i
                 csv[(csv.Date == date) & (csv.Hour == hour)]['Precipitation'] = p
+
+    half_hour_concat.to_csv('./half_hour_compiled_without_prev.csv', index=False, encoding='utf-8', sep=',')
+    hour_concat.to_csv('./hour_compiled_without_prev.csv', index=False, encoding='utf-8', sep=',')
+
+    for csv in [half_hour_concat, hour_concat]:
+        for i in trange(len(csv)):
+            csv.loc[i, 'Prev_one_on'] = False if i < 1 else (csv.loc[i - 1, 'AC'] > 0)
+            csv.loc[i, 'Prev_two_on'] = csv.loc[i, 'Prev_one_on'] if i < 2 else (
+                    (csv.loc[i - 1, 'AC'] > 0) and (csv.loc[i - 2, 'AC'] > 0))
+            csv.loc[i, 'Prev_one'] = csv.loc[i - 1, 'AC'] if i >= 1 else 0
+            csv.loc[i, 'Prev_three'] = sum([csv.loc[i - k, 'AC'] for k in range(i - 3, i)]) if i >= 3 else sum(
+                [csv.loc[i - k, 'AC'] for k in range(0, i)])
+            csv.loc[i, 'Prev_five'] = sum([csv.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
+                [csv.loc[i - k, 'AC'] for k in range(0, i)])
 
     half_hour_concat.to_csv('./half_hour_compiled.csv', index=False, encoding='utf-8', sep=',')
     hour_concat.to_csv('./hour_compiled.csv', index=False, encoding='utf-8', sep=',')
