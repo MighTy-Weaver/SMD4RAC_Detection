@@ -15,10 +15,12 @@ print(list(df_X))
 X_num = df_X.to_numpy().astype('float32')
 X_train, X_test, y_train, y_test = train_test_split(X_num, AC, test_size=0.1, shuffle=True)
 
+opt = keras.optimizers.Adam(learning_rate=0.01)
+
 
 def build_MLP_model():
     model = keras.Sequential()
-    model.add(Dense(256, input_dim=10, activation='relu'))
+    model.add(Dense(256, input_dim=10, activation='softmax'))
     model.add(BatchNormalization())
     model.add(Dropout(0.4))
     model.add(Dense(128, activation='softmax'))
@@ -27,8 +29,14 @@ def build_MLP_model():
     model.add(Dense(64, activation='softmax'))
     model.add(BatchNormalization())
     model.add(Dropout(0.4))
+    model.add(Dense(32, activation='softmax'))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.4))
+    model.add(Dense(16, activation='softmax'))
+    model.add(BatchNormalization())
+    model.add(Dropout(0.4))
     model.add(Dense(1, activation='relu'))
-    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mae'])
+    model.compile(optimizer=opt, loss='mean_squared_error', metrics=['mae'])
     return model
 
 

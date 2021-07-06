@@ -5,3 +5,7 @@
 /.idea
 /test.py
 /electricity_data_hourly_and_half_hourly/
+/half_hour_compiled.csv
+/half_hour_compiled_without_prev.csv
+/hour_compiled.csv
+/hour_compiled_without_prev.csv
