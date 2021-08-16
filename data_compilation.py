@@ -1,9 +1,11 @@
 import glob
 import math
+import os
 from statistics import mean
 
+import numpy as np
 import pandas as pd
-from tqdm import tqdm, trange
+from tqdm import trange, tqdm
 
 
 def get_average_data(date: str, hour: str, half=False):
@@ -12,7 +14,7 @@ def get_average_data(date: str, hour: str, half=False):
     :param date: A str indicating the date
     :param hour: A str indicating the hour
     :param half: Whether it's half hour or full hour
-    :return: The average data for four climate categories
+    :return: The average data for four climate categories and the time
     """
     result = []
     if len(date.split('-')) == 3:
@@ -37,7 +39,7 @@ def get_average_data(date: str, hour: str, half=False):
             result.append(data.loc[end_index, 'data'])
         else:
             result.append(mean([data.loc[i, 'data'] for i in range(start_index, end_index)]))
-    return result[0], result[1], result[2], result[3]
+    return [result[0], result[1], result[2], result[3], time]
 
 
 if __name__ == '__main__':
@@ -69,39 +71,83 @@ if __name__ == '__main__':
     hour_concat.to_csv('./electricity_data_hourly_and_half_hourly/hour.csv', encoding='utf-8', sep=',',
                        index=False)
 
-    for col in ['Temperature', 'Irradiance', 'Precipitation', 'Humidity', 'WIFI', 'Prev_one', 'Prev_three', 'Prev_five',
-                'Prev_one_on', 'Prev_two_on', 'Next_one_on', 'Next_two_on']:
+    for col in ['Time', 'Temperature', 'Irradiance', 'Precipitation', 'Humidity', 'WIFI', 'Prev_one', 'Prev_three',
+                'Prev_five', 'Prev_one_on', 'Prev_two_on', 'Next_one_on', 'Next_two_on']:
         for csv in [half_hour_concat, hour_concat]:
             csv[col] = math.nan
 
-    for ind, csv in enumerate([half_hour_concat, hour_concat]):
-        for date in tqdm(csv['Date'].unique()):
-            for hour in tqdm(csv[csv.Date == date]['Hour'].unique()):
-                t, h, p, i = get_average_data(date, hour, ind == 0)
-                csv[(csv.Date == date) & (csv.Hour == hour)]['Temperature'] = t
-                csv[(csv.Date == date) & (csv.Hour == hour)]['Humidity'] = h
-                csv[(csv.Date == date) & (csv.Hour == hour)]['Irradiance'] = i
-                csv[(csv.Date == date) & (csv.Hour == hour)]['Precipitation'] = p
-        if ind == 0:
-            csv.to_csv('./half_hour_compiled_without_prev.csv', index=False)
-        else:
-            csv.to_csv('./hour_compiled_without_prev.csv', index=False)
+    if os.path.exists('./Average.npy'):
+        total_average_data = np.load('./Average.npy').item()
+    else:
+        total_average_data = {'half': {}, 'full': {}}
+        half_hour_date = half_hour_concat['Date'].unique()
+        half_hour_hour = half_hour_concat['Hour'].unique()
+        full_hour_date = hour_concat['Date'].unique()
+        full_hour_hour = hour_concat['Hour'].unique()
+        for d in tqdm(half_hour_date):
+            for h in half_hour_hour:
+                total_average_data['half'][d + h] = get_average_data(d, h, True)
+        for d in tqdm(full_hour_date):
+            for h in full_hour_hour:
+                total_average_data['full'][d + h] = get_average_data(d, h, False)
+        np.save('./Average.npy', total_average_data)
 
-    for ind, csv in enumerate([pd.read_csv('./half_hour_compiled_without_prev.csv', index_col=None),
-                               pd.read_csv('./hour_compiled_without_prev.csv', index_col=None)]):
-        for i in trange(len(csv)):
-            csv.loc[i, 'Prev_one_on'] = False if i < 1 else (csv.loc[i - 1, 'AC'] > 0)
-            csv.loc[i, 'Prev_two_on'] = csv.loc[i, 'Prev_one_on'] if i < 2 else (
-                    (csv.loc[i - 1, 'AC'] > 0) and (csv.loc[i - 2, 'AC'] > 0))
-            csv.loc[i, 'Next_one_on'] = False if i >= len(csv) - 1 else (csv.loc[i + 1, 'AC'] > 0)
-            csv.loc[i, 'Next_two_on'] = csv.loc[i, 'Next_one_on'] if i >= len(csv) - 2 else (
-                    (csv.loc[i + 1, 'AC'] > 0) and (csv.loc[i + 2, 'AC'] > 0))
-            csv.loc[i, 'Prev_one'] = csv.loc[i - 1, 'AC'] if i >= 1 else 0
-            csv.loc[i, 'Prev_three'] = sum([csv.loc[i - k, 'AC'] for k in range(i - 3, i)]) if i >= 3 else sum(
-                [csv.loc[i - k, 'AC'] for k in range(0, i)])
-            csv.loc[i, 'Prev_five'] = sum([csv.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
-                [csv.loc[i - k, 'AC'] for k in range(0, i)])
-        if ind == 0:
-            csv.to_csv('./half_hour_compiled.csv', index=False)
-        else:
-            csv.to_csv('./hour_compiled.csv', index=False)
+    for i in trange(len(half_hour_concat)):
+        half_hour_concat.loc[i, 'Temperature'] = total_average_data['half'][
+            half_hour_concat.loc[i, 'Date'] + half_hour_concat.loc[i, 'Hour']][0]
+        half_hour_concat.loc[i, 'Humidity'] = total_average_data['half'][
+            half_hour_concat.loc[i, 'Date'] + half_hour_concat.loc[i, 'Hour']][1]
+        half_hour_concat.loc[i, 'Precipitation'] = total_average_data['half'][
+            half_hour_concat.loc[i, 'Date'] + half_hour_concat.loc[i, 'Hour']][2]
+        half_hour_concat.loc[i, 'Irradiance'] = total_average_data['half'][
+            half_hour_concat.loc[i, 'Date'] + half_hour_concat.loc[i, 'Hour']][3]
+        half_hour_concat.loc[i, 'Time'] = total_average_data['half'][
+            half_hour_concat.loc[i, 'Date'] + half_hour_concat.loc[i, 'Hour']][4]
+
+        half_hour_concat.loc[i, 'Prev_one_on'] = False if i < 1 else (half_hour_concat.loc[i - 1, 'AC'] > 0)
+        half_hour_concat.loc[i, 'Prev_two_on'] = half_hour_concat.loc[i, 'Prev_one_on'] if i < 2 else (
+                (half_hour_concat.loc[i - 1, 'AC'] > 0) and (half_hour_concat.loc[i - 2, 'AC'] > 0))
+        half_hour_concat.loc[i, 'Next_one_on'] = False if i >= len(half_hour_concat) - 1 else (
+                half_hour_concat.loc[i + 1, 'AC'] > 0)
+        half_hour_concat.loc[i, 'Next_two_on'] = half_hour_concat.loc[i, 'Next_one_on'] if i >= len(
+            half_hour_concat) - 2 else (
+                (half_hour_concat.loc[i + 1, 'AC'] > 0) and (half_hour_concat.loc[i + 2, 'AC'] > 0))
+        half_hour_concat.loc[i, 'Prev_one'] = half_hour_concat.loc[i - 1, 'AC'] if i >= 1 else 0
+        half_hour_concat.loc[i, 'Prev_three'] = sum(
+            [half_hour_concat.loc[i - k, 'AC'] for k in range(i - 3, i)]) if i >= 3 else sum(
+            [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
+        half_hour_concat.loc[i, 'Prev_five'] = sum(
+            [half_hour_concat.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
+            [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
+        print(half_hour_concat)
+    half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./half_hour_compiled.csv', index=False)
+
+    for i in trange(len(half_hour_concat)):
+        hour_concat.loc[i, 'Temperature'] = \
+            total_average_data['full'][hour_concat.loc[i, 'Date'] + hour_concat.loc[i, 'Hour']][0]
+        hour_concat.loc[i, 'Humidity'] = \
+            total_average_data['full'][hour_concat.loc[i, 'Date'] + hour_concat.loc[i, 'Hour']][1]
+        hour_concat.loc[i, 'Precipitation'] = \
+            total_average_data['full'][hour_concat.loc[i, 'Date'] + hour_concat.loc[i, 'Hour']][2]
+        hour_concat.loc[i, 'Irradiance'] = \
+            total_average_data['full'][hour_concat.loc[i, 'Date'] + hour_concat.loc[i, 'Hour']][3]
+        hour_concat.loc[i, 'Time'] = \
+            total_average_data['full'][hour_concat.loc[i, 'Date'] + hour_concat.loc[i, 'Hour']][4]
+
+        hour_concat.loc[i, 'Prev_one_on'] = False if i < 1 else (hour_concat.loc[i - 1, 'AC'] > 0)
+        hour_concat.loc[i, 'Prev_two_on'] = hour_concat.loc[i, 'Prev_one_on'] if i < 2 else (
+                (hour_concat.loc[i - 1, 'AC'] > 0) and (hour_concat.loc[i - 2, 'AC'] > 0))
+        hour_concat.loc[i, 'Next_one_on'] = False if i >= len(hour_concat) - 1 else (
+                hour_concat.loc[i + 1, 'AC'] > 0)
+        hour_concat.loc[i, 'Next_two_on'] = hour_concat.loc[i, 'Next_one_on'] if i >= len(
+            hour_concat) - 2 else (
+                (hour_concat.loc[i + 1, 'AC'] > 0) and (hour_concat.loc[i + 2, 'AC'] > 0))
+        hour_concat.loc[i, 'Prev_one'] = hour_concat.loc[i - 1, 'AC'] if i >= 1 else 0
+        hour_concat.loc[i, 'Prev_three'] = sum(
+            [hour_concat.loc[i - k, 'AC'] for k in range(i - 3, i)]) if i >= 3 else sum(
+            [hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
+        hour_concat.loc[i, 'Prev_five'] = sum(
+            [hour_concat.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
+            [hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
+
+    hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./hour_compiled.csv', index=False)

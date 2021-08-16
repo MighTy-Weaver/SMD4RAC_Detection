@@ -1,6 +1,7 @@
 import keras
 import pandas as pd
 import tensorflow as tf
+import tensorflow.keras.metrics as metric
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.layers import Dense, Dropout, BatchNormalization, LSTM, Bidirectional
 
@@ -36,7 +37,7 @@ def build_MLP_model():
     model.add(BatchNormalization())
     model.add(Dropout(0.4))
     model.add(Dense(1, activation='relu'))
-    model.compile(optimizer=opt, loss='mean_squared_error', metrics=['mae'])
+    model.compile(optimizer=opt, loss='mean_squared_error', metrics=[metric.RootMeanSquaredError()])
     return model
 
 
