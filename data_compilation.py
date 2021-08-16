@@ -77,7 +77,7 @@ if __name__ == '__main__':
             csv[col] = math.nan
 
     if os.path.exists('./Average.npy'):
-        total_average_data = np.load('./Average.npy').item()
+        total_average_data = np.load('./Average.npy', allow_pickle=True).item()
     else:
         total_average_data = {'half': {}, 'full': {}}
         half_hour_date = half_hour_concat['Date'].unique()
@@ -91,6 +91,8 @@ if __name__ == '__main__':
             for h in full_hour_hour:
                 total_average_data['full'][d + h] = get_average_data(d, h, False)
         np.save('./Average.npy', total_average_data)
+
+    print(total_average_data)
 
     for i in trange(len(half_hour_concat)):
         half_hour_concat.loc[i, 'Temperature'] = total_average_data['half'][
@@ -119,10 +121,11 @@ if __name__ == '__main__':
         half_hour_concat.loc[i, 'Prev_five'] = sum(
             [half_hour_concat.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
             [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
-        print(half_hour_concat)
+        print(half_hour_concat.loc[i])
+
     half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./half_hour_compiled.csv', index=False)
 
-    for i in trange(len(half_hour_concat)):
+    for i in trange(len(hour_concat)):
         hour_concat.loc[i, 'Temperature'] = \
             total_average_data['full'][hour_concat.loc[i, 'Date'] + hour_concat.loc[i, 'Hour']][0]
         hour_concat.loc[i, 'Humidity'] = \
