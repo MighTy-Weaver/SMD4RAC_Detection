@@ -44,16 +44,17 @@ def get_average_data(date: str, hour: str, half=False):
 
 if __name__ == '__main__':
     irradiance = pd.read_csv(
-        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Irradiance_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Irradiance_Minute_20201230_20210630.csv')
     precipitation = pd.read_csv(
-        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Precipitation_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Precipitation_Minute_20201230_20210630.csv')
     humidity = pd.read_csv(
-        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Relative_Humidity_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Relative_Humidity_Minute_20201230_20210630.csv')
     temperature = pd.read_csv(
-        './Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Temperature_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Temperature_Minute_20201230_20210630.csv')
 
-    half_hour = glob.glob('./electricity_data_hourly_and_half_hourly/Electricity_half_hourly_20201230-20210630/*.csv')
-    hour = glob.glob('./electricity_data_hourly_and_half_hourly/Electricity_hourly_20201230-20210630/*.csv')
+    half_hour = glob.glob(
+        'data/electricity_data_hourly_and_half_hourly/Electricity_half_hourly_20201230-20210630/*.csv')
+    hour = glob.glob('data/electricity_data_hourly_and_half_hourly/Electricity_hourly_20201230-20210630/*.csv')
 
     half_hour_concat = pd.concat([pd.read_csv(i, encoding='utf-16', sep='\t') for i in half_hour],
                                  ignore_index=True).rename(
@@ -66,9 +67,9 @@ if __name__ == '__main__':
                  'AC (kWh)': 'AC', 'Light (kWh)': 'Lighting', 'Socket (kWh)': 'Socket',
                  'Water Heater (kWh)': 'WaterHeater'}).drop(
         ['Location Path', 'Location Description'], axis=1).sort_values(by=['Location', 'Date', 'Hour'])
-    half_hour_concat.to_csv('./electricity_data_hourly_and_half_hourly/half_hour.csv', encoding='utf-8', sep=',',
+    half_hour_concat.to_csv('.data/electricity_data_hourly_and_half_hourly/half_hour.csv', encoding='utf-8', sep=',',
                             index=False)
-    hour_concat.to_csv('./electricity_data_hourly_and_half_hourly/hour.csv', encoding='utf-8', sep=',',
+    hour_concat.to_csv('.data/electricity_data_hourly_and_half_hourly/hour.csv', encoding='utf-8', sep=',',
                        index=False)
 
     for col in ['Time', 'Temperature', 'Irradiance', 'Precipitation', 'Humidity', 'WIFI', 'Prev_one', 'Prev_three',
@@ -76,8 +77,8 @@ if __name__ == '__main__':
         for csv in [half_hour_concat, hour_concat]:
             csv[col] = math.nan
 
-    if os.path.exists('./Average.npy'):
-        total_average_data = np.load('./Average.npy', allow_pickle=True).item()
+    if os.path.exists('./data/Average.npy'):
+        total_average_data = np.load('./data/Average.npy', allow_pickle=True).item()
     else:
         total_average_data = {'half': {}, 'full': {}}
         half_hour_date = half_hour_concat['Date'].unique()
@@ -90,7 +91,7 @@ if __name__ == '__main__':
         for d in tqdm(full_hour_date):
             for h in full_hour_hour:
                 total_average_data['full'][d + h] = get_average_data(d, h, False)
-        np.save('./Average.npy', total_average_data)
+        np.save('./data/Average.npy', total_average_data)
 
     print(total_average_data)
 
@@ -123,7 +124,7 @@ if __name__ == '__main__':
             [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
         print(half_hour_concat.loc[i])
 
-    half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./half_hour_compiled.csv', index=False)
+    half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/half_hour_compiled.csv', index=False)
 
     for i in trange(len(hour_concat)):
         hour_concat.loc[i, 'Temperature'] = \
@@ -153,4 +154,4 @@ if __name__ == '__main__':
             [hour_concat.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
             [hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
 
-    hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./hour_compiled.csv', index=False)
+    hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/hour_compiled.csv', index=False)

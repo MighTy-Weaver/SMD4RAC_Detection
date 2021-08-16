@@ -7,7 +7,7 @@ from tensorflow.python.keras.layers import Dense, Dropout, BatchNormalization, L
 
 tf.config.run_functions_eagerly(True)
 
-data = pd.read_csv('./summer_data_compiled.csv', index_col=0)
+data = pd.read_csv('data/20190403_20191003_data_compiled.csv', index_col=0)
 print(list(data))
 AC = data['AC'].to_numpy().astype('float32')
 print(AC, len(AC))
