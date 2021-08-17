@@ -72,7 +72,7 @@ if __name__ == '__main__':
     hour_concat.to_csv('.data/electricity_data_hourly_and_half_hourly/hour.csv', encoding='utf-8', sep=',',
                        index=False)
 
-    for col in ['Time', 'Temperature', 'Irradiance', 'Precipitation', 'Humidity', 'WIFI', 'Prev_one', 'Prev_three',
+    for col in ['Time', 'Temperature', 'Irradiance', 'Precipitation', 'Humidity', 'Prev_one', 'Prev_three',  # 'WIFI',
                 'Prev_five', 'Prev_one_on', 'Prev_two_on', 'Next_one_on', 'Next_two_on']:
         for csv in [half_hour_concat, hour_concat]:
             csv[col] = math.nan
@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
     print(total_average_data)
 
-    for i in trange(len(half_hour_concat)):
+    for i in trange(len(half_hour_concat), desc="Calculating half-hourly data: "):
         half_hour_concat.loc[i, 'Temperature'] = total_average_data['half'][
             half_hour_concat.loc[i, 'Date'] + half_hour_concat.loc[i, 'Hour']][0]
         half_hour_concat.loc[i, 'Humidity'] = total_average_data['half'][
@@ -117,16 +117,16 @@ if __name__ == '__main__':
                 (half_hour_concat.loc[i + 1, 'AC'] > 0) and (half_hour_concat.loc[i + 2, 'AC'] > 0))
         half_hour_concat.loc[i, 'Prev_one'] = half_hour_concat.loc[i - 1, 'AC'] if i >= 1 else 0
         half_hour_concat.loc[i, 'Prev_three'] = sum(
-            [half_hour_concat.loc[i - k, 'AC'] for k in range(i - 3, i)]) if i >= 3 else sum(
+            [half_hour_concat.loc[i - k, 'AC'] for k in range(0, 3)]) if i >= 3 else sum(
             [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
         half_hour_concat.loc[i, 'Prev_five'] = sum(
-            [half_hour_concat.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
+            [half_hour_concat.loc[i - k, 'AC'] for k in range(0, 5)]) if i >= 5 else sum(
             [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
         print(half_hour_concat.loc[i])
 
     half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/half_hour_compiled.csv', index=False)
 
-    for i in trange(len(hour_concat)):
+    for i in trange(len(hour_concat), desc="Calculating hourly data: "):
         hour_concat.loc[i, 'Temperature'] = \
             total_average_data['full'][hour_concat.loc[i, 'Date'] + hour_concat.loc[i, 'Hour']][0]
         hour_concat.loc[i, 'Humidity'] = \
@@ -148,10 +148,10 @@ if __name__ == '__main__':
                 (hour_concat.loc[i + 1, 'AC'] > 0) and (hour_concat.loc[i + 2, 'AC'] > 0))
         hour_concat.loc[i, 'Prev_one'] = hour_concat.loc[i - 1, 'AC'] if i >= 1 else 0
         hour_concat.loc[i, 'Prev_three'] = sum(
-            [hour_concat.loc[i - k, 'AC'] for k in range(i - 3, i)]) if i >= 3 else sum(
+            [hour_concat.loc[i - k, 'AC'] for k in range(0, 3)]) if i >= 3 else sum(
             [hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
         hour_concat.loc[i, 'Prev_five'] = sum(
-            [hour_concat.loc[i - k, 'AC'] for k in range(i - 5, i)]) if i >= 5 else sum(
+            [hour_concat.loc[i - k, 'AC'] for k in range(0, 5)]) if i >= 5 else sum(
             [hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
 
     hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/hour_compiled.csv', index=False)
