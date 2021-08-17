@@ -67,9 +67,9 @@ if __name__ == '__main__':
                  'AC (kWh)': 'AC', 'Light (kWh)': 'Lighting', 'Socket (kWh)': 'Socket',
                  'Water Heater (kWh)': 'WaterHeater'}).drop(
         ['Location Path', 'Location Description'], axis=1).sort_values(by=['Location', 'Date', 'Hour'])
-    half_hour_concat.to_csv('.data/electricity_data_hourly_and_half_hourly/half_hour.csv', encoding='utf-8', sep=',',
+    half_hour_concat.to_csv('./data/electricity_data_hourly_and_half_hourly/half_hour.csv', encoding='utf-8', sep=',',
                             index=False)
-    hour_concat.to_csv('.data/electricity_data_hourly_and_half_hourly/hour.csv', encoding='utf-8', sep=',',
+    hour_concat.to_csv('./data/electricity_data_hourly_and_half_hourly/hour.csv', encoding='utf-8', sep=',',
                        index=False)
 
     for col in ['Time', 'Temperature', 'Irradiance', 'Precipitation', 'Humidity', 'Prev_one', 'Prev_three',  # 'WIFI',
