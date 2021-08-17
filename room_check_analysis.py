@@ -4,7 +4,7 @@ import pandas as pd
 
 from utils import replace_dict
 
-room_data = pd.read_csv('./room_check.csv', index_col=None)
+room_data = pd.read_csv('data/room_check.csv', index_col=None)
 
 print(room_data)
 print(list(room_data))
