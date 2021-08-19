@@ -1,7 +1,7 @@
-/data/20200101_20201211_data_compiled.csv
-/data/20200101_20201211_data_initial.csv
-/data/2019_2020_data_without_2020wifi.csv
-/data/20190403_20191003_data_compiled.csv
+/data/20200101_20201211_data_compiled_hour.csv
+/data/Initial_data/20200101_20201211_initial.csv
+/data/Initial_data/2019_2020_data_without_2020wifi.csv
+/data/20190403_20191003_data_compiled_hour.csv
 /.idea
 /test.py
 /data/electricity_data_hourly_and_half_hourly/

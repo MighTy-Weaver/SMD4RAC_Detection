@@ -124,7 +124,8 @@ if __name__ == '__main__':
             [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
         print(half_hour_concat.loc[i])
 
-    half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/half_hour_compiled.csv', index=False)
+    half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/20201230_20210630_data_compiled_half_hour.csv',
+                                                           index=False)
 
     for i in trange(len(hour_concat), desc="Calculating hourly data: "):
         hour_concat.loc[i, 'Temperature'] = \
@@ -154,4 +155,4 @@ if __name__ == '__main__':
             [hour_concat.loc[i - k, 'AC'] for k in range(0, 5)]) if i >= 5 else sum(
             [hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
 
-    hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/hour_compiled.csv', index=False)
+    hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/20201230_20210630_data_compiled_hour.csv', index=False)
