@@ -32,29 +32,31 @@ def get_average_data(date: str, hour: str, half=False):
         date_processed.split('-')) + ' 0' + hour + ":00"
     for data in [temperature, humidity, precipitation, irradiance]:
         end_index = data[data.Time == time].index.tolist()
-        assert len(end_index) == 1, "Time {}'s data have more than one or not found!".format(time)
-        end_index = end_index[0]
-        start_index = end_index - 30 if half else end_index - 60
-        if start_index < 0:
-            result.append(data.loc[end_index, 'data'])
+        if len(end_index) == 1:
+            end_index = end_index[0]
+            start_index = end_index - 30 if half else end_index - 60
+            if start_index < 0:
+                result.append(data.loc[end_index, 'data'])
+            else:
+                result.append(mean([data.loc[i, 'data'] for i in range(start_index, end_index)]))
         else:
-            result.append(mean([data.loc[i, 'data'] for i in range(start_index, end_index)]))
+            result.append(mean(list(data['data'])))
     return [result[0], result[1], result[2], result[3], time]
 
 
 if __name__ == '__main__':
     irradiance = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Irradiance_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Irradiance_Minute_20210701_20210815.csv')
     precipitation = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Precipitation_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Precipitation_Minute_20210701_20210815.csv')
     humidity = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Relative_Humidity_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Relative_Humidity_Minute_20210701_20210815.csv')
     temperature = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210630/Meteorological_Minute_20201230_20210630/Temperature_Minute_20201230_20210630.csv')
+        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Temperature_Minute_20210701_20210815.csv')
 
     half_hour = glob.glob(
-        'data/electricity_data_hourly_and_half_hourly/Electricity_half_hourly_20201230-20210630/*.csv')
-    hour = glob.glob('data/electricity_data_hourly_and_half_hourly/Electricity_hourly_20201230-20210630/*.csv')
+        'data/electricity_data_hourly_and_half_hourly/Electricity_half_hourly_20210701-20210815/*.csv')
+    hour = glob.glob('data/electricity_data_hourly_and_half_hourly/Electricity_half_hourly_20210701-20210815/*.csv')
 
     half_hour_concat = pd.concat([pd.read_csv(i, encoding='utf-16', sep='\t') for i in half_hour],
                                  ignore_index=True).rename(
