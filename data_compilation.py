@@ -126,7 +126,7 @@ if __name__ == '__main__':
             [half_hour_concat.loc[i - k, 'AC'] for k in range(0, i)])
         print(half_hour_concat.loc[i])
 
-    half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/20201230_20210630_data_compiled_half_hour.csv',
+    half_hour_concat.drop(['Date', 'Hour'], axis=1).to_csv('./data/20210710_20210815_data_compiled_half_hour.csv',
                                                            index=False)
 
     for i in trange(len(hour_concat), desc="Calculating hourly data: "):
