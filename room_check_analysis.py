@@ -1,7 +1,7 @@
+import glob
 import math
 
 import pandas as pd
-from matplotlib import pyplot as plt
 
 from utils import replace_dict
 
@@ -10,6 +10,8 @@ pd.set_option("display.max_columns", None)
 
 print(room_data)
 print(list(room_data))
+room_data['room'] = room_data['room'].astype(int)
+room_data['Occupancy'].replace({math.nan: 0, 'Y': 1})
 
 for i in range(len(room_data)):
     if math.isnan(room_data.loc[i, 'Indoor_after']):
@@ -56,11 +58,48 @@ print(room_data['Efficiency'])
 room_data['Efficiency'] = room_data['Efficiency'].astype('float64')
 Efficiency = list(room_data['Efficiency'])
 
-plt.hist(Efficiency, bins=50, density=False)
-plt.show()
-room_data.to_csv('./data/room_check.csv', index=False)
+room_data.sort_values(by=['Efficiency'], inplace=True, ascending=False)
+print(room_data)
+efficiency_room_list = list(room_data['room'])
+print(efficiency_room_list)
 
-room_data = room_data.drop(['Occupancy', 'Machine Mode', 'Rated Power', 'Facing', 'recent_status', 'weather'], axis=1)
-print(list(room_data))
-print(room_data.dtypes)
-print(room_data.describe())
+high_class = [int(i.split('\\')[-1].split('.')[0]) for i in
+              glob.glob(
+                  '../../UROP 2 - Zhongming Lu/Inefficient-AC-detection/20210713191456_cate3_KMeans_22_33/a/*.png')] + [
+                 int(j.split('\\')[-1].split('.')[0]) for j in
+                 glob.glob(
+                     './20210713191456_cate3_KMeans_22_33/c/*.png')]
+high_class = [i for i in high_class if i in efficiency_room_list]
+medium_class = [int(j.split('\\')[-1].split('.')[0]) for j in glob.glob(
+    '../../UROP 2 - Zhongming Lu/Inefficient-AC-detection/20210713191456_cate3_KMeans_22_33/c/*.png')]
+medium_class = [i for i in medium_class if i in efficiency_room_list]
+low_class = [int(i.split('\\')[-1].split('.')[0]) for i in glob.glob(
+    '../../UROP 2 - Zhongming Lu/Inefficient-AC-detection/20210713191456_cate3_KMeans_22_33/b/*.png')]
+low_class = [i for i in low_class if i in efficiency_room_list]
+
+efficiency_room_list = [i for i in efficiency_room_list if i in high_class + medium_class + low_class]
+print(high_class, medium_class, low_class)
+a = high_class + medium_class
+print('TP', len([i for i in efficiency_room_list[:len(a)] if i in a]))
+print('TN', len([i for i in efficiency_room_list[len(a):] if i in low_class]))
+print('FP', len([i for i in efficiency_room_list[:len(a)] if i not in a]))
+print('FN', len([i for i in efficiency_room_list[len(a):] if i not in low_class]))
+
+TP = len([i for i in efficiency_room_list[:len(a)] if i in a])
+TN = len([i for i in efficiency_room_list[len(a):] if i in low_class])
+FP = len([i for i in efficiency_room_list[:len(a)] if i not in a])
+FN = len([i for i in efficiency_room_list[len(a):] if i not in low_class])
+
+print('Accuracy = {}'.format(round((TP + TN) / (len(efficiency_room_list)), 7)))
+print('Recall = {}'.format(round(TP / (TP + FN), 7)))
+print('Precision = {}'.format(round(TP / (TP + FP), 7)))
+print('F_1 score = {}'.format(round(2 * TP / (2 * TP + FP + FN), 7)))
+
+# plt.hist(Efficiency, bins=50, density=False)
+# plt.show()
+# room_data.to_csv('./data/room_check.csv', index=False)
+#
+# room_data = room_data.drop(['Occupancy', 'Machine Mode', 'Rated Power', 'Facing', 'recent_status', 'weather'], axis=1)
+# print(list(room_data))
+# print(room_data.dtypes)
+# print(room_data.describe())
