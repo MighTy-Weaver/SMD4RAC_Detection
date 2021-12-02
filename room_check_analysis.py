@@ -1,6 +1,7 @@
 import glob
 import math
 
+import numpy as np
 import pandas as pd
 
 from utils import replace_dict
@@ -62,6 +63,10 @@ room_data.sort_values(by=['Efficiency'], inplace=True, ascending=False)
 print(room_data)
 efficiency_room_list = list(room_data['room'])
 print(efficiency_room_list)
+efficiency_dict = {}
+for i in range(len(room_data)):
+    efficiency_dict[room_data.loc[i, 'room']] = room_data.loc[i, 'Efficiency']
+np.save('./data/efficiency_dict.npy', efficiency_dict)
 
 high_class = [int(i.split('\\')[-1].split('.')[0]) for i in
               glob.glob(
