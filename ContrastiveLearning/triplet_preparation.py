@@ -10,7 +10,7 @@ from utils import normal_room_list
 from utils import poor_room_list
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--frac', default=0.4, type=float, help="Number of fraction to sample from all triplets")
+parser.add_argument('--frac', default=0.5, type=float, help="Number of fraction to sample from all triplets")
 args = parser.parse_args()
 
 sample_frac = args.frac
@@ -27,13 +27,14 @@ dates = X['Date'].unique()
 rooms = normal_room_list + poor_room_list
 
 room_data_dict = {r: [] for r in rooms}
-for r in tqdm(normal_room_list + poor_room_list, desc="filtering data samples for ALL rooms: "):
+for r in tqdm(rooms, desc="filtering data samples for ALL rooms: "):
     for d in tqdm(dates):
         if len(X[(X.Date == d) & (X.Location == r)]) == 48:
             room_data_dict[r].append(d)
 np.save('../data/room_date_dict.npy', room_data_dict)
 room_data_dict_sample = {r: sample(room_data_dict[r], int(len(room_data_dict[r]) * sample_frac)) for r in rooms}
 np.save('../data/room_date_dict_sample{}.npy'.format(sample_frac), room_data_dict_sample)
+print(room_data_dict_sample)
 
 for n in tqdm(normal_room_list, desc="Generating triplets for NORMAL rooms: "):
     for p in tqdm(poor_room_list):
