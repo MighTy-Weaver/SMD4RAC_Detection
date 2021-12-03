@@ -46,13 +46,13 @@ def get_average_data(date: str, hour: str, half=False):
 
 if __name__ == '__main__':
     irradiance = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Irradiance_Minute_20210701_20210815.csv')
+        '../data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Irradiance_Minute_20210701_20210815.csv')
     precipitation = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Precipitation_Minute_20210701_20210815.csv')
+        '../data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Precipitation_Minute_20210701_20210815.csv')
     humidity = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Relative_Humidity_Minute_20210701_20210815.csv')
+        '../data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Relative_Humidity_Minute_20210701_20210815.csv')
     temperature = pd.read_csv(
-        'data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Temperature_Minute_20210701_20210815.csv')
+        '../data/Meteorological_Data_Hourly_and_Half_Hourly_20201230_20210815/Meteorological_Minute_20210701_20210815/Temperature_Minute_20210701_20210815.csv')
 
     half_hour = glob.glob(
         'data/electricity_data_hourly_and_half_hourly/Electricity_half_hourly_20210701-20210815/*.csv')

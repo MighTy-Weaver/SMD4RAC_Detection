@@ -6,7 +6,7 @@ import pandas as pd
 
 from utils import replace_dict
 
-room_data = pd.read_csv('./data/room_check_original.csv', index_col=None)
+room_data = pd.read_csv('../data/room_check_original.csv', index_col=None)
 pd.set_option("display.max_columns", None)
 
 print(room_data)
@@ -66,7 +66,7 @@ print(efficiency_room_list)
 efficiency_dict = {}
 for i in range(len(room_data)):
     efficiency_dict[room_data.loc[i, 'room']] = room_data.loc[i, 'Efficiency']
-np.save('./data/efficiency_dict.npy', efficiency_dict)
+np.save('../data/efficiency_dict.npy', efficiency_dict)
 
 high_class = [int(i.split('\\')[-1].split('.')[0]) for i in
               glob.glob(
