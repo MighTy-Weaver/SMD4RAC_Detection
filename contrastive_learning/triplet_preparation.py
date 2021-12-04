@@ -42,7 +42,6 @@ else:
     room_data_dict_sample = {r: sample(room_data_dict[r], int(len(room_data_dict[r]) * sample_frac)) for r in rooms}
     np.save('../data/room_date_dict_sample{}.npy'.format(sample_frac), room_data_dict_sample)
 
-pos_df_list = []
 for n in tqdm(normal_room_list, desc="Generating triplets for NORMAL rooms: "):
     for p in tqdm(poor_room_list):
         pos_list = permutations(room_data_dict[n], 2)
@@ -51,11 +50,16 @@ for n in tqdm(normal_room_list, desc="Generating triplets for NORMAL rooms: "):
         n_p_df = pd.DataFrame(data={'anchor': [i[0][0] for i in pos_neg_list], 'pos': [i[0][1] for i in pos_neg_list],
                                     'neg': [i[1] for i in pos_neg_list], 'anchor_room': [n for _ in pos_neg_list],
                                     'pos_room': [n for _ in pos_neg_list], 'neg_room': [p for _ in pos_neg_list]})
-        pos_df_list.append(n_p_df)
-pos_triplet_csv = pd.concat(pos_df_list, ignore_index=True)
-pos_triplet_csv.to_csv('./pos_triplet.csv', index=False)
+        if os.path.exists('./pos_triplet.csv'):
+            n_p_df.to_csv('./pos_triplet.csv', mode='a', header=False, index=False)
+        else:
+            n_p_df.to_csv('./pos_triplet.csv', index=False)
 
-neg_df_list = []
+        if os.path.exists('./triplet.csv'):
+            n_p_df.to_csv('./triplet.csv', mode='a', header=False, index=False)
+        else:
+            n_p_df.to_csv('./triplet.csv', index=False)
+
 for p in tqdm(poor_room_list, desc="Generating triplets for POOR rooms: "):
     for n in tqdm(normal_room_list):
         neg_list = permutations(room_data_dict[p], 2)
@@ -64,8 +68,12 @@ for p in tqdm(poor_room_list, desc="Generating triplets for POOR rooms: "):
         p_n_df = pd.DataFrame(data={'anchor': [i[0][0] for i in neg_pos_list], 'pos': [i[0][1] for i in neg_pos_list],
                                     'neg': [i[1] for i in neg_pos_list], 'anchor_room': [p for _ in neg_pos_list],
                                     'pos_room': [p for _ in neg_pos_list], 'neg_room': [n for _ in neg_pos_list]})
-        neg_df_list.append(p_n_df)
-neg_triplet_csv = pd.concat(neg_df_list, ignore_index=True)
-neg_triplet_csv.to_csv('./neg_triplet.csv', index=False)
+        if os.path.exists('./neg_triplet.csv'):
+            p_n_df.to_csv('./neg_triplet.csv', mode='a', header=False, index=False)
+        else:
+            p_n_df.to_csv('./neg_triplet.csv', index=False)
 
-pd.concat([pos_triplet_csv, neg_triplet_csv], ignore_index=True).to_csv('./triplet.csv', index=False)
+        if os.path.exists('./triplet.csv'):
+            p_n_df.to_csv('./triplet.csv', mode='a', header=False, index=False)
+        else:
+            p_n_df.to_csv('./triplet.csv', index=False)
