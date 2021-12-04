@@ -13,9 +13,11 @@ from utils import poor_room_list
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--frac', default=0.5, type=float, help="Number of fraction to sample from all triplets")
+parser.add_argument('--k', default=50000, type=int, help="Number of samples for each room")
 args = parser.parse_args()
 
 sample_frac = args.frac
+sample_num = args.k
 
 print(normal_room_list)
 print(poor_room_list)
@@ -46,7 +48,7 @@ for n in tqdm(normal_room_list, desc="Generating triplets for NORMAL rooms: "):
     for p in tqdm(poor_room_list):
         pos_list = permutations(room_data_dict[n], 2)
         neg_list = room_data_dict[p]
-        pos_neg_list = list(product(pos_list, neg_list))
+        pos_neg_list = sample(list(product(pos_list, neg_list)), k=sample_num)
         n_p_df = pd.DataFrame(data={'anchor': [i[0][0] for i in pos_neg_list], 'pos': [i[0][1] for i in pos_neg_list],
                                     'neg': [i[1] for i in pos_neg_list], 'anchor_room': [n for _ in pos_neg_list],
                                     'pos_room': [n for _ in pos_neg_list], 'neg_room': [p for _ in pos_neg_list]})
@@ -64,7 +66,7 @@ for p in tqdm(poor_room_list, desc="Generating triplets for POOR rooms: "):
     for n in tqdm(normal_room_list):
         neg_list = permutations(room_data_dict[p], 2)
         pos_list = room_data_dict[p]
-        neg_pos_list = product(neg_list, pos_list)
+        neg_pos_list = sample(list(product(neg_list, pos_list)), k=sample_num)
         p_n_df = pd.DataFrame(data={'anchor': [i[0][0] for i in neg_pos_list], 'pos': [i[0][1] for i in neg_pos_list],
                                     'neg': [i[1] for i in neg_pos_list], 'anchor_room': [p for _ in neg_pos_list],
                                     'pos_room': [p for _ in neg_pos_list], 'neg_room': [n for _ in neg_pos_list]})
