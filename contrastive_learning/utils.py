@@ -26,3 +26,11 @@ def l_infinity(x, y):
     :return: max(abs(x-y))
     """
     return torch.max(torch.abs(x - y), dim=1).values
+
+
+def get_AC_efficiency_class(room: int):
+    pass
+
+
+def get_AC_efficiency(room: int):
+    pass
