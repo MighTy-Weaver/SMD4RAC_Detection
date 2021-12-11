@@ -1,5 +1,5 @@
 import pandas as pd
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 
 
 class AC_Triplet_Dataset(Dataset):
@@ -29,6 +29,8 @@ class AC_Triplet_Dataset(Dataset):
             pos_room = self.triplet_csv.loc[index, 'pos_room']
             neg_date = self.triplet_csv.loc[index, 'neg']
             neg_room = self.triplet_csv.loc[index, 'neg_room']
+            for d, r in [(anchor_date, anchor_room), (pos_date, pos_room), (neg_date, neg_room)]:
+                assert len(self.X[(self.X.Date == d) & (self.X.Location == r)]) == 48, "date {} room {}".format(d, r)
             return self.X[(self.X.Date == anchor_date) & (self.X.Location == anchor_room)] \
                        .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), \
                    self.X[(self.X.Date == pos_date) & (self.X.Location == pos_room)] \
@@ -64,3 +66,9 @@ class AC_Normal_Dataset(Dataset):
 
     def __len__(self):
         pass
+
+
+test = AC_Triplet_Dataset()
+loader = DataLoader(test, batch_size=16, shuffle=True)
+for a, b, c in loader:
+    print(a.shape, b.shape, c.shape)

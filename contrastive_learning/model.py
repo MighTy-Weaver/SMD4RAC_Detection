@@ -5,7 +5,9 @@ from torch.nn import Sequential
 class LSTM_encoder(nn.Module):
     def __init__(self):
         super(LSTM_encoder, self).__init__()
-        pass
+        self.LSTM_encoder = nn.LSTM()
+        self.dropout=nn.Dropout(0.4)
+        self.bn=nn.BatchNorm2d()
 
     def forward(self, x):
         return x
