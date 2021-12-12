@@ -1,5 +1,6 @@
+import numpy as np
 import pandas as pd
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
 
 class AC_Triplet_Dataset(Dataset):
@@ -15,11 +16,11 @@ class AC_Triplet_Dataset(Dataset):
         self.mode = mode
 
         self.triplet_csv = pd.read_csv(csv_path, index_col=None).sample(frac=sample_frac).reset_index(drop=True)
-        print("DATALOADER: finished loading triplet.csv, total {} triples.".format(len(self.triplet_csv)))
+        print("Triplet DATALOADER: finished loading triplet.csv, total {} triples.".format(len(self.triplet_csv)))
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.X = self.data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'AC'], axis=1)
         self.X['Date'] = self.data['Time'].apply(lambda x: x.split(' ')[0])
-        print("DATALOADER: finished loading original data")
+        print("Triplet DATALOADER: finished loading original data")
 
     def __getitem__(self, index):
         if isinstance(index, int):
@@ -29,8 +30,6 @@ class AC_Triplet_Dataset(Dataset):
             pos_room = self.triplet_csv.loc[index, 'pos_room']
             neg_date = self.triplet_csv.loc[index, 'neg']
             neg_room = self.triplet_csv.loc[index, 'neg_room']
-            for d, r in [(anchor_date, anchor_room), (pos_date, pos_room), (neg_date, neg_room)]:
-                assert len(self.X[(self.X.Date == d) & (self.X.Location == r)]) == 48, "date {} room {}".format(d, r)
             return self.X[(self.X.Date == anchor_date) & (self.X.Location == anchor_room)] \
                        .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), \
                    self.X[(self.X.Date == pos_date) & (self.X.Location == pos_room)] \
@@ -59,16 +58,22 @@ class AC_Triplet_Dataset(Dataset):
 
 class AC_Normal_Dataset(Dataset):
     def __init__(self):
-        pass
+        self.room_date_dict = dict(np.load('../data/room_date_dict.npy', allow_pickle=True).item())
+        self.room_date_list = []
+        for room in self.room_date_dict.keys():
+            self.room_date_list.extend([(room, d) for d in self.room_date_dict[room]])
+
+        self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
+        self.X = self.data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'AC'], axis=1)
+        self.X['Date'] = self.data['Time'].apply(lambda x: x.split(' ')[0])
+        print("Normal DATALOADER: finished loading original data")
 
     def __getitem__(self, index):
-        pass
+        if isinstance(index, int):
+            room = self.room_date_list[index][0]
+            date = self.room_date_list[index][1]
+            return self.X[(self.X.Date == date) & (self.X.Location == room)] \
+                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float)
 
     def __len__(self):
-        pass
-
-
-test = AC_Triplet_Dataset()
-loader = DataLoader(test, batch_size=16, shuffle=True)
-for a, b, c in loader:
-    print(a.shape, b.shape, c.shape)
+        return len(self.room_date_list)
