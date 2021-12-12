@@ -10,9 +10,9 @@ poor_room_list = [i for i in all_room_list if i not in normal_room_list]
 
 def cosine_similarity_loss(x, y):
     """
-    This function calculates the cosine similarity loss between two tensors by 1 - cosine similarity
-    :param x: Input tensor x.
-    :param y: Input tensor y.
+    This function calculates the cosine similarity loss between two tensors: 1 - cosine similarity
+    :param x: Input tensor x
+    :param y: Input tensor y
     :return: 1 - cosine similarity between two tensors
     """
     return 1.0 - F.cosine_similarity(x, y)
@@ -21,16 +21,28 @@ def cosine_similarity_loss(x, y):
 def l_infinity(x, y):
     """
     This function calculates the l_infinity loss between two tensors: max(abs(x-y))
-    :param x: Input tensor x.
-    :param y: Input tensor y.
+    :param x: Input tensor x
+    :param y: Input tensor y
     :return: max(abs(x-y))
     """
     return torch.max(torch.abs(x - y), dim=1).values
 
 
 def get_AC_efficiency_class(room: int):
-    pass
+    """
+    This function returns the AC efficiency class of a given room
+    :param room: An integer as the room number
+    :return: True/False, True -> Normal AC, False -> Poor AC
+    """
+    assert room in efficiency_dict.keys(), 'Room {} is not in the manually checked rooms'.format(room)
+    return efficiency_dict[room] >= 1
 
 
 def get_AC_efficiency(room: int):
-    pass
+    """
+    This function returns the AC efficiency of a given room
+    :param room: An integer as the room number
+    :return: The AC efficiency of that room
+    """
+    assert room in efficiency_dict.keys(), 'Room {} is not in the manually checked rooms'.format(room)
+    return efficiency_dict[room]
