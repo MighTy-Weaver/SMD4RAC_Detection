@@ -67,7 +67,7 @@ for n in tqdm(normal_room_list, desc="Generating triplets for NORMAL rooms: "):
 for p in tqdm(poor_room_list, desc="Generating triplets for POOR rooms: "):
     for n in tqdm(normal_room_list):
         neg_list = permutations(room_data_dict[p], 2)
-        pos_list = room_data_dict[p]
+        pos_list = room_data_dict[n]
         neg_pos_list = sample(list(product(neg_list, pos_list)), k=sample_num)
         p_n_df = pd.DataFrame(data={'anchor': [i[0][0] for i in neg_pos_list], 'pos': [i[0][1] for i in neg_pos_list],
                                     'neg': [i[1] for i in neg_pos_list], 'anchor_room': [p for _ in neg_pos_list],
