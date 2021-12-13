@@ -32,7 +32,7 @@ print(dates)
 rooms = normal_room_list + poor_room_list
 print(rooms)
 
-if False:  # os.path.exists('../data/room_date_dict.npy'):
+if os.path.exists('../data/room_date_dict.npy'):
     room_data_dict = np.load('../data/room_date_dict.npy', allow_pickle=True).item()
     print('Loading pre-generated room date summary dict, no sample applied.')
     print(room_data_dict.keys(), list(room_data_dict.values())[0])
