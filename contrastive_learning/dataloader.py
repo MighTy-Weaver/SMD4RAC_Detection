@@ -60,8 +60,8 @@ class AC_Normal_Dataset(Dataset):
     def __init__(self):
         self.room_date_dict = dict(np.load('../data/room_date_dict.npy', allow_pickle=True).item())
         self.room_date_list = []
-        for room in self.room_date_dict.keys():
-            self.room_date_list.extend([(room, d) for d in self.room_date_dict[room]])
+        for room, value in self.room_date_dict.items():
+            self.room_date_list.extend([(room, d) for d in value])
 
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.X = self.data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'AC'], axis=1)
