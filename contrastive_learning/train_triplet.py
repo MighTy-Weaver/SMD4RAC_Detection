@@ -18,10 +18,11 @@ from utils import cosine_similarity_loss
 
 # Argument parser
 parser = argparse.ArgumentParser()
+parser.add_argument("--triplet_sample", help="fraction to sample from the triplet dataset", default=0.0005)
 parser.add_argument("--encoder_lr", help="learning rate", default=0.00045, type=float)
 parser.add_argument("--classifier_lr", help="learning rate", default=0.0006, type=float)
 parser.add_argument("--epoch", help="epochs", default=50, type=int)
-parser.add_argument("--encoder_bs", help="batch size", default=256, type=int)
+parser.add_argument("--encoder_bs", help="batch size", default=312, type=int)
 parser.add_argument("--classifier_bs", help="batch size", default=256, type=int)
 parser.add_argument("--gpu", help="gpu number", default=2, type=int)
 args = parser.parse_args()
@@ -59,7 +60,7 @@ classifier_optimizer = Adam(classifier.parameters(), lr=classifier_learning_rate
 save_path = './model_checkpoint_triplet/'
 save_step = 1
 
-triplet_dataset = AC_Triplet_Dataset()
+triplet_dataset = AC_Triplet_Dataset(sample_frac=args.triplet_sample_frac)
 training_dataset = AC_Normal_Dataset('trn')
 validation_dataset = AC_Normal_Dataset('val')
 triplet_loader = DataLoader(triplet_dataset, batch_size=encoder_batch_size, shuffle=True)
