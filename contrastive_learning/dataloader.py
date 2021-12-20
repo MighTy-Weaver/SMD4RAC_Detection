@@ -34,12 +34,12 @@ class AC_Triplet_Dataset(Dataset):
             pos_room = self.triplet_csv.loc[index, 'pos_room']
             neg_date = self.triplet_csv.loc[index, 'neg']
             neg_room = self.triplet_csv.loc[index, 'neg_room']
-            return self.X[(self.X.Date == anchor_date) & (self.X.Location == anchor_room)] \
-                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), \
-                   self.X[(self.X.Date == pos_date) & (self.X.Location == pos_room)] \
-                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), \
-                   self.X[(self.X.Date == neg_date) & (self.X.Location == neg_room)] \
-                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float)
+            return torch.tensor(self.X[(self.X.Date == anchor_date) & (self.X.Location == anchor_room)] \
+                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32), \
+                   torch.tensor(self.X[(self.X.Date == pos_date) & (self.X.Location == pos_room)] \
+                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32), \
+                   torch.tensor(self.X[(self.X.Date == neg_date) & (self.X.Location == neg_room)] \
+                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32)
         elif isinstance(index, slice):
             anchor_date = list(self.triplet_csv.loc[index, 'anchor'])
             anchor_room = list(self.triplet_csv.loc[index, 'anchor_room'])
