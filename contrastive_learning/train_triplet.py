@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--encoder_lr", help="learning rate", default=0.00045, type=float)
 parser.add_argument("--classifier_lr", help="learning rate", default=0.0006, type=float)
 parser.add_argument("--epoch", help="epochs", default=50, type=int)
-parser.add_argument("--encoder_bs", help="batch size", default=786, type=int)
+parser.add_argument("--encoder_bs", help="batch size", default=128, type=int)
 parser.add_argument("--classifier_bs", help="batch size", default=256, type=int)
 parser.add_argument("--gpu", help="gpu number", default=2, type=int)
 args = parser.parse_args()
@@ -86,7 +86,7 @@ for epoch in trange(num_epoch, desc="Training encoder:"):
 
         epoch_loss += loss.item()
 
-        print("Training Epoch {}\tTraining Loss {}".format(epoch + 1, epoch_loss / len(train_loader), ))
+    print("Training Epoch {}\tTraining Loss {}".format(epoch + 1, epoch_loss / len(train_loader), ))
 
     if (epoch + 1) % save_step == 0:
         torch.save(encoder.state_dict(), os.path.join(save_path, 'encoder_epoch{}.pth'.format(epoch + 1)))

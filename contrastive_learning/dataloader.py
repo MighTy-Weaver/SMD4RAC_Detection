@@ -8,7 +8,7 @@ from utils import normal_room_list
 
 
 class AC_Triplet_Dataset(Dataset):
-    def __init__(self, mode='trn', sample_frac=0.5, csv_path='./triplet.csv'):
+    def __init__(self, mode='trn', sample_frac=0.001, csv_path='./triplet.csv'):
         """
         The Triplet Dataset for Contrastive Learning Training Process. getitem returns a triplet (anchor, pos, neg)
         :param mode: 'trn' or 'val'
