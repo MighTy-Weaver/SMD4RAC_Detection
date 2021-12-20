@@ -43,7 +43,7 @@ if not os.path.exists('./model_checkpoint_triplet'):
     os.mkdir('./model_checkpoint_triplet/')
 
 # Build the model
-encoder = LSTM_encoder(hidden_size=128, bidirectional=True).to(device)
+encoder = LSTM_encoder(hidden_size=256, bidirectional=True).to(device)
 classifier = NN(input_dimension=encoder.get_output_length(), output_dimension=2).to(device)
 
 # Training settings

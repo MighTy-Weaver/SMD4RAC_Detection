@@ -47,12 +47,12 @@ class AC_Triplet_Dataset(Dataset):
             pos_room = list(self.triplet_csv.loc[index, 'pos_room'])
             neg_date = list(self.triplet_csv.loc[index, 'neg'])
             neg_room = list(self.triplet_csv.loc[index, 'neg_room'])
-            return self.X[(self.X.Date.isin(anchor_date)) & (self.X.Location.isin(anchor_room))] \
-                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), \
-                   self.X[(self.X.Date.isin(pos_date)) & (self.X.Location.isin(pos_room))] \
-                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), \
-                   self.X[(self.X.Date.isin(neg_date)) & (self.X.Location.isin(neg_room))] \
-                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float)
+            return torch.tensor(self.X[(self.X.Date.isin(anchor_date)) & (self.X.Location.isin(anchor_room))] \
+                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32), \
+                   torch.tensor(self.X[(self.X.Date.isin(pos_date)) & (self.X.Location.isin(pos_room))] \
+                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32), \
+                   torch.tensor(self.X[(self.X.Date.isin(neg_date)) & (self.X.Location.isin(neg_room))] \
+                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32)
         else:
             raise TypeError('Should call dataloader object with int or slice!')
 
