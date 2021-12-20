@@ -3,14 +3,25 @@ from torch.nn import Sequential
 
 
 class LSTM_encoder(nn.Module):
-    def __init__(self):
+    def __init__(self, feature_num=11, hidden_size=64, num_layers=16, bias=True, batch_first=True, bidirectional=True):
         super(LSTM_encoder, self).__init__()
-        self.LSTM_encoder = nn.LSTM()
-        self.dropout=nn.Dropout(0.4)
-        self.bn=nn.BatchNorm2d()
+        self.feature_num = feature_num
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.bias = bias
+        self.batch_first = batch_first
+        self.bidirectional = bidirectional
+
+        self.LSTM = nn.LSTM(input_size=feature_num, hidden_size=hidden_size, num_layers=num_layers, bias=bias,
+                            batch_first=batch_first, bidirectional=bidirectional)
+        self.dropout = nn.Dropout(0.4)
+        self.bn = nn.BatchNorm1d(64)
 
     def forward(self, x):
-        return x
+        out = self.LSTM(x)
+        out = self.dropout(out)
+        out = self.bn(out)
+        return out
 
 
 class NN_classifier(nn.Module):

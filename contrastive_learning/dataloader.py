@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset
 
+from utils import normal_room_list
+
 
 class AC_Triplet_Dataset(Dataset):
     def __init__(self, mode='trn', sample_frac=0.5, csv_path='./triplet.csv'):
@@ -73,7 +75,7 @@ class AC_Normal_Dataset(Dataset):
             room = self.room_date_list[index][0]
             date = self.room_date_list[index][1]
             return self.X[(self.X.Date == date) & (self.X.Location == room)] \
-                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float)
+                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), int(room in normal_room_list)
 
     def __len__(self):
         return len(self.room_date_list)
