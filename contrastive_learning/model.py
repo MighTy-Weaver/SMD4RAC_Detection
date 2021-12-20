@@ -17,15 +17,12 @@ class LSTM_encoder(nn.Module):
 
         self.LSTM = nn.LSTM(input_size=feature_num, hidden_size=hidden_size, num_layers=num_layers, bias=bias,
                             batch_first=batch_first, bidirectional=bidirectional, dropout=dropout)
-        self.bn = nn.BatchNorm1d(64)
+        self.bn = nn.BatchNorm1d(self.get_output_length())
 
     def forward(self, x):
         out, (h0, c0) = self.LSTM(x)
-        # print(avg.shape)
-        # state = torch.cat([h0, c0], dim=1)
-        # print(state.shape)
-        # out = self.bn(out)
-        return torch.mean(out, dim=1)
+        avg = torch.mean(out, dim=1)
+        return self.bn(avg)
 
     def get_output_length(self):
         return self.hidden_size if not self.bidirectional else 2 * self.hidden_size
