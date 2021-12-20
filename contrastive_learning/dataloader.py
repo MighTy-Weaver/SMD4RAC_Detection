@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import torch
 from torch.utils.data import Dataset
 
 from utils import normal_room_list
@@ -59,11 +60,18 @@ class AC_Triplet_Dataset(Dataset):
 
 
 class AC_Normal_Dataset(Dataset):
-    def __init__(self):
+    def __init__(self, mode='trn'):
+        if mode not in ['trn', 'val']:
+            raise NotImplementedError("mode must be either 'trn' or 'val'")
         self.room_date_dict = dict(np.load('../data/room_date_dict.npy', allow_pickle=True).item())
         self.room_date_list = []
         for room, value in self.room_date_dict.items():
             self.room_date_list.extend([(room, d) for d in value])
+
+        if mode == 'trn':
+            self.room_date_list = self.room_date_list[:int(len(self.room_date_list) * 0.9)]
+        else:
+            self.room_date_list = self.room_date_list[int(len(self.room_date_list) * 0.9):]
 
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.X = self.data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'AC'], axis=1)
@@ -74,8 +82,9 @@ class AC_Normal_Dataset(Dataset):
         if isinstance(index, int):
             room = self.room_date_list[index][0]
             date = self.room_date_list[index][1]
-            return self.X[(self.X.Date == date) & (self.X.Location == room)] \
-                       .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), int(room in normal_room_list)
+            return torch.tensor(self.X[(self.X.Date == date) & (self.X.Location == room)] \
+                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32), int(
+                room in normal_room_list)
 
     def __len__(self):
         return len(self.room_date_list)

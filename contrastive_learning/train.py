@@ -5,16 +5,18 @@ import torch
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 from tqdm import trange
 
 from dataloader import AC_Normal_Dataset
 from model import LSTM_encoder
+from model import NN_classifier
 
 # Argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument("--lr", help="learning rate", default=0.00045, type=float)
 parser.add_argument("--epoch", help="epochs", default=50, type=int)
-parser.add_argument("--bs", help="batch size", default=128, type=int)
+parser.add_argument("--bs", help="batch size", default=256, type=int)
 parser.add_argument("--gpu", help="gpu number", default=3, type=int)
 args = parser.parse_args()
 
@@ -35,7 +37,8 @@ if not os.path.exists('./model_checkpoint'):
     os.mkdir('./model_checkpoint/')
 
 # Build the model
-model = LSTM_encoder(bidirectional=False).to(device)
+encoder = LSTM_encoder(bidirectional=True).to(device)
+model = NN_classifier(output_dimension=2, encoder=encoder).to(device)
 
 # Training settings
 num_epoch = args.epoch
@@ -46,20 +49,19 @@ optimizer = AdamW(model.parameters(), lr=learning_rate)
 save_path = './model_checkpoint/'
 save_step = 2
 
-dataset = AC_Normal_Dataset()
-train_loader = DataLoader(
-    dataset[: int(len(dataset) * 0.9)], batch_size=batch_size, shuffle=True
-)
-val_loader = DataLoader(
-    dataset[int(len(dataset) * 0.9):], batch_size=batch_size, shuffle=True
-)
+training_dataset = AC_Normal_Dataset('trn')
+validation_dataset = AC_Normal_Dataset('val')
+train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
+val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
 
 # Start training
 for epoch in trange(num_epoch):
     epoch_loss = 0
 
     model.train()
-    for iter_id, (inputs, labels) in enumerate(train_loader):
+    trn_total, trn_correct = 0, 0
+    for inputs, labels in tqdm(train_loader):
+        trn_total += len(inputs)
         inputs = inputs.to(device)
         labels = labels.to(device)
         outputs = model(inputs)
@@ -70,42 +72,35 @@ for epoch in trange(num_epoch):
         optimizer.step()
 
         epoch_loss += loss.item()
-        writer.add_scalars('Loss_iter', {'train': loss.item()},
-                           iter_id + epoch * len(train_IDLoader))
+
+        predicted_answer = torch.argmax(outputs, dim=1)
+        truth_answer = labels.detach().cpu()
+        trn_correct += sum([predicted_answer[ind] == truth_answer[ind] for ind in range(len(predicted_answer))])
 
     model.eval()
     with torch.no_grad():
         val_epoch_loss = 0
-        for inputs, labels in val_IDLoader:
+        val_total, val_correct = 0, 0
+        for inputs, labels in val_loader:
+            val_total += len(inputs)
             inputs = inputs.to(device)
             labels = labels.to(device)
-            labels -= 230
-            outputs = model.val_forward(inputs)
+            outputs = model(inputs)
             loss = criterion(outputs, labels)
             val_epoch_loss += loss.item()
 
+            predicted_answer = torch.argmax(outputs, dim=1)
+            truth_answer = labels.detach().cpu()
+            val_correct += sum(
+                predicted_answer[ind] == truth_answer[ind]
+                for ind in range(len(predicted_answer))
+            )
+
+
         print("Training Epoch {}\tTraining Loss {}\tValidation Loss {}".format(epoch + 1,
-                                                                               epoch_loss / len(train_IDLoader),
-                                                                               val_epoch_loss / len(val_IDLoader)))
-        writer.add_scalars('Loss_epoch',
-                           {'train': epoch_loss / len(train_IDLoader), 'valid': val_epoch_loss / len(val_IDLoader)},
-                           epoch + 1)
-
-        if (epoch + 1) % Rk_step == 0:
-            RT_gallery_input = val_RT.get_gallery_imgs().to(device)
-            RT_gallery_output = model.encode_image(RT_gallery_input)
-            Rk_dict = {}
-            for inputs, labels in val_RTLoader:
-                inputs = inputs.to(device)
-                labels = labels.to(device)
-                outputs = model.encode_image(inputs)
-                for i in [1, 5, 10]:
-                    Rk, _ = R_k(k=i, query_encoded=outputs, gallery_encoded=RT_gallery_output,
-                                ground_truth_dict=val_RT.csv_dict)
-                    Rk_dict['R{}'.format(i)] = Rk
-            print("At epoch {}, R{} = {}, R{} = {}, R{} = {}".format(epoch + 1, 1, Rk_dict['R1'], 5, Rk_dict['R5'], 10,
-                                                                     Rk_dict['R10']))
-            writer.add_scalars('Rank_k_accuracy', Rk_dict, epoch + 1)
-
+                                                                               epoch_loss / len(train_loader),
+                                                                               val_epoch_loss / len(val_loader)))
+        print('Training Accuracy = {}\tValidation Accuracy = {}'.format(round(trn_correct / trn_total, 3),
+                                                                        round(val_correct / val_total, 3)))
     if (epoch + 1) % save_step == 0:
         torch.save(model.state_dict(), os.path.join(save_path, 'epoch{}.pth'.format(epoch + 1)))
