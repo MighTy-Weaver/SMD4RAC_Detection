@@ -94,16 +94,12 @@ for epoch in trange(num_epoch, desc="Epoch: "):
             loss = criterion(outputs, labels)
             val_epoch_loss += loss.item()
 
-            print(outputs)
             predicted_answer = torch.argmax(outputs, dim=1)
-            print(predicted_answer)
             truth_answer = labels.detach().cpu()
-            print(truth_answer)
             val_correct += sum(
                 predicted_answer[ind] == truth_answer[ind]
                 for ind in range(len(predicted_answer))
             )
-            print(val_correct)
 
         print("Training Epoch {}\tTraining Loss {}\tValidation Loss {}".format(epoch + 1,
                                                                                epoch_loss / len(train_loader),
