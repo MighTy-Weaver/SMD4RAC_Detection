@@ -18,7 +18,7 @@ class LSTM_encoder(nn.Module):
         self.bn = nn.BatchNorm1d(64)
 
     def forward(self, x):
-        out = self.LSTM(x)
+        out,() = self.LSTM(x)
         out = self.dropout(out)
         out = self.bn(out)
         return out
