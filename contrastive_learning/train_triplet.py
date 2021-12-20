@@ -18,7 +18,7 @@ from utils import cosine_similarity_loss
 
 # Argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument("--triplet_sample", help="fraction to sample from the triplet dataset", default=0.0005)
+parser.add_argument("--triplet_sample_frac", help="fraction to sample from the triplet dataset", default=0.0005)
 parser.add_argument("--encoder_lr", help="learning rate", default=0.00045, type=float)
 parser.add_argument("--classifier_lr", help="learning rate", default=0.0006, type=float)
 parser.add_argument("--epoch", help="epochs", default=50, type=int)
