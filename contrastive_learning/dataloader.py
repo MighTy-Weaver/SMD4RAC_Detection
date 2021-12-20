@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import torch
+from sklearn.utils import shuffle
 from torch.utils.data import Dataset
 
 from utils import normal_room_list
@@ -60,13 +61,18 @@ class AC_Triplet_Dataset(Dataset):
 
 
 class AC_Normal_Dataset(Dataset):
-    def __init__(self, mode='trn'):
+    def __init__(self, mode='trn', test=False):
         if mode not in ['trn', 'val']:
             raise NotImplementedError("mode must be either 'trn' or 'val'")
         self.room_date_dict = dict(np.load('../data/room_date_dict.npy', allow_pickle=True).item())
         self.room_date_list = []
         for room, value in self.room_date_dict.items():
             self.room_date_list.extend([(room, d) for d in value])
+
+        self.room_date_list = shuffle(self.room_date_list, random_state=621)
+
+        if test:
+            self.room_date_list = self.room_date_list[:500]
 
         if mode == 'trn':
             self.room_date_list = self.room_date_list[:int(len(self.room_date_list) * 0.9)]
