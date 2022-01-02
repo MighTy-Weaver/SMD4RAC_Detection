@@ -58,6 +58,7 @@ room_data['Efficiency'] = (1.012 * room_data['Velocity'] * room_data['Indoor_T_d
 print(room_data['Efficiency'])
 room_data['Efficiency'] = room_data['Efficiency'].astype('float64')
 Efficiency = list(room_data['Efficiency'])
+print(room_data.describe())
 
 room_data.sort_values(by=['Efficiency'], inplace=True, ascending=False)
 print(room_data)

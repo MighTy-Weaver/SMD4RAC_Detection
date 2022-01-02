@@ -82,7 +82,7 @@ class AC_Normal_Dataset(Dataset):
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.X = self.data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'AC'], axis=1)
         self.X['Date'] = self.data['Time'].apply(lambda x: x.split(' ')[0])
-        print("Normal DATALOADER: finished loading original data")
+        print("Normal DATALOADER: finished loading original data, total {}".format(len(self.room_date_list)))
 
     def __getitem__(self, index):
         if isinstance(index, int):
