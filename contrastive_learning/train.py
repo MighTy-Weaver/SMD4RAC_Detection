@@ -3,6 +3,7 @@ import os
 import warnings
 
 import torch
+from sklearn.metrics import f1_score
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -65,6 +66,7 @@ for epoch in trange(num_epoch, desc="Epoch: "):
 
     model.train()
     trn_total, trn_correct = 0, 0
+    trn_total_pred, trn_total_label = [], []
     for inputs, labels in tqdm(train_loader):
         trn_total += len(inputs)
         inputs = inputs.to(device)
@@ -80,9 +82,12 @@ for epoch in trange(num_epoch, desc="Epoch: "):
 
         predicted_answer = torch.argmax(outputs, dim=1)
         truth_answer = labels.detach().cpu()
+        trn_total_pred.extend(list(predicted_answer))
+        trn_total_label.extend(list(truth_answer))
         trn_correct += sum([predicted_answer[ind] == truth_answer[ind] for ind in range(len(predicted_answer))])
 
     model.eval()
+    val_total_pred, val_total_label = [], []
     with torch.no_grad():
         val_epoch_loss = 0
         val_total, val_correct = 0, 0
@@ -96,6 +101,8 @@ for epoch in trange(num_epoch, desc="Epoch: "):
 
             predicted_answer = torch.argmax(outputs, dim=1)
             truth_answer = labels.detach().cpu()
+            val_total_pred.extend(list(predicted_answer))
+            val_total_label.extend(list(truth_answer))
             val_correct += sum(
                 predicted_answer[ind] == truth_answer[ind]
                 for ind in range(len(predicted_answer))
@@ -107,5 +114,7 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         print(trn_total, trn_correct, val_correct, val_total)
         print('Training Accuracy = {}\tValidation Accuracy = {}'.format(round(int(trn_correct) / int(trn_total), 3),
                                                                         round(int(val_correct) / int(val_total), 3)))
+        print("Training F1 score = {}\nValidation F1 score = {}".format(
+            round(f1_score(trn_total_label, trn_total_pred), 3), round(f1_score(val_total_label, val_total_pred), 3)))
     if (epoch + 1) % save_step == 0:
         torch.save(model.state_dict(), os.path.join(save_path, 'epoch{}.pth'.format(epoch + 1)))

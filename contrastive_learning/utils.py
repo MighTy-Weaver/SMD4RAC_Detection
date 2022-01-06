@@ -4,8 +4,9 @@ import torch.nn.functional as F
 
 efficiency_dict = dict(np.load('../data/efficiency_dict.npy', allow_pickle=True).item())
 all_room_list = list(efficiency_dict.keys())
-normal_room_list = [i for i in all_room_list if efficiency_dict[i] >= 1]
+normal_room_list = [i for i in all_room_list if efficiency_dict[i] >= 1.540667]
 poor_room_list = [i for i in all_room_list if i not in normal_room_list]
+print("Efficiency list loaded, {} normal rooms and {} poor rooms".format(len(normal_room_list), len(poor_room_list)))
 
 
 def cosine_similarity_loss(x, y):
