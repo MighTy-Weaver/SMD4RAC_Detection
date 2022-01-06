@@ -113,7 +113,6 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         print("Training Epoch {}\tTraining Loss {}\tValidation Loss {}".format(epoch + 1,
                                                                                epoch_loss / len(train_loader),
                                                                                val_epoch_loss / len(val_loader)))
-        print(trn_total, trn_correct, val_correct, val_total)
         print('Training Accuracy = {}\tValidation Accuracy = {}'.format(round(int(trn_correct) / int(trn_total), 3),
                                                                         round(int(val_correct) / int(val_total), 3)))
         print("Training F1 score = {}\nValidation F1 score = {}".format(
