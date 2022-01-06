@@ -28,9 +28,7 @@ X = data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time'],
 Y = data['AC']
 X['Date'] = data['Time'].apply(lambda x: x.split(' ')[0])
 dates = X['Date'].unique()
-print(dates)
 rooms = normal_room_list + poor_room_list
-print(rooms)
 
 if os.path.exists('../data/room_date_dict.npy'):
     room_data_dict = np.load('../data/room_date_dict.npy', allow_pickle=True).item()
