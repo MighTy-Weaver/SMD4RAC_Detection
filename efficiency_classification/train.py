@@ -2,7 +2,9 @@ import argparse
 import os
 import warnings
 
+import numpy as np
 import torch
+from sklearn.metrics import f1_score
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -59,12 +61,14 @@ validation_dataset = AC_Normal_Dataset('val', test=args.test == 1)
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
 
+record = {i: [] for i in ['trn_loss', 'trn_acc', 'trn_f1', 'val_loss', 'val_acc', 'val_f1']}
 # Start training
 for epoch in trange(num_epoch, desc="Epoch: "):
     epoch_loss = 0
 
     model.train()
     trn_total, trn_correct = 0, 0
+    trn_total_pred, trn_total_label = [], []
     for inputs, labels in tqdm(train_loader):
         trn_total += len(inputs)
         inputs = inputs.to(device)
@@ -80,9 +84,12 @@ for epoch in trange(num_epoch, desc="Epoch: "):
 
         predicted_answer = torch.argmax(outputs, dim=1)
         truth_answer = labels.detach().cpu()
+        trn_total_pred.extend(predicted_answer.tolist())
+        trn_total_label.extend(truth_answer.tolist())
         trn_correct += sum([predicted_answer[ind] == truth_answer[ind] for ind in range(len(predicted_answer))])
 
     model.eval()
+    val_total_pred, val_total_label = [], []
     with torch.no_grad():
         val_epoch_loss = 0
         val_total, val_correct = 0, 0
@@ -96,6 +103,8 @@ for epoch in trange(num_epoch, desc="Epoch: "):
 
             predicted_answer = torch.argmax(outputs, dim=1)
             truth_answer = labels.detach().cpu()
+            val_total_pred.extend(predicted_answer.tolist())
+            val_total_label.extend(truth_answer.tolist())
             val_correct += sum(
                 predicted_answer[ind] == truth_answer[ind]
                 for ind in range(len(predicted_answer))
@@ -104,8 +113,18 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         print("Training Epoch {}\tTraining Loss {}\tValidation Loss {}".format(epoch + 1,
                                                                                epoch_loss / len(train_loader),
                                                                                val_epoch_loss / len(val_loader)))
-        print(trn_total, trn_correct, val_correct, val_total)
         print('Training Accuracy = {}\tValidation Accuracy = {}'.format(round(int(trn_correct) / int(trn_total), 3),
                                                                         round(int(val_correct) / int(val_total), 3)))
+        print("Training F1 score = {}\nValidation F1 score = {}".format(
+            round(f1_score(trn_total_label, trn_total_pred), 3), round(f1_score(val_total_label, val_total_pred), 3)))
+
+        record['trn_loss'].append(epoch_loss / len(train_loader))
+        record['val_loss'].append(val_epoch_loss / len(val_loader))
+        record['trn_acc'].append(round(int(trn_correct) / int(trn_total), 3))
+        record['val_acc'].append(round(int(val_correct) / int(val_total), 3))
+        record['trn_f1'].append(round(f1_score(trn_total_label, trn_total_pred), 3))
+        record['val_f1'].append(round(f1_score(val_total_label, val_total_pred), 3))
+
     if (epoch + 1) % save_step == 0:
         torch.save(model.state_dict(), os.path.join(save_path, 'epoch{}.pth'.format(epoch + 1)))
+        np.save(os.path.join(save_path, 'epoch{}_record.npy'.format(epoch + 1)), record)

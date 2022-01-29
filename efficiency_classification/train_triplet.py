@@ -58,7 +58,7 @@ classifier_criterion = CrossEntropyLoss()
 encoder_optimizer = AdamW(encoder.parameters(), lr=encoder_learning_rate)
 classifier_optimizer = Adam(classifier.parameters(), lr=classifier_learning_rate)
 save_path = './model_checkpoint_triplet/'
-save_step = 1
+save_step = 2
 
 triplet_dataset = AC_Triplet_Dataset(sample_frac=args.triplet_sample_frac)
 training_dataset = AC_Normal_Dataset('trn')
