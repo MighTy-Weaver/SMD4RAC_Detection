@@ -27,7 +27,7 @@ class AC_Normal_Dataset(Dataset):
             self.room_date_list = self.room_date_list[int(len(self.room_date_list) * trn_ratio):]
 
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
-        self.X = self.data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'AC'], axis=1)
+        self.X = self.data.drop(['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time'], axis=1)
         self.X['Date'] = self.data['Time'].apply(lambda x: x.split(' ')[0])
         print("Normal Regression DATALOADER: finished loading original data, total {}".format(len(self.room_date_list)))
 

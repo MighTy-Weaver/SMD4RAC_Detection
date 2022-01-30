@@ -5,14 +5,15 @@ import warnings
 import numpy as np
 import torch
 from sklearn.metrics import f1_score
-from torch.nn import CrossEntropyLoss
+from torch.nn import MSELoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from tqdm import trange
 
 from dataloader import AC_Normal_Dataset
-from model import LSTM_encoder, NN_regressor
+from model import LSTM_encoder
+from model import NN_regressor
 
 # Argument parser
 parser = argparse.ArgumentParser()
@@ -46,7 +47,7 @@ model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
 num_epoch = args.epoch
 batch_size = args.bs
 learning_rate = args.lr
-criterion = CrossEntropyLoss()
+criterion = MSELoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
 save_path = './model_checkpoint/'
 save_step = 2
