@@ -12,7 +12,7 @@ from tqdm import tqdm
 from tqdm import trange
 
 from dataloader import AC_Normal_Dataset
-from model import LSTM_encoder
+from model import simple_LSTM_encoder
 from model import NN_regressor
 
 # Argument parser
@@ -40,7 +40,7 @@ if torch.cuda.is_available():
     torch.cuda.set_device(args.gpu)
 
 # Build the model
-encoder = LSTM_encoder(bidirectional=True, feature_num=12).to(device)
+encoder = simple_LSTM_encoder(bidirectional=True, feature_num=12).to(device)
 model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
 
 # Training settings

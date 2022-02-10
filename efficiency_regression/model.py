@@ -3,10 +3,10 @@ from torch import nn
 from torch.nn import Sequential
 
 
-class LSTM_encoder(nn.Module):
+class simple_LSTM_encoder(nn.Module):
     def __init__(self, feature_num=11, hidden_size=32, num_layers=1, bias=True, batch_first=True, bidirectional=True,
                  dropout=0.4):
-        super(LSTM_encoder, self).__init__()
+        super(simple_LSTM_encoder, self).__init__()
         self.feature_num = feature_num
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -29,6 +29,10 @@ class LSTM_encoder(nn.Module):
 
     def get_output_length(self):
         return 3 * self.hidden_size if not self.bidirectional else 4 * self.hidden_size
+
+
+class attention_LSTM_encoder(nn.Module):
+    pass
 
 
 class NN_regressor(nn.Module):
