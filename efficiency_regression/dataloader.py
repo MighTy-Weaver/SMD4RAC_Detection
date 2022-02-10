@@ -35,9 +35,9 @@ class AC_Normal_Dataset(Dataset):
         if isinstance(index, int):
             room = self.room_date_list[index][0]
             date = self.room_date_list[index][1]
-            return torch.tensor(self.X[(self.X.Date == date) & (self.X.Location == room)] \
-                                .drop(['Location', 'Date'], axis=1).to_numpy(dtype=float), dtype=torch.float32), \
-                   efficiency_dict[room]
+            return torch.tensor(
+                self.X[(self.X.Date == date) & (self.X.Location == room)].drop(['Location', 'Date'], axis=1).to_numpy(
+                    dtype=float), dtype=torch.float), float(efficiency_dict[room])
 
     def __len__(self):
         return len(self.room_date_list)

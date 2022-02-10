@@ -24,7 +24,8 @@ class LSTM_encoder(nn.Module):
         seq_avg = torch.mean(out, dim=1).squeeze()  # (bs, 2 * hidden size)
         h0_avg = torch.mean(h0, dim=0).squeeze()  # (bs, hidden size)
         c0_avg = torch.mean(c0, dim=0).squeeze()  # (bs, hidden size)
-        return self.bn(torch.cat((seq_avg, h0_avg, c0_avg), dim=0))
+        # print(seq_avg.shape, h0_avg.shape, c0_avg.shape,torch.cat((seq_avg, h0_avg, c0_avg), dim=1).shape)
+        return self.bn(torch.cat((seq_avg, h0_avg, c0_avg), dim=1))
 
     def get_output_length(self):
         return 3 * self.hidden_size if not self.bidirectional else 4 * self.hidden_size
