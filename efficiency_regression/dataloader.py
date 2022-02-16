@@ -4,7 +4,7 @@ import torch
 from sklearn.utils import shuffle
 from torch.utils.data import Dataset
 
-from utils.utils import efficiency_dict
+from utils import efficiency_dict
 
 
 class AC_Normal_Dataset(Dataset):
@@ -41,3 +41,7 @@ class AC_Normal_Dataset(Dataset):
 
     def __len__(self):
         return len(self.room_date_list)
+
+
+t = AC_Normal_Dataset()
+print(t.room_date_dict)
