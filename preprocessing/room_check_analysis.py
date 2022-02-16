@@ -2,9 +2,17 @@ import math
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from matplotlib import pyplot as plt
 
 from utils import replace_dict
+
+
+def calculate_vapor_density(temp: float):
+    return 5.018 + 0.32321 * temp + 8.1847 * pow(10, -3) * pow(temp, 2) + 3.1243 * pow(10, -4) * pow(temp, 3)
+
+
+room_volume = 30  # m^3
 
 room_data = pd.read_csv('../data/room_check_original.csv', index_col=None)
 pd.set_option("display.max_columns", None)
@@ -27,52 +35,87 @@ for i in range(len(room_data)):
         if room_data.loc[i, 'room'] in replace_dict[key]:
             room_data.loc[i, 'replaced_year'] = key
 
+    # calculate stabilize time
+    time_list = room_data.loc[i, 'Time before stabilization'].split('min')
+    room_data.loc[i, 'Time_stabilize_in_sec'] = int(time_list[0]) * 60 + int(time_list[1].replace('s', '')) if \
+        time_list[1] != '' else int(time_list[0]) * 60
+
+    # handle characters
     room_data.loc[i, 'Indoor_RH_init'] = float(room_data.loc[i, 'Indoor_RH_init'].replace('%', ''))
     room_data.loc[i, 'Indoor_RH_after'] = float(room_data.loc[i, 'Indoor_RH_after'].replace('%', ''))
     room_data.loc[i, 'Env RH'] = float(room_data.loc[i, 'Env RH'].replace('%', ''))
     room_data.loc[i, 'Rated Power'] = float(room_data.loc[i, 'Rated Power'].replace('W', ''))
-    if len(room_data.loc[i, 'Time before stablization'].split('min')) == 1:
-
-        room_data.loc[i, 'Time before stablization'] = \
-            int(room_data.loc[i, 'Time before stablization'].replace('s', '').split('min')[0]) * 60 + \
-            int(room_data.loc[i, 'Time before stablization'].replace('s', '').split('min')[1])
+    if len(room_data.loc[i, 'Time before stabilization'].split('min')) == 1:
+        room_data.loc[i, 'Time before stabilization'] = \
+            int(room_data.loc[i, 'Time before stabilization'].replace('s', '').split('min')[0]) * 60 + \
+            int(room_data.loc[i, 'Time before stabilization'].replace('s', '').split('min')[1])
     else:
-        room_data.loc[
-            i, 'Time before stablization'] = int(
-            room_data.loc[i, 'Time before stablization'].replace('s', '').split('min')[0]) * 60
-
+        room_data.loc[i, 'Time before stabilization'] = int(
+            room_data.loc[i, 'Time before stabilization'].replace('s', '').split('min')[0]) * 60
     room_data.loc[i, 'Velocity'] = room_data.loc[i, 'Velocity'].replace('m/s', '')
 
-    room_data.loc[i, 'Indoor_T_diff'] = -round(room_data.loc[i, 'Indoor_after'] - room_data.loc[i, 'Env T'], 5)
-    room_data.loc[i, 'Indoor_RH_diff'] = -round(room_data.loc[i, 'Indoor_RH_after'] -
-                                                room_data.loc[i, 'Indoor_RH_init'], 5)
+    # add some new columns
+    room_data.loc[i, 'Indoor_T_diff'] = -round(room_data.loc[i, 'Indoor_after'] - room_data.loc[i, 'Indoor_init'], 5)
+    # room_data.loc[i, 'Indoor_RH_diff'] = -round(room_data.loc[i, 'Indoor_RH_after'] -
+    #                                             room_data.loc[i, 'Indoor_RH_init'], 5)
+    # room_data.loc[i, 'T_air_diff'] = round(room_data.loc[i, 'Tair_init'] -
+    #                                        room_data.loc[i, 'Stabilized Tair'], 5)
+    room_data.loc[i, 'init_saturate_vd'] = calculate_vapor_density(room_data.loc[i, 'Indoor_init'])
+    room_data.loc[i, 'after_saturate_vd'] = calculate_vapor_density(room_data.loc[i, 'Indoor_after'])
+    room_data.loc[i, 'init_actual_vd'] = room_data.loc[i, 'Indoor_RH_init'] * 0.01 * room_data.loc[
+        i, 'init_saturate_vd']
+    room_data.loc[i, 'after_actual_vd'] = room_data.loc[i, 'Indoor_RH_after'] * 0.01 * room_data.loc[
+        i, 'after_saturate_vd']
+
+# unite data type
 room_data['Indoor_RH_init'] = room_data['Indoor_RH_init'].astype('float64')
 room_data['Indoor_RH_after'] = room_data['Indoor_RH_after'].astype('float64')
 room_data['Env RH'] = room_data['Env RH'].astype('float64')
-room_data['Stablized Tair'] = room_data['Stablized Tair'].astype('float64')
-room_data['Time before stablization'] = room_data['Time before stablization'].astype('int64')
+room_data['Stabilized Tair'] = room_data['Stabilized Tair'].astype('float64')
+room_data['Time before stabilization'] = room_data['Time before stabilization'].astype('int64')
 room_data['Velocity'] = room_data['Velocity'].astype('float64')
 room_data['replaced_year'] = room_data['replaced_year'].astype('int64')
-room_data['Efficiency'] = (1.012 * room_data['Velocity'] * room_data['Indoor_T_diff'] * 1225 + 2260 * room_data[
-    'Velocity'] * (room_data['Indoor_RH_diff'] * 0.01) * 40) * 0.02 / room_data['Rated Power']
+
+# calculate latent heat (water)
+room_data['init_vapor_mass'] = room_data['init_actual_vd'] * room_volume
+room_data['after_vapor_mass'] = room_data['after_actual_vd'] * room_volume
+room_data['vapor_mass_diff'] = room_data['init_vapor_mass'] - room_data['after_vapor_mass']  # gram
+room_data['vapor_latent_heat'] = room_data['vapor_mass_diff'] * 2260  # joule
+
+# calculate specific heat (air)
+room_data['air_specific_heat'] = 1.012 * 1225 * room_volume * room_data['Indoor_T_diff']
+
+# calculate efficiency
+room_data['Efficiency'] = (room_data['vapor_latent_heat'] + room_data['air_specific_heat']) / (
+        room_data['Rated Power'] * room_data['Time_stabilize_in_sec'])
+
+room_data[room_data.Occupancy == 'Y'].to_csv('../occupancy.csv', index=False)
+room_data[room_data.Efficiency > 1].to_csv('../Larger_than_1.csv', index=False)
+# room_data['Efficiency'] = (1.012 * (room_data['Velocity'] * 1225) * room_data['T_air_diff'] + 2260 * room_data[
+#     'Velocity'] * (room_data['Indoor_RH_diff'] * 0.01) * 40) * 0.02 / room_data['Rated Power']
 # 40是绝对湿度下的含水量，1.012是空气比热容，1225是空气密度，2260是水的latent heat，0.02是出风口面积0.02平方米
 
-print(room_data['Efficiency'])
+room_data.to_csv('../data/room_check_processed.csv', index=False)
+
+# 1.012 * (room_data['Velocity'] * 1225) * room_data['Indoor_T_diff'] * 1
+# s * S
+# c
+# 速度 * 密度
+# 温差ΔT
+#
+# 2260 * room_data['Velocity'] * (room_data['Indoor_RH_diff'] * 0.01) * 40)
+
+# make the plot
 room_data['Efficiency'] = room_data['Efficiency'].astype('float64')
 Efficiency = list(room_data['Efficiency'])
-print(room_data.describe())
-print(Efficiency)
 room_data.sort_values(by=['Efficiency'], inplace=True, ascending=False)
 Efficiency = sorted(Efficiency)
-print(Efficiency)
-import seaborn as sns
 
 sns.histplot(data=room_data, x="Efficiency")
 plt.savefig('./efficiency_distribution.png')
 
-efficiency_dict = {
-    room_data.loc[i, 'room']: room_data.loc[i, 'Efficiency'] for i in range(len(room_data))
-}
+efficiency_dict = {room_data.loc[i, 'room']: room_data.loc[i, 'Efficiency']
+                   for i in range(len(room_data))}
 np.save('../data/efficiency_dict.npy', efficiency_dict)
 
 # high_class = [int(i.split('\\')[-1].split('.')[0]) for i in

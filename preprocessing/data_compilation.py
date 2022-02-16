@@ -19,12 +19,12 @@ def get_average_data(date: str, hour: str, half=False):
     result = []
     if len(date.split('-')) == 3:
         y, m, d = date.split('-')[0], date.split('-')[1], date.split('-')[2]
-        m = '0' + m if len(m) == 1 else m
-        d = '0' + d if len(d) == 1 else d
+        m = f'0{m}' if len(m) == 1 else m
+        d = f'0{d}' if len(d) == 1 else d
     elif len(date.split('/')) == 3:
         y, m, d = date.split('/')[0], date.split('/')[1], date.split('/')[2]
-        m = '0' + m if len(m) == 1 else m
-        d = '0' + d if len(d) == 1 else d
+        m = f'0{m}' if len(m) == 1 else m
+        d = f'0{d}' if len(d) == 1 else d
     else:
         raise Exception("Error at {}".format(date))
     date_processed = '-'.join([y, m, d])

@@ -12,3 +12,5 @@
 /data/room_check.csv
 /utils.py
 /data/
+/occupancy.csv
+/Larger_than_1.csv
