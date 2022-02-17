@@ -56,10 +56,10 @@ for i in range(len(room_data)):
 
     # add some new columns
     room_data.loc[i, 'Indoor_T_diff'] = -round(room_data.loc[i, 'Indoor_after'] - room_data.loc[i, 'Indoor_init'], 5)
-    # room_data.loc[i, 'Indoor_RH_diff'] = -round(room_data.loc[i, 'Indoor_RH_after'] -
-    #                                             room_data.loc[i, 'Indoor_RH_init'], 5)
-    # room_data.loc[i, 'T_air_diff'] = round(room_data.loc[i, 'Tair_init'] -
-    #                                        room_data.loc[i, 'Stabilized Tair'], 5)
+    room_data.loc[i, 'Indoor_RH_diff'] = -round(room_data.loc[i, 'Indoor_RH_after'] -
+                                                room_data.loc[i, 'Indoor_RH_init'], 5)
+    room_data.loc[i, 'T_air_diff'] = round(room_data.loc[i, 'Tair_init'] -
+                                           room_data.loc[i, 'Stabilized Tair'], 5)
     room_data.loc[i, 'init_saturate_vd'] = calculate_vapor_density(room_data.loc[i, 'Indoor_init'])
     room_data.loc[i, 'after_saturate_vd'] = calculate_vapor_density(room_data.loc[i, 'Indoor_after'])
     room_data.loc[i, 'init_actual_vd'] = room_data.loc[i, 'Indoor_RH_init'] * 0.01 * room_data.loc[
@@ -91,9 +91,10 @@ room_data['Efficiency'] = (room_data['vapor_latent_heat'] + room_data['air_speci
 
 room_data[room_data.Occupancy == 'Y'].to_csv('../occupancy.csv', index=False)
 room_data[room_data.Efficiency > 1].to_csv('../Larger_than_1.csv', index=False)
-# room_data['Efficiency'] = (1.012 * (room_data['Velocity'] * 1225) * room_data['T_air_diff'] + 2260 * room_data[
-#     'Velocity'] * (room_data['Indoor_RH_diff'] * 0.01) * 40) * 0.02 / room_data['Rated Power']
-# 40是绝对湿度下的含水量，1.012是空气比热容，1225是空气密度，2260是水的latent heat，0.02是出风口面积0.02平方米
+
+room_data['prev_Efficiency'] = (1.012 * (room_data['Velocity'] * 1225) * room_data['T_air_diff'] + 2260 * room_data[
+    'Velocity'] * (room_data['Indoor_RH_diff'] * 0.01) * 40) * 0.02 / room_data['Rated Power']
+# # 40是绝对湿度下的含水量，1.012是空气比热容，1225是空气密度，2260是水的latent heat，0.02是出风口面积0.02平方米
 
 room_data.to_csv('../data/room_check_processed.csv', index=False)
 
@@ -107,9 +108,12 @@ room_data.to_csv('../data/room_check_processed.csv', index=False)
 
 # make the plot
 room_data['Efficiency'] = room_data['Efficiency'].astype('float64')
+room_data['prev_Efficiency'] = room_data['prev_Efficiency'].astype('float64')
 Efficiency = list(room_data['Efficiency'])
 room_data.sort_values(by=['Efficiency'], inplace=True, ascending=False)
 Efficiency = sorted(Efficiency)
+
+# print(room_data.corr())
 
 sns.histplot(data=room_data, x="Efficiency")
 plt.savefig('./efficiency_distribution.png')
