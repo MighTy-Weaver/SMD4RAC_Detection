@@ -71,6 +71,8 @@ else:
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
 
+print(len(val_loader))
+
 record = {i: [] for i in ['trn_r2', 'val_r2', 'trn_loss', 'val_loss']}
 # Start training
 for epoch in trange(num_epoch, desc="Epoch: "):
@@ -102,7 +104,7 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         val_epoch_loss = 0
         for inputs, labels in val_loader:
             inputs = inputs.to(device)
-            labels = labels.to(device)
+            labels = labels.type(torch.float32).to(device)
             outputs = model(inputs)
             loss = criterion(outputs, labels.reshape(-1, 1))
             val_epoch_loss += loss.item()

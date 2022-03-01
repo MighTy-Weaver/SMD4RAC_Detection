@@ -45,7 +45,7 @@ class AC_Normal_Dataset(Dataset):
 
 
 class AC_Sparse_Dataset(Dataset):
-    def __init__(self, mode='trn', test=False, trn_ratio=0.9, group_size=400):
+    def __init__(self, mode='trn', test=False, trn_ratio=0.8, group_size=200):
         if mode not in ['trn', 'val']:
             raise NotImplementedError("mode must be either 'trn' or 'val'")
 
@@ -64,7 +64,9 @@ class AC_Sparse_Dataset(Dataset):
                 num_groups = int(len(self.data_room) / group_size)
                 self.data_room = self.data_room.sample(n=num_groups * group_size).reset_index(drop=True)
                 self.tensor_list.extend(
-                    [(self.data_room.loc[j * group_size:(j + 1) * group_size].reset_index(drop=True),
+                    [(torch.tensor(self.data_room.loc[j * group_size:(j + 1) * group_size - 1].drop(
+                        ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location'],
+                        axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
                       float(efficiency_dict[r])) for j in range(num_groups)])
 
         self.tensor_list = shuffle(self.tensor_list, random_state=621)
