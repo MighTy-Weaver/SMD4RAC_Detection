@@ -12,8 +12,9 @@ from tqdm import tqdm
 from tqdm import trange
 
 from dataloader import AC_Normal_Dataset
-from model import simple_LSTM_encoder
+from dataloader import AC_Sparse_Dataset
 from model import NN_regressor
+from model import simple_LSTM_encoder
 
 # Argument parser
 parser = argparse.ArgumentParser()
@@ -22,6 +23,8 @@ parser.add_argument("--epoch", help="epochs", default=50, type=int)
 parser.add_argument("--bs", help="batch size", default=256, type=int)
 parser.add_argument("--gpu", help="gpu number", default=3, type=int)
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
+parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], type=str)
+parser.add_argument("--gs", help="group size for sparse dataset", default=200, type=int)
 args = parser.parse_args()
 
 # Check device status
@@ -47,17 +50,24 @@ model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
 num_epoch = args.epoch
 batch_size = args.bs
 learning_rate = args.lr
+data_mode = args.data_mode
+group_size = args.gs
 criterion = MSELoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
-save_path = './LSTM_model_checkpoint_bs{}_e{}_lr{}/'.format(batch_size, num_epoch, learning_rate)
+save_path = './LSTM_model_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}/'.format(batch_size, num_epoch, learning_rate, data_mode,
+                                                                        group_size)
 save_step = 2
 
 # Make checkpoint save path
 if not os.path.exists(save_path):
     os.mkdir(save_path)
 
-training_dataset = AC_Normal_Dataset('trn', test=args.test == 1)
-validation_dataset = AC_Normal_Dataset('val', test=args.test == 1)
+if data_mode == 'daily':
+    training_dataset = AC_Normal_Dataset('trn', test=args.test == 1)
+    validation_dataset = AC_Normal_Dataset('val', test=args.test == 1)
+else:
+    training_dataset = AC_Sparse_Dataset('trn', test=args.test == 1, group_size=group_size)
+    validation_dataset = AC_Sparse_Dataset('val', test=args.test == 1, group_size=group_size)
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
 
