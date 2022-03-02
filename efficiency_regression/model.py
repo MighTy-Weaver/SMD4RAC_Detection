@@ -1,4 +1,5 @@
 import torch
+from numba.cuda import const
 from torch import nn
 from torch.autograd import Variable
 from torch.nn import Sequential

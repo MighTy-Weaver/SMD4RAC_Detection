@@ -18,13 +18,17 @@ from model import simple_LSTM_encoder
 
 # Argument parser
 parser = argparse.ArgumentParser()
+parser.add_argument("--model", choices=['lstm', 'attn_lstm'], default='lstm')
 parser.add_argument("--lr", help="learning rate", default=0.00045, type=float)
 parser.add_argument("--epoch", help="epochs", default=50, type=int)
 parser.add_argument("--bs", help="batch size", default=256, type=int)
-parser.add_argument("--gpu", help="gpu number", default=3, type=int)
-parser.add_argument("--test", help="run in test mode", default=0, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], type=str)
 parser.add_argument("--gs", help="group size for sparse dataset", default=200, type=int)
+parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
+
+parser.add_argument("--gpu", help="gpu number", default=3, type=int)
+parser.add_argument("--test", help="run in test mode", default=0, type=int)
+
 args = parser.parse_args()
 
 # Check device status
@@ -43,7 +47,12 @@ if torch.cuda.is_available():
     torch.cuda.set_device(args.gpu)
 
 # Build the model
-encoder = simple_LSTM_encoder(bidirectional=True, feature_num=12).to(device)
+if args.model == 'lstm':
+    encoder = simple_LSTM_encoder(bidirectional=True, feature_num=12).to(device)
+elif args.model == 'attn_lstm':
+    encoder = None
+else:
+    raise NotImplementedError("Model type other than 'lstm' or 'attn lstm' hasnot been implemented yet")
 model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
 
 # Training settings
@@ -54,8 +63,8 @@ data_mode = args.data_mode
 group_size = args.gs
 criterion = MSELoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
-save_path = './LSTM_model_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}/'.format(batch_size, num_epoch, learning_rate, data_mode,
-                                                                        group_size)
+save_path = './{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}/'.format(args.model, batch_size, num_epoch, learning_rate,
+                                                                      data_mode, group_size, args.ratio)
 save_step = 2
 
 # Make checkpoint save path
@@ -63,15 +72,13 @@ if not os.path.exists(save_path):
     os.mkdir(save_path)
 
 if data_mode == 'daily':
-    training_dataset = AC_Normal_Dataset('trn', test=args.test == 1)
-    validation_dataset = AC_Normal_Dataset('val', test=args.test == 1)
+    training_dataset = AC_Normal_Dataset('trn', test=args.test == 1, trn_ratio=args.ratio)
+    validation_dataset = AC_Normal_Dataset('val', test=args.test == 1, trn_ratio=args.ratio)
 else:
-    training_dataset = AC_Sparse_Dataset('trn', test=args.test == 1, group_size=group_size)
-    validation_dataset = AC_Sparse_Dataset('val', test=args.test == 1, group_size=group_size)
+    training_dataset = AC_Sparse_Dataset('trn', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio)
+    validation_dataset = AC_Sparse_Dataset('val', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio)
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
-
-print(len(val_loader))
 
 record = {i: [] for i in ['trn_r2', 'val_r2', 'trn_loss', 'val_loss']}
 # Start training
@@ -109,11 +116,14 @@ for epoch in trange(num_epoch, desc="Epoch: "):
             loss = criterion(outputs, labels.reshape(-1, 1))
             val_epoch_loss += loss.item()
 
-            predicted_answer = torch.argmax(outputs, dim=1)
+            predicted_answer = outputs
             truth_answer = labels.detach().cpu()
             val_total_pred.extend(predicted_answer.tolist())
             val_total_label.extend(truth_answer.tolist())
         val_r2 = r2_score(val_total_label, val_total_pred)
+        # print("len: {}".format(len(val_loader)))
+        # print(val_total_label)
+        # print(val_total_pred)
         print("Training Epoch {}\tTraining Loss {}\tValidation Loss {}".format(epoch + 1,
                                                                                epoch_loss / len(train_loader),
                                                                                val_epoch_loss / len(val_loader)))
@@ -127,3 +137,4 @@ for epoch in trange(num_epoch, desc="Epoch: "):
     if (epoch + 1) % save_step == 0:
         torch.save(model.state_dict(), os.path.join(save_path, 'epoch{}.pth'.format(epoch + 1)))
         np.save(os.path.join(save_path, 'epoch{}_record.npy'.format(epoch + 1)), record)
+        print("Max R2 is {} for train and {} for val".format(max(record['trn_r2']), max(record['val_r2'])))
