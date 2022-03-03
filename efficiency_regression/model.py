@@ -36,6 +36,56 @@ class simple_LSTM_encoder(nn.Module):
         return 3 * self.hidden_size if not self.bidirectional else 4 * self.hidden_size
 
 
+class Transformer_encoder(nn.Module):
+    def __init__(self, feature_num=12, num_head=8, num_layers=6, LSTM_hidden_size=32, LSTM_num_layers=4, LSTM_bias=True,
+                 bidirectional=True, dropout=0.2):
+        super(Transformer_encoder, self).__init__()
+        self.feature_num = feature_num
+        self.num_head = num_head
+        self.num_layers = num_layers
+        self.LSTM_hidden_size = LSTM_hidden_size
+        self.LSTM_num_layers = LSTM_num_layers
+        self.LSTM_bias = LSTM_bias
+        self.bidirectional = bidirectional
+        self.dropout = dropout
+
+        self.encoder_layer = nn.TransformerEncoderLayer(d_model=self.feature_num, nhead=self.num_head, batch_first=True)
+        self.encoder = nn.TransformerEncoder(self.encoder_layer, num_layers == self.num_layers)
+        self.LSTM = nn.LSTM(input_size=feature_num, hidden_size=LSTM_hidden_size, num_layers=LSTM_num_layers,
+                            bias=LSTM_bias, batch_first=True, bidirectional=bidirectional, dropout=dropout)
+        self.bn = nn.BatchNorm1d(self.get_output_length())
+
+    def forward(self, x):
+        encode = self.encoder(x)
+        out, (h0, c0) = self.LSTM(encode)
+        seq_avg = torch.mean(out, dim=1).squeeze()  # (bs, 2 * hidden size)
+        h0_avg = torch.mean(h0, dim=0).squeeze()  # (bs, hidden size)
+        c0_avg = torch.mean(c0, dim=0).squeeze()  # (bs, hidden size)
+        # print(seq_avg.shape, h0_avg.shape, c0_avg.shape)  # ,torch.cat((seq_avg, h0_avg, c0_avg), dim=1).shape)
+        try:
+            return self.bn(torch.cat((seq_avg, h0_avg, c0_avg), dim=1))
+        except IndexError:
+            return self.bn(torch.cat((seq_avg, h0_avg, c0_avg), dim=-1).unsqueeze(0))
+
+    def get_output_length(self):
+        return 3 * self.LSTM_hidden_size if not self.bidirectional else 4 * self.LSTM_hidden_size
+
+
+class NN_regressor(nn.Module):
+    def __init__(self, encoder, output_dimension=1):
+        super(NN_regressor, self).__init__()
+        self.encoder = encoder
+        self.nn1 = Sequential(nn.Linear(in_features=self.encoder.get_output_length(), out_features=64),
+                              nn.BatchNorm1d(64), nn.Dropout(0.4), nn.ReLU())
+        self.nn2 = nn.Linear(in_features=64, out_features=output_dimension)
+
+    def forward(self, x):
+        out = self.encoder(x)
+        out = self.nn1(out)
+        out = self.nn2(out)
+        return out
+
+
 class bilstm_attn(torch.nn.Module):
     def __init__(self, batch_size, output_size, hidden_size, vocab_size, embed_dim, bidirectional, dropout, use_cuda,
                  attention_size, sequence_length):
@@ -121,18 +171,3 @@ class bilstm_attn(torch.nn.Module):
         attn_output = self.attention_net(lstm_output)
         logits = self.label(attn_output)
         return logits
-
-
-class NN_regressor(nn.Module):
-    def __init__(self, encoder, output_dimension=1):
-        super(NN_regressor, self).__init__()
-        self.encoder = encoder
-        self.nn1 = Sequential(nn.Linear(in_features=self.encoder.get_output_length(), out_features=64),
-                              nn.BatchNorm1d(64), nn.Dropout(0.4), nn.ReLU())
-        self.nn2 = nn.Linear(in_features=64, out_features=output_dimension)
-
-    def forward(self, x):
-        out = self.encoder(x)
-        out = self.nn1(out)
-        out = self.nn2(out)
-        return out

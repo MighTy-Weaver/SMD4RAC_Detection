@@ -14,15 +14,17 @@ from tqdm import trange
 from dataloader import AC_Normal_Dataset
 from dataloader import AC_Sparse_Dataset
 from model import NN_regressor
+from model import Transformer_encoder
 from model import simple_LSTM_encoder
 
 # Argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument("--model", choices=['lstm', 'attn_lstm'], default='lstm')
+parser.add_argument("--model", choices=['lstm', 'attn_lstm', 'transformer'], default='lstm')
 parser.add_argument("--lr", help="learning rate", default=0.00045, type=float)
 parser.add_argument("--epoch", help="epochs", default=50, type=int)
-parser.add_argument("--bs", help="batch size", default=256, type=int)
-parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], type=str)
+parser.add_argument("--bs", help="batch size", default=32, type=int)
+parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
+                    type=str)
 parser.add_argument("--gs", help="group size for sparse dataset", default=200, type=int)
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
 
@@ -51,8 +53,11 @@ if args.model == 'lstm':
     encoder = simple_LSTM_encoder(bidirectional=True, feature_num=12).to(device)
 elif args.model == 'attn_lstm':
     encoder = None
+elif args.model == 'transformer':
+    encoder = Transformer_encoder(feature_num=12, num_head=6).to(device)
 else:
-    raise NotImplementedError("Model type other than 'lstm' or 'attn lstm' hasnot been implemented yet")
+    raise NotImplementedError(
+        "Model type other than 'lstm' or 'attn lstm' or 'transformer' hasnot been implemented yet")
 model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
 
 # Training settings
@@ -90,6 +95,7 @@ for epoch in trange(num_epoch, desc="Epoch: "):
     for inputs, labels in tqdm(train_loader):
         inputs = inputs.to(device)
         labels = labels.type(torch.float32).to(device)
+        encode = encoder(inputs)
         outputs = model(inputs)
         loss = criterion(outputs, labels.reshape(-1, 1))
 
