@@ -8,3 +8,4 @@ normal_room_list = [i for i in all_room_list if efficiency_dict[i] >= mean(all_r
 poor_room_list = [i for i in all_room_list if i not in normal_room_list]
 print("Efficiency list loaded, {} normal rooms and {} poor rooms".format(len(normal_room_list), len(poor_room_list)))
 print("Mean efficiency is {}".format(mean(all_room_efficiency_list)))
+
