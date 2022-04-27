@@ -10,6 +10,7 @@ from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from tqdm import trange
+from transformers import get_scheduler
 
 from dataloader import AC_Normal_Dataset
 from dataloader import AC_Sparse_Dataset
@@ -19,8 +20,9 @@ from model import simple_LSTM_encoder
 
 # Argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument("--model", choices=['lstm', 'attn_lstm', 'transformer'], default='lstm')
-parser.add_argument("--lr", help="learning rate", default=0.00045, type=float)
+parser.add_argument("--model", choices=['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer'],
+                    default='lstm')
+parser.add_argument("--lr", help="learning rate", default=5e-5, type=float)
 parser.add_argument("--epoch", help="epochs", default=50, type=int)
 parser.add_argument("--bs", help="batch size", default=32, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
@@ -50,14 +52,19 @@ if torch.cuda.is_available():
 
 # Build the model
 if args.model == 'lstm':
+    encoder = simple_LSTM_encoder(bidirectional=False, feature_num=12).to(device)
+elif args.model == 'bilstm':
     encoder = simple_LSTM_encoder(bidirectional=True, feature_num=12).to(device)
-elif args.model == 'attn_lstm':
-    encoder = None
+elif args.model == 'lstm-transformer':
+    encoder = Transformer_encoder(gs=args.gs, feature_num=12, num_head=6, mode='lstm', bidirectional=False).to(device)
 elif args.model == 'transformer':
-    encoder = Transformer_encoder(feature_num=12, num_head=6).to(device)
+    encoder = Transformer_encoder(gs=args.gs, feature_num=12, num_head=6).to(device)
+elif args.model == 'bilstm-transformer':
+    encoder = Transformer_encoder(gs=args.gs, feature_num=12, num_head=6, mode='lstm', bidirectional=True).to(device)
 else:
     raise NotImplementedError(
         "Model type other than 'lstm' or 'attn lstm' or 'transformer' hasnot been implemented yet")
+
 model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
 
 # Training settings
@@ -70,7 +77,7 @@ criterion = MSELoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
 save_path = './{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}/'.format(args.model, batch_size, num_epoch, learning_rate,
                                                                       data_mode, group_size, args.ratio)
-save_step = 2
+save_step = 1000
 
 # Make checkpoint save path
 if not os.path.exists(save_path):
@@ -84,6 +91,9 @@ else:
     validation_dataset = AC_Sparse_Dataset('val', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio)
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
+
+lr_scheduler = get_scheduler(name='linear', optimizer=optimizer,
+                             num_warmup_steps=0, num_training_steps=num_epoch * len(train_loader))
 
 record = {i: [] for i in ['trn_r2', 'val_r2', 'trn_loss', 'val_loss']}
 # Start training
@@ -102,6 +112,7 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        lr_scheduler.step()
 
         epoch_loss += loss.item()
 
@@ -139,8 +150,13 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         record['val_loss'].append(val_epoch_loss / len(val_loader))
         record['trn_r2'].append(trn_r2)
         record['val_r2'].append(val_r2)
+        print("Max R2 is {} for train and {} for val".format(max(record['trn_r2']), max(record['val_r2'])))
+
+    if val_r2 >= max(record['val_r2']):
+        np.save(os.path.join(save_path, 'best_pred.npy'), trn_total_pred + val_total_pred)
+        np.save(os.path.join(save_path, 'best_label.npy'), trn_total_label + val_total_label)
+        torch.save(model.state_dict(), os.path.join(save_path, 'best.pth'.format(epoch + 1)))
 
     if (epoch + 1) % save_step == 0:
         torch.save(model.state_dict(), os.path.join(save_path, 'epoch{}.pth'.format(epoch + 1)))
         np.save(os.path.join(save_path, 'epoch{}_record.npy'.format(epoch + 1)), record)
-        print("Max R2 is {} for train and {} for val".format(max(record['trn_r2']), max(record['val_r2'])))

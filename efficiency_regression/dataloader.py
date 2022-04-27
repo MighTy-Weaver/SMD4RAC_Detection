@@ -46,7 +46,7 @@ class AC_Normal_Dataset(Dataset):
 
 class AC_Sparse_Dataset(Dataset):
     def __init__(self, mode='trn', test=False, trn_ratio=0.8, group_size=200):
-        if mode not in ['trn', 'val']:
+        if mode not in ['trn', 'val', 'all']:
             raise NotImplementedError("mode must be either 'trn' or 'val'")
 
         self.group_size = group_size
@@ -76,7 +76,7 @@ class AC_Sparse_Dataset(Dataset):
 
         if mode == 'trn':
             self.tensor_list = self.tensor_list[:int(len(self.tensor_list) * trn_ratio)]
-        else:
+        elif mode == 'val':
             self.tensor_list = self.tensor_list[int(len(self.tensor_list) * trn_ratio):]
 
     def __getitem__(self, item):

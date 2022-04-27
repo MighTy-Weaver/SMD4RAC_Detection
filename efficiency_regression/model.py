@@ -37,10 +37,11 @@ class simple_LSTM_encoder(nn.Module):
 
 
 class Transformer_encoder(nn.Module):
-    def __init__(self, feature_num=12, num_head=8, num_layers=6, LSTM_hidden_size=32, LSTM_num_layers=4, LSTM_bias=True,
-                 bidirectional=True, dropout=0.2):
+    def __init__(self, gs, feature_num=12, num_head=8, num_layers=8, LSTM_hidden_size=128, LSTM_num_layers=3,
+                 LSTM_bias=True, bidirectional=True, dropout=0.2, mode='flat'):
         super(Transformer_encoder, self).__init__()
         self.feature_num = feature_num
+        self.gs = gs
         self.num_head = num_head
         self.num_layers = num_layers
         self.LSTM_hidden_size = LSTM_hidden_size
@@ -48,6 +49,7 @@ class Transformer_encoder(nn.Module):
         self.LSTM_bias = LSTM_bias
         self.bidirectional = bidirectional
         self.dropout = dropout
+        self.mode = mode
 
         self.encoder_layer = nn.TransformerEncoderLayer(d_model=self.feature_num, nhead=self.num_head, batch_first=True)
         self.encoder = nn.TransformerEncoder(self.encoder_layer, num_layers == self.num_layers)
@@ -57,6 +59,9 @@ class Transformer_encoder(nn.Module):
 
     def forward(self, x):
         encode = self.encoder(x)
+        if self.mode == 'flat':
+            out = torch.flatten(encode, start_dim=1)
+            return out
         out, (h0, c0) = self.LSTM(encode)
         seq_avg = torch.mean(out, dim=1).squeeze()  # (bs, 2 * hidden size)
         h0_avg = torch.mean(h0, dim=0).squeeze()  # (bs, hidden size)
@@ -68,21 +73,25 @@ class Transformer_encoder(nn.Module):
             return self.bn(torch.cat((seq_avg, h0_avg, c0_avg), dim=-1).unsqueeze(0))
 
     def get_output_length(self):
-        return 3 * self.LSTM_hidden_size if not self.bidirectional else 4 * self.LSTM_hidden_size
+        return (
+            4 * self.LSTM_hidden_size if self.mode != 'flat' else self.feature_num * self.gs) if self.bidirectional else 3 * self.LSTM_hidden_size
 
 
 class NN_regressor(nn.Module):
     def __init__(self, encoder, output_dimension=1):
         super(NN_regressor, self).__init__()
         self.encoder = encoder
-        self.nn1 = Sequential(nn.Linear(in_features=self.encoder.get_output_length(), out_features=64),
+        self.nn1 = Sequential(nn.Linear(in_features=self.encoder.get_output_length(), out_features=256),
+                              nn.BatchNorm1d(256), nn.Dropout(0.4), nn.ReLU())
+        self.nn2 = Sequential(nn.Linear(in_features=256, out_features=64),
                               nn.BatchNorm1d(64), nn.Dropout(0.4), nn.ReLU())
-        self.nn2 = nn.Linear(in_features=64, out_features=output_dimension)
+        self.nn3 = nn.Linear(in_features=64, out_features=output_dimension)
 
     def forward(self, x):
         out = self.encoder(x)
         out = self.nn1(out)
         out = self.nn2(out)
+        out = self.nn3(out)
         return out
 
 
