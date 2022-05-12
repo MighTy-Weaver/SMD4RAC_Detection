@@ -1,10 +1,13 @@
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn
 import torch
 from sklearn.utils import shuffle
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
+from utils import normal_room_list
 from utils import efficiency_dict
 
 
@@ -45,10 +48,11 @@ class AC_Normal_Dataset(Dataset):
 
 
 class AC_Sparse_Dataset(Dataset):
-    def __init__(self, mode='trn', test=False, trn_ratio=0.8, group_size=200):
+    def __init__(self, mode='trn', test=False, trn_ratio=0.8, group_size=200, cla=False):
         if mode not in ['trn', 'val', 'all']:
             raise NotImplementedError("mode must be either 'trn' or 'val'")
 
+        self.cla = cla
         self.group_size = group_size
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.data_without0 = self.data[self.data.AC > 0]
@@ -63,14 +67,22 @@ class AC_Sparse_Dataset(Dataset):
             else:
                 num_groups = int(len(self.data_room) / group_size)
                 self.data_room = self.data_room.sample(n=num_groups * group_size).reset_index(drop=True)
-                self.tensor_list.extend(
-                    [(torch.tensor(self.data_room.loc[j * group_size:(j + 1) * group_size - 1].drop(
-                        ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location'],
-                        axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
-                      float(efficiency_dict[r])) for j in range(num_groups)])
+                if self.cla:
+                    self.tensor_list.extend(
+                        [(torch.tensor(self.data_room.loc[j * group_size:(j + 1) * group_size - 1].drop(
+                            ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location'],
+                            axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
+                          int(r in normal_room_list)) for j in range(num_groups)])
+                else:
+                    self.tensor_list.extend(
+                        [(torch.tensor(self.data_room.loc[j * group_size:(j + 1) * group_size - 1].drop(
+                            ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location'],
+                            axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
+                          float(efficiency_dict[r])) for j in range(num_groups)])
 
         self.tensor_list = shuffle(self.tensor_list, random_state=621)
-
+        seaborn.histplot(x=[i[1] for i in self.tensor_list])
+        plt.savefig('./dis.png')
         if test:
             self.tensor_list = self.tensor_list[:20]
 

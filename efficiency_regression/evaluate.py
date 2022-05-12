@@ -4,6 +4,7 @@ from itertools import chain
 
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn
 from sklearn.metrics import r2_score
 from tqdm import tqdm
 
@@ -12,7 +13,7 @@ if not os.path.exists('./truth_pred_plot/'):
 if not os.path.exists('./model_plot/'):
     os.mkdir('./model_plot')
 
-plt.rc('font', family='Times New Roman')
+plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams["savefig.bbox"] = "tight"
 checkpoints = glob.glob('./*rat0.8/')
 
@@ -41,8 +42,12 @@ for f in tqdm(checkpoints):
     preds = list(chain(*np.load(f'{f}/best_pred.npy', allow_pickle=True).tolist()))
     labels = list((np.load(f'{f}/best_label.npy', allow_pickle=True).tolist()))
 
-    plt.scatter(x=labels, y=preds, label="(Label, Prediction)")
+    preds = preds[int(0.8 * len(preds)):]
+    labels = labels[int(0.8 * len(labels)):]
+
+    # plt.scatter(x=labels, y=preds, label="(Label, Prediction)")
     real_range = np.linspace(min(list(preds + labels)), max(list(preds + labels)))
+    seaborn.regplot(x=labels, y=preds, label="(Label, Prediction)", scatter=True)
     plt.plot(real_range, real_range, color='m', linestyle="-.", linewidth=1, label="Identity Line (y=x)")
     plt.xlabel(f"Truth label\n$R^2 Score\t{round(r2_score(labels, preds), 5)}$")
     plt.ylabel("Prediction")
@@ -54,7 +59,24 @@ for f in tqdm(checkpoints):
     record = find_latest_record(glob.glob(f'{f}/epoch*.npy'))
     model_dict[model_version][gs] = record
     if record:
-        pass
+        length = range(1, len(record['trn_loss']) + 1)
+        plt.plot(length, record['trn_loss'], label='Training Loss')
+        plt.plot(length, record['val_loss'], label='Validation Loss')
+        plt.xlabel("Epoch")
+        plt.ylabel("Loss")
+        plt.title(f"Model {model_version} Loss Curve")
+        plt.legend()
+        plt.savefig(f'./truth_pred_plot/{model_version}_{gs}_loss.png', bbox_inches='tight')
+        plt.clf()
+
+        plt.plot(length, record['trn_r2'], label='Training R2')
+        plt.plot(length, record['val_r2'], label='Validation R2')
+        plt.xlabel("Epoch")
+        plt.ylabel("R2")
+        plt.title(f"Model {model_version} R2 Curve")
+        plt.legend()
+        plt.savefig(f'./truth_pred_plot/{model_version}_{gs}_r2.png', bbox_inches='tight')
+        plt.clf()
 
 for m in model_choices:
     g_choices = [g for g in gs_choices if model_dict[m][g]]
@@ -62,6 +84,8 @@ for m in model_choices:
     val_loss_min = [min(model_dict[m][g]['val_loss']) for g in gs_choices if model_dict[m][g]]
     trn_r2_max = [max(model_dict[m][g]['trn_r2']) for g in gs_choices if model_dict[m][g]]
     val_r2_max = [max(model_dict[m][g]['val_r2']) for g in gs_choices if model_dict[m][g]]
+
+    print(m, max(val_r2_max), g_choices[val_r2_max.index(max(val_r2_max))])
 
     plt.plot(g_choices, trn_loss_min, label="Min Training Loss")
     plt.plot(g_choices, val_loss_min, label="Min Validation Loss")

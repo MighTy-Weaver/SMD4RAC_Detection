@@ -4,7 +4,9 @@ import warnings
 
 import numpy as np
 import torch
+from sklearn.metrics import accuracy_score
 from sklearn.metrics import r2_score
+from torch import nn
 from torch.nn import MSELoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -30,7 +32,7 @@ parser.add_argument("--data_mode", help="use sparse data or daily data", choices
 parser.add_argument("--gs", help="group size for sparse dataset", default=200, type=int)
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
 
-parser.add_argument("--gpu", help="gpu number", default=0, type=int)
+parser.add_argument("--gpu", help="gpu number", default=3, type=int)
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
 
 args = parser.parse_args()
@@ -65,7 +67,7 @@ else:
     raise NotImplementedError(
         "Model type other than 'lstm' or 'attn lstm' or 'transformer' hasnot been implemented yet")
 
-model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
+model = NN_regressor(output_dimension=2, encoder=encoder, cla=True).to(device)
 
 # Training settings
 num_epoch = args.epoch
@@ -73,10 +75,11 @@ batch_size = args.bs
 learning_rate = args.lr
 data_mode = args.data_mode
 group_size = args.gs
-criterion = MSELoss()
+criterion = nn.CrossEntropyLoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
-save_path = './{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}/'.format(args.model, batch_size, num_epoch, learning_rate,
-                                                                      data_mode, group_size, args.ratio)
+save_path = './CLASSIFY_{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}/'.format(args.model, batch_size, num_epoch,
+                                                                               learning_rate,
+                                                                               data_mode, group_size, args.ratio)
 save_step = 1000
 
 # Make checkpoint save path
@@ -87,8 +90,10 @@ if data_mode == 'daily':
     training_dataset = AC_Normal_Dataset('trn', test=args.test == 1, trn_ratio=args.ratio)
     validation_dataset = AC_Normal_Dataset('val', test=args.test == 1, trn_ratio=args.ratio)
 else:
-    training_dataset = AC_Sparse_Dataset('trn', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio)
-    validation_dataset = AC_Sparse_Dataset('val', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio)
+    training_dataset = AC_Sparse_Dataset('trn', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio,
+                                         cla=True)
+    validation_dataset = AC_Sparse_Dataset('val', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio,
+                                           cla=True)
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
 
@@ -104,10 +109,10 @@ for epoch in trange(num_epoch, desc="Epoch: "):
     trn_total_pred, trn_total_label = [], []
     for inputs, labels in tqdm(train_loader):
         inputs = inputs.to(device)
-        labels = labels.type(torch.float32).to(device)
+        labels = labels.type(torch.int64).to(device)
         encode = encoder(inputs)
         outputs = model(inputs)
-        loss = criterion(outputs, labels.reshape(-1, 1))
+        loss = criterion(outputs, labels)
 
         optimizer.zero_grad()
         loss.backward()
@@ -116,11 +121,12 @@ for epoch in trange(num_epoch, desc="Epoch: "):
 
         epoch_loss += loss.item()
 
-        predicted_answer = outputs
+        predicted_answer = torch.argmax(outputs, dim=-1)
         truth_answer = labels.detach().cpu()
         trn_total_pred.extend(predicted_answer.tolist())
         trn_total_label.extend(truth_answer.tolist())
-    trn_r2 = r2_score(trn_total_label, trn_total_pred)
+
+    trn_r2 = accuracy_score(trn_total_label, trn_total_pred)
 
     model.eval()
     val_total_pred, val_total_label = [], []
@@ -128,16 +134,16 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         val_epoch_loss = 0
         for inputs, labels in val_loader:
             inputs = inputs.to(device)
-            labels = labels.type(torch.float32).to(device)
+            labels = labels.type(torch.int64).to(device)
             outputs = model(inputs)
-            loss = criterion(outputs, labels.reshape(-1, 1))
+            loss = criterion(outputs, labels)
             val_epoch_loss += loss.item()
 
-            predicted_answer = outputs
+            predicted_answer = torch.argmax(outputs, dim=-1)
             truth_answer = labels.detach().cpu()
             val_total_pred.extend(predicted_answer.tolist())
             val_total_label.extend(truth_answer.tolist())
-        val_r2 = r2_score(val_total_label, val_total_pred)
+        val_r2 = accuracy_score(val_total_label, val_total_pred)
         # print("len: {}".format(len(val_loader)))
         # print(val_total_label)
         # print(val_total_pred)

@@ -20,6 +20,7 @@ class simple_LSTM_encoder(nn.Module):
         self.LSTM = nn.LSTM(input_size=feature_num, hidden_size=hidden_size, num_layers=num_layers, bias=bias,
                             batch_first=batch_first, bidirectional=bidirectional, dropout=dropout)
         self.bn = nn.BatchNorm1d(self.get_output_length())
+        self.softmax = nn.Softmax()
 
     def forward(self, x):
         out, (h0, c0) = self.LSTM(x)
@@ -78,20 +79,24 @@ class Transformer_encoder(nn.Module):
 
 
 class NN_regressor(nn.Module):
-    def __init__(self, encoder, output_dimension=1):
+    def __init__(self, encoder, output_dimension=1, cla=False):
         super(NN_regressor, self).__init__()
         self.encoder = encoder
+        self.cla = cla
         self.nn1 = Sequential(nn.Linear(in_features=self.encoder.get_output_length(), out_features=256),
                               nn.BatchNorm1d(256), nn.Dropout(0.4), nn.ReLU())
         self.nn2 = Sequential(nn.Linear(in_features=256, out_features=64),
                               nn.BatchNorm1d(64), nn.Dropout(0.4), nn.ReLU())
         self.nn3 = nn.Linear(in_features=64, out_features=output_dimension)
+        self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
         out = self.encoder(x)
         out = self.nn1(out)
         out = self.nn2(out)
         out = self.nn3(out)
+        if self.cla:
+            return self.softmax(out)
         return out
 
 
