@@ -27,7 +27,7 @@ parser.add_argument("--epoch", help="epochs", default=200, type=int)
 parser.add_argument("--bs", help="batch size", default=64, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
                     type=str)
-parser.add_argument("--gs", help="group size for sparse dataset", default=50, type=int)
+parser.add_argument("--gs", help="group size for sparse dataset", default=25, type=int)
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
 parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
 
