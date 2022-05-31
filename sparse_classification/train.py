@@ -4,7 +4,8 @@ import warnings
 
 import numpy as np
 import torch
-from sklearn.metrics import f1_score, accuracy_score
+from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
 from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
@@ -22,13 +23,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--model", choices=['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer'],
                     default='lstm')
 parser.add_argument("--lr", help="learning rate", default=5e-5, type=float)
-parser.add_argument("--epoch", help="epochs", default=50, type=int)
+parser.add_argument("--epoch", help="epochs", default=200, type=int)
 parser.add_argument("--bs", help="batch size", default=64, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
                     type=str)
-parser.add_argument("--gs", help="group size for sparse dataset", default=200, type=int)
+parser.add_argument("--gs", help="group size for sparse dataset", default=50, type=int)
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
-parser.add_argument("--data", default=400000, type=int, help="The number of data to be trained")
+parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
 
 parser.add_argument("--gpu", help="gpu number", default=0, type=int)
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
@@ -85,8 +86,7 @@ if not os.path.exists(save_path):
     os.mkdir(save_path)
 
 training_dataset = AC_sparse_separate_dataset('trn', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio,
-                                              cla=True,
-                                              total_number=args.data)
+                                              cla=True, total_number=args.data)
 validation_dataset = AC_sparse_separate_dataset('val', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio,
                                                 cla=True, total_number=args.data)
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
@@ -158,5 +158,9 @@ for epoch in trange(num_epoch, desc="Epoch: "):
     if val_acc >= max(record['val_acc']):
         np.save(os.path.join(save_path, 'best_pred.npy'), trn_total_pred + val_total_pred)
         np.save(os.path.join(save_path, 'best_label.npy'), trn_total_label + val_total_label)
+        np.save(os.path.join(save_path, 'best_train_label.npy'), trn_total_label)
+        np.save(os.path.join(save_path, 'best_valid_label.npy'), val_total_label)
+        np.save(os.path.join(save_path, 'best_train_pred.npy'), trn_total_pred)
+        np.save(os.path.join(save_path, 'best_valid_pred.npy'), val_total_pred)
         torch.save(model.state_dict(), os.path.join(save_path, 'best.pth'.format(epoch + 1)))
     np.save(os.path.join(save_path, 'record.npy'), record)

@@ -1,7 +1,5 @@
 import torch
-from numba.cuda import const
 from torch import nn
-from torch.autograd import Variable
 from torch.nn import Sequential
 
 
@@ -83,11 +81,13 @@ class NN_regressor(nn.Module):
         super(NN_regressor, self).__init__()
         self.encoder = encoder
         self.cla = cla
-        self.nn1 = Sequential(nn.Linear(in_features=self.encoder.get_output_length(), out_features=256),
-                              nn.BatchNorm1d(256), nn.Dropout(0.4), nn.ReLU())
-        self.nn2 = Sequential(nn.Linear(in_features=256, out_features=64),
-                              nn.BatchNorm1d(64), nn.Dropout(0.4), nn.ReLU())
-        self.nn3 = nn.Linear(in_features=64, out_features=output_dimension)
+        self.nn1 = Sequential(nn.Linear(in_features=self.encoder.get_output_length(), out_features=512),
+                              nn.BatchNorm1d(512), nn.Dropout(0.3), nn.ReLU())
+        self.nn2 = Sequential(nn.Linear(in_features=512, out_features=128),
+                              nn.BatchNorm1d(128), nn.Dropout(0.3), nn.ReLU())
+        self.nn3 = Sequential(nn.Linear(in_features=128, out_features=64),
+                              nn.BatchNorm1d(64), nn.Dropout(0.3), nn.ReLU())
+        self.nn4 = nn.Linear(in_features=64, out_features=output_dimension)
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
@@ -95,7 +95,7 @@ class NN_regressor(nn.Module):
         out = self.nn1(out)
         out = self.nn2(out)
         out = self.nn3(out)
+        out = self.nn4(out)
         if self.cla:
             return self.softmax(out)
         return out
-
