@@ -9,13 +9,8 @@ from tqdm import tqdm
 
 warnings.filterwarnings('ignore')
 
-if not os.path.exists('./truth_pred_plot/'):
-    os.mkdir('./truth_pred_plot')
-if not os.path.exists('./model_plot/'):
-    os.mkdir('./model_plot')
 
-plt.rcParams["font.family"] = "Times New Roman"
-plt.rcParams["savefig.bbox"] = "tight"
+
 checkpoints = glob.glob('./*checkpoint*/')
 
 gs_choices = [5, 10, 25, 50, 100, 150, 200, 400]
