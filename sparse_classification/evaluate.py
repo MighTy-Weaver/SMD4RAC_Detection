@@ -31,7 +31,7 @@ for f in tqdm(checkpoints):
     model_version = info[0].replace("./", '')
     epoch_num = int(info[3].replace('e', ''))
     gs = int(info[6].replace('gs', ''))
-    data_num = int(info[-1].replace('numdata', ''))
+    data_num = int(info[-1].replace('numdata', '').replace('/', ''))
     record = np.load(f'{f}/record.npy', allow_pickle=True).item()
     train_pred = np.load(f'{f}/best_train_pred.npy', allow_pickle=True).tolist()
     train_label = np.load(f'{f}/best_train_label.npy', allow_pickle=True).tolist()
