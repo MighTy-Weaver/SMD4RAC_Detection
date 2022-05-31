@@ -31,7 +31,7 @@ parser.add_argument("--gs", help="group size for sparse dataset", default=50, ty
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
 parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
 
-parser.add_argument("--gpu", help="gpu number", default=0, type=int)
+parser.add_argument("--gpu", help="gpu number", default=2, type=int)
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
 
 args = parser.parse_args()
