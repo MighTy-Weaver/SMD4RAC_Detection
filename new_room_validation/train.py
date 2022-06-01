@@ -31,7 +31,7 @@ parser.add_argument("--gs", help="group size for sparse dataset", default=25, ty
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
 parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
 parser.add_argument("--room", default=1, type=float, help="Room ratio for sampling rooms")
-parser.add_argument("--gpu", help="gpu number", default=2, type=int)
+parser.add_argument("--gpu", help="gpu number", default=3, type=int)
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
 
 args = parser.parse_args()
@@ -80,7 +80,7 @@ save_path = './{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}_roomrat{}_numdata{}
                                                                                           num_epoch,
                                                                                           learning_rate,
                                                                                           data_mode, group_size,
-                                                                                          args.ratio,
+                                                                                          args.ratio, args.room,
                                                                                           args.data)
 
 # Make checkpoint save path
