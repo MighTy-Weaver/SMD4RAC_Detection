@@ -91,7 +91,7 @@ class AC_Sparse_Dataset(Dataset):
 
 class AC_sparse_separate_dataset(Dataset):
     def __init__(self, mode='trn', test=False, trn_ratio=0.8, group_size=200, cla=False, total_number=400000,
-                 verbose=False):
+                 verbose=False, data_path='./data/'):
         if mode not in ['trn', 'val', 'all']:
             raise NotImplementedError("mode must be either 'trn' or 'val'")
 
@@ -106,11 +106,11 @@ class AC_sparse_separate_dataset(Dataset):
         self.training_tensor_list = []
         self.validation_tensor_list = []
 
-        if not os.path.exists('./data/'):
-            os.mkdir('./data/')
+        if not os.path.exists(data_path):
+            os.mkdir(data_path)
         if mode == 'trn':
-            if os.path.exists('./data/trn_{}_{}_{}.npy'.format(total_number, trn_ratio, group_size)):
-                self.tensor_list = np.load('./data/trn_{}_{}_{}.npy'.format(total_number, trn_ratio, group_size),
+            if os.path.exists('{}trn_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size)):
+                self.tensor_list = np.load('{}trn_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
                                            allow_pickle=True).tolist()
             else:
                 room_length = {r: len(self.data_without0[self.data_without0.Location == r]) for r in self.rooms}
@@ -168,8 +168,10 @@ class AC_sparse_separate_dataset(Dataset):
                 self.training_tensor_list = shuffle(self.training_tensor_list, random_state=621)
                 self.validation_tensor_list = shuffle(self.validation_tensor_list, random_state=621)
 
-                np.save('./data/val_{}_{}_{}.npy'.format(total_number, trn_ratio, group_size), self.validation_tensor_list)
-                np.save('./data/trn_{}_{}_{}.npy'.format(total_number, trn_ratio, group_size), self.training_tensor_list)
+                np.save('{}val_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
+                        self.validation_tensor_list)
+                np.save('{}trn_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
+                        self.training_tensor_list)
 
                 self.tensor_list = self.training_tensor_list
                 if test:
@@ -178,7 +180,8 @@ class AC_sparse_separate_dataset(Dataset):
         elif mode == 'val':
             print("Loading validation set")
             self.tensor_list = list(
-                np.load('./data/val_{}_{}_{}.npy'.format(total_number, trn_ratio, group_size), allow_pickle=True).tolist())
+                np.load('{}val_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
+                        allow_pickle=True).tolist())
             print("Validation set Loaded!\n\n")
             if test:
                 self.tensor_list = self.tensor_list[:100]

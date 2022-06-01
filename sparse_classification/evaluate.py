@@ -1,15 +1,11 @@
 import glob
-import os
 import warnings
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
 warnings.filterwarnings('ignore')
-
-
 
 checkpoints = glob.glob('./*checkpoint*/')
 
@@ -39,5 +35,6 @@ for f in tqdm(checkpoints):
         {'model': model_version, 'gs': gs, 'data_number': data_num, 'best_train_acc': max(record['trn_acc']),
          'best_valid_acc': max(record['val_acc']), 'best_train_f1': max(record['trn_f1']),
          'best_valid_f1': max(record['val_f1'])}, ignore_index=True)
-csv_record.to_csv('../sparse_record.csv', index=False)
-np.save('../sparse_pred_label.npy', model_dict)
+csv_record.sort_values(by=['best_valid_acc', 'best_valid_f1'], ascending=False).to_csv('./sparse_record.csv',
+                                                                                       index=False)
+np.save('./sparse_pred_label.npy', model_dict)
