@@ -89,8 +89,8 @@ training_dataset = AC_sparse_separate_dataset('trn', test=args.test == 1, group_
                                               cla=True, total_number=args.data)
 validation_dataset = AC_sparse_separate_dataset('val', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio,
                                                 cla=True, total_number=args.data)
-train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True)
-val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True)
+train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
 lr_scheduler = get_scheduler(name='linear', optimizer=optimizer,
                              num_warmup_steps=0, num_training_steps=num_epoch * len(train_loader))
@@ -105,7 +105,6 @@ for epoch in trange(num_epoch, desc="Epoch: "):
     for inputs, labels in tqdm(train_loader):
         inputs = inputs.to(device)
         labels = labels.type(torch.int64).to(device)
-        encode = encoder(inputs)
         outputs = model(inputs)
         loss = criterion(outputs, labels)
 
