@@ -77,20 +77,20 @@ group_size = args.gs
 criterion = MSELoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
 save_path = './{}_regpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}_roomrat{}_numdata{}/'.format(args.model, batch_size,
-                                                                                          num_epoch,
-                                                                                          learning_rate,
-                                                                                          data_mode, group_size,
-                                                                                          args.ratio, args.room,
-                                                                                          args.data)
+                                                                                        num_epoch,
+                                                                                        learning_rate,
+                                                                                        data_mode, group_size,
+                                                                                        args.ratio, args.room,
+                                                                                        args.data)
 
 # Make checkpoint save path
 if not os.path.exists(save_path):
     os.mkdir(save_path)
 
 training_dataset = AC_sparse_separate_dataset('trn', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio,
-                                              cla=False, total_number=args.data, data_path='./data_reg/')
+                                              cla=True, total_number=args.data, data_path='./data_reg/')
 validation_dataset = AC_sparse_separate_dataset('val', test=args.test == 1, group_size=group_size, trn_ratio=args.ratio,
-                                                cla=False, total_number=args.data, data_path='./data_reg/')
+                                                cla=True, total_number=args.data, data_path='./data_reg/')
 train_loader = DataLoader(training_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
