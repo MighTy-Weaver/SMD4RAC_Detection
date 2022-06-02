@@ -30,8 +30,8 @@ parser.add_argument("--data_mode", help="use sparse data or daily data", choices
 parser.add_argument("--gs", help="group size for sparse dataset", default=25, type=int)
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
 parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
-
-parser.add_argument("--gpu", help="gpu number", default=2, type=int)
+parser.add_argument("--room", default=1, type=float, help="Room ratio for sampling rooms")
+parser.add_argument("--gpu", help="gpu number", default=3, type=int)
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
 
 args = parser.parse_args()
@@ -66,7 +66,7 @@ else:
     raise NotImplementedError(
         "Model type other than 'lstm' or 'attn lstm' or 'transformer' hasnot been implemented yet")
 
-model = NN_regressor(output_dimension=1, encoder=encoder).to(device)
+model = NN_regressor(output_dimension=2, encoder=encoder).to(device)
 
 # Training settings
 num_epoch = args.epoch
@@ -76,7 +76,12 @@ data_mode = args.data_mode
 group_size = args.gs
 criterion = MSELoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
-save_path = f'./{args.model}_regpoint_bs{batch_size}_e{num_epoch}_lr{learning_rate}_mode{data_mode}_gs{group_size}_rat{args.ratio}_numdata{args.data}/'
+save_path = './{}_regpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}_roomrat{}_numdata{}/'.format(args.model, batch_size,
+                                                                                          num_epoch,
+                                                                                          learning_rate,
+                                                                                          data_mode, group_size,
+                                                                                          args.ratio, args.room,
+                                                                                          args.data)
 
 # Make checkpoint save path
 if not os.path.exists(save_path):
