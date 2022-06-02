@@ -10,6 +10,6 @@ project [Inefficient-AC-detection](https://github.com/MighTy-Weaver/Inefficient-
 | 50,000 | | | | 5 Done | | | | |
 | 100,000 | | 5 Done | 5 Done | 5 Done | 5 Done | 5 Done | 5 Done | |
 | 150,000 | | | | | | | | |
-| 200,000 | | | 5 Done | 5 Done | | | | |
+| 200,000 | | | 5 Done | 5 Done | 5 Done | | | |
 | 300,000 | | | | | | | | |
-| 400,000 | | | 5 Done | 5 Done | | | | |
+| 400,000 | | | 5 Done | 5 Done | 5 Done | | | |
