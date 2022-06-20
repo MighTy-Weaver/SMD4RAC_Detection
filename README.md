@@ -13,3 +13,7 @@ project [Inefficient-AC-detection](https://github.com/MighTy-Weaver/Inefficient-
 | 200,000 | | | 5 Done | 5 Done | 5 Done | | | |
 | 300,000 | | | | | | | | |
 | 400,000 | | | 5 Done | 5 Done | 5 Done | | | |
+
+## Contact
+
+If you have any question, feel free to email me at `1874240442@qq.com`. This email will be active all the time. 
