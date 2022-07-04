@@ -21,3 +21,5 @@ for gs in gs_choices:
         val_dataset_length = len(val_dataset)
         bar.update(1)
         log.write(f"{gs}\t{dm}\t{trn_dataset_length}\t{val_dataset_length}\n")
+        print(f"{gs}\t{dm}\t{trn_dataset_length}\t{val_dataset_length}\n")
+log.close()

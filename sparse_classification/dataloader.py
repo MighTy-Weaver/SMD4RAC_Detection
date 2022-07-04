@@ -105,10 +105,12 @@ class AC_sparse_separate_dataset(Dataset):
         self.data_path = data_path
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.data_without0 = self.data[self.data.AC > 0]
-        self.rooms = sample(self.data_without0['Location'].unique().tolist(),
-                            k=int(len(self.data_without0['Location'].unique()) * room_ratio))
+        self.rooms = sample(
+            [i for i in self.data_without0['Location'].unique().tolist() if i in efficiency_dict.keys()],
+            k=int(len(self.data_without0['Location'].unique()) * room_ratio))
         if room_ratio != 1:
-            self.valid_rooms = [i for i in self.data_without0['Location'].unique() if i not in self.rooms]
+            self.valid_rooms = [i for i in self.data_without0['Location'].unique() if
+                                (i not in self.rooms) and (i in efficiency_dict.keys())]
         self.training_tensor_list = []
         self.validation_tensor_list = []
 
@@ -133,17 +135,19 @@ class AC_sparse_separate_dataset(Dataset):
                     if r not in efficiency_dict.keys():
                         if verbose:
                             print(f'Room {r} not in efficiency record.')
-                    elif len(self.data_room) < 2 * group_size:
+                    elif len(self.data_room) < 5 * group_size:
                         if verbose:
-                            print(f'Room {r} doesnot have 3 * {group_size} = {3 * group_size} data')
+                            print(f'Room {r} doesnot have 5 * {group_size} = {3 * group_size} data')
                     else:
                         self.train_data_room = self.data_room.sample(n=int(len(self.data_room) * trn_ratio),
                                                                      random_state=621).sort_values(by=['index'])
                         self.val_data_room = self.data_room[
                             ~self.data_room.index.isin(self.train_data_room['index'].tolist())]
+                        repeat_count = 0
                         while len(trn_room_list) < self.trn_sampling_number[r]:
                             sampled_data = self.train_data_room.sample(n=self.group_size).sort_values(by=['index'])
                             if sampled_data['index'].tolist() in trn_room_list:
+                                repeat_count += 1
                                 continue
                             if self.cla:
                                 self.training_tensor_list.append((torch.tensor(sampled_data.drop(
@@ -156,9 +160,15 @@ class AC_sparse_separate_dataset(Dataset):
                                      'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
                                                                   float(efficiency_dict[r])))
                             trn_room_list.append(sampled_data['index'].tolist())
+                            if repeat_count > 100000:
+                                print(
+                                    "Room {}'s data has {} for gs {}".format(r, len(self.data_room), group_size))
+                                break
+                        repeat_count = 0
                         while len(val_room_list) < self.val_sampling_number[r]:
                             sampled_data = self.val_data_room.sample(n=self.group_size).sort_values(by=['index'])
                             if sampled_data['index'].tolist() in val_room_list:
+                                repeat_count += 1
                                 continue
                             if self.cla:
                                 self.validation_tensor_list.append((torch.tensor(sampled_data.drop(
@@ -171,6 +181,10 @@ class AC_sparse_separate_dataset(Dataset):
                                      'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
                                                                     float(efficiency_dict[r])))
                             val_room_list.append(sampled_data['index'].tolist())
+                            if repeat_count > 100000:
+                                print(
+                                    "Room {}'s data has {} for gs {}".format(r, len(self.data_room), group_size))
+                                break
                 self.training_tensor_list = shuffle(self.training_tensor_list, random_state=621)
                 self.validation_tensor_list = shuffle(self.validation_tensor_list, random_state=621)
 

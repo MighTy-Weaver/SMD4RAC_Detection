@@ -76,12 +76,12 @@ data_mode = args.data_mode
 group_size = args.gs
 criterion = CrossEntropyLoss()
 optimizer = AdamW(model.parameters(), lr=learning_rate)
-save_path = './{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}_roomrat{}_numdata{}/'.format(args.model, batch_size,
-                                                                                          num_epoch,
-                                                                                          learning_rate,
-                                                                                          data_mode, group_size,
-                                                                                          args.ratio,
-                                                                                          args.data)
+save_path = './ckpt/{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}_roomrat{}_numdata{}/'.format(args.model, batch_size,
+                                                                                               num_epoch,
+                                                                                               learning_rate,
+                                                                                               data_mode, group_size,
+                                                                                               args.ratio,
+                                                                                               args.data)
 
 # Make checkpoint save path
 if not os.path.exists(save_path):

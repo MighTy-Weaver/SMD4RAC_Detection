@@ -29,10 +29,12 @@ class AC_sparse_separate_dataset(Dataset):
         self.data_path = data_path
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.data_without0 = self.data[self.data.AC > 0]
-        self.rooms = sample(list(self.data_without0['Location'].unique()),
-                            k=int(len(self.data_without0['Location'].unique()) * room_ratio))
+        self.rooms = sample(
+            [i for i in self.data_without0['Location'].unique().tolist() if i in efficiency_dict.keys()],
+            k=int(len(self.data_without0['Location'].unique()) * room_ratio))
         if room_ratio != 1:
-            self.valid_rooms = [i for i in self.data_without0['Location'].unique() if i not in self.rooms]
+            self.valid_rooms = [i for i in self.data_without0['Location'].unique() if
+                                (i not in self.rooms) and (i in efficiency_dict.keys())]
         self.training_tensor_list = []
         self.validation_tensor_list = []
 

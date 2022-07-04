@@ -7,10 +7,11 @@ from tqdm import tqdm
 
 warnings.filterwarnings('ignore')
 
-checkpoints = glob.glob('./*checkpoint*/')
+checkpoints = glob.glob('./ckpt/*checkpoint*/')
 
-gs_choices = [5, 10, 25, 50, 100, 150, 200, 400]
+gs_choices = [10, 20, 24, 25, 48, 50, 100, 150, 200]
 data_num_choices = [10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000]
+
 model_choices = ['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer']
 
 model_dict = {}
