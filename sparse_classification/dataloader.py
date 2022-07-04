@@ -1,4 +1,5 @@
 import os.path
+import sys
 import warnings
 from random import sample
 
@@ -9,8 +10,9 @@ from sklearn.utils import shuffle
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from utils import efficiency_dict
-from utils import normal_room_list
+sys.path.append('../')
+from sparse_classification.utils import efficiency_dict
+from sparse_classification.utils import normal_room_list
 
 warnings.filterwarnings("ignore")
 
@@ -56,8 +58,7 @@ class AC_Sparse_Dataset(Dataset):
                             if self.cla:
                                 self.tensor_list.append((torch.tensor(sampled_data.drop(
                                     ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
-                                     'index'],
-                                    axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
+                                     'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
                                                          int(r in normal_room_list)))
                             else:
                                 self.tensor_list.append((torch.tensor(sampled_data.drop(
@@ -104,7 +105,7 @@ class AC_sparse_separate_dataset(Dataset):
         self.data_path = data_path
         self.data = pd.read_csv('../data/20201230_20210815_data_compiled_half_hour.csv', index_col=None)
         self.data_without0 = self.data[self.data.AC > 0]
-        self.rooms = sample(self.data_without0['Location'].unique(),
+        self.rooms = sample(self.data_without0['Location'].unique().tolist(),
                             k=int(len(self.data_without0['Location'].unique()) * room_ratio))
         if room_ratio != 1:
             self.valid_rooms = [i for i in self.data_without0['Location'].unique() if i not in self.rooms]
@@ -132,11 +133,11 @@ class AC_sparse_separate_dataset(Dataset):
                     if r not in efficiency_dict.keys():
                         if verbose:
                             print(f'Room {r} not in efficiency record.')
-                    elif len(self.data_room) < 3 * group_size:
+                    elif len(self.data_room) < 2 * group_size:
                         if verbose:
                             print(f'Room {r} doesnot have 3 * {group_size} = {3 * group_size} data')
                     else:
-                        self.train_data_room = self.data_room.sample(n=len(self.data_room) - int(1.5 * group_size),
+                        self.train_data_room = self.data_room.sample(n=int(len(self.data_room) * trn_ratio),
                                                                      random_state=621).sort_values(by=['index'])
                         self.val_data_room = self.data_room[
                             ~self.data_room.index.isin(self.train_data_room['index'].tolist())]
