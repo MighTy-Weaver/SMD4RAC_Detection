@@ -1,3 +1,4 @@
+import os.path
 import sys
 
 from tqdm import tqdm
@@ -14,6 +15,10 @@ log = open('./record.txt', 'w')
 
 for gs in gs_choices:
     for dm in data_num_choices:
+        if os.path.exists(f'./data/val_{dm}_0.8_{gs}.npy'):
+            print(f'./data/val_{dm}_0.8_{gs}.npy')
+            bar.update(1)
+            continue
         dataset = AC_sparse_separate_dataset('trn', test=False, group_size=gs, trn_ratio=0.8, cla=True, total_number=dm)
         val_dataset = AC_sparse_separate_dataset('val', test=False, group_size=gs, trn_ratio=0.8, cla=True,
                                                  total_number=dm)

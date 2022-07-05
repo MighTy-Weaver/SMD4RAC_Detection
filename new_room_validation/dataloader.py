@@ -31,7 +31,8 @@ class AC_sparse_separate_dataset(Dataset):
         self.data_without0 = self.data[self.data.AC > 0]
         self.rooms = sample(
             [i for i in self.data_without0['Location'].unique().tolist() if i in efficiency_dict.keys()],
-            k=int(len(self.data_without0['Location'].unique()) * room_ratio))
+            k=int(len([i for i in self.data_without0['Location'].unique().tolist() if
+                       i in efficiency_dict.keys()]) * room_ratio))
         if room_ratio != 1:
             self.valid_rooms = [i for i in self.data_without0['Location'].unique() if
                                 (i not in self.rooms) and (i in efficiency_dict.keys())]
