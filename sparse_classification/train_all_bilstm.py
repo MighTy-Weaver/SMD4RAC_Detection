@@ -4,7 +4,7 @@ import os
 data = glob.glob('./data/trn*.npy')
 ckpts = glob.glob('./ckpt/*+checkpoint*/')
 
-models = ['lstm']
+models = [ 'bilstm']
 
 for d in data:
     setting = d.split('_')

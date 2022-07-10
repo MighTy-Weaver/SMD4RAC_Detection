@@ -87,6 +87,7 @@ class NN_regressor(nn.Module):
         self.nn3 = Sequential(nn.Linear(in_features=128, out_features=64),
                               nn.BatchNorm1d(64), nn.Dropout(0.3), nn.ReLU())
         self.nn4 = nn.Linear(in_features=64, out_features=output_dimension)
+        self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
         out = self.encoder(x)
@@ -94,4 +95,6 @@ class NN_regressor(nn.Module):
         out = self.nn2(out)
         out = self.nn3(out)
         out = self.nn4(out)
+        if self.cla:
+            return self.softmax(out)
         return out
