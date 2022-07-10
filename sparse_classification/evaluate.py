@@ -9,8 +9,8 @@ warnings.filterwarnings('ignore')
 
 checkpoints = glob.glob('./ckpt/*checkpoint*/')
 
-gs_choices = [10, 20, 24, 25, 48, 50, 100, 150, 200]
-data_num_choices = [10000, 20000, 50000, 100000, 150000, 200000, 300000, 400000]
+gs_choices = [6, 12, 18, 24, 48, 72, 96, 120, 144, 192]
+data_num_choices = [2000, 5000, 10000, 25000, 50000, 75000, 100000, 150000, 200000, 300000, 400000]
 
 model_choices = ['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer']
 
@@ -38,4 +38,4 @@ for f in tqdm(checkpoints):
          'best_valid_f1': max(record['val_f1'])}, ignore_index=True)
 csv_record.sort_values(by=['best_valid_acc', 'best_valid_f1'], ascending=False).to_csv('./sparse_record.csv',
                                                                                        index=False)
-np.save('./sparse_pred_label.npy', model_dict)
+np.save('./sparse_pred_statistics.npy', model_dict)

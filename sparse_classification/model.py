@@ -5,7 +5,7 @@ from torch.nn import Sequential
 
 class simple_LSTM_encoder(nn.Module):
     def __init__(self, feature_num=11, hidden_size=32, num_layers=4, bias=True, batch_first=True, bidirectional=True,
-                 dropout=0.4):
+                 dropout=0.2):
         super(simple_LSTM_encoder, self).__init__()
         self.feature_num = feature_num
         self.hidden_size = hidden_size
@@ -18,7 +18,6 @@ class simple_LSTM_encoder(nn.Module):
         self.LSTM = nn.LSTM(input_size=feature_num, hidden_size=hidden_size, num_layers=num_layers, bias=bias,
                             batch_first=batch_first, bidirectional=bidirectional, dropout=dropout)
         self.bn = nn.BatchNorm1d(self.get_output_length())
-        self.softmax = nn.Softmax()
 
     def forward(self, x):
         out, (h0, c0) = self.LSTM(x)
@@ -88,7 +87,6 @@ class NN_regressor(nn.Module):
         self.nn3 = Sequential(nn.Linear(in_features=128, out_features=64),
                               nn.BatchNorm1d(64), nn.Dropout(0.3), nn.ReLU())
         self.nn4 = nn.Linear(in_features=64, out_features=output_dimension)
-        self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
         out = self.encoder(x)
@@ -96,6 +94,4 @@ class NN_regressor(nn.Module):
         out = self.nn2(out)
         out = self.nn3(out)
         out = self.nn4(out)
-        if self.cla:
-            return self.softmax(out)
         return out
