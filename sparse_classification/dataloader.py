@@ -1,7 +1,7 @@
 import os.path
 import sys
 import warnings
-from itertools import combinations
+from math import comb
 from random import sample
 
 import numpy as np
@@ -12,8 +12,7 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 
 sys.path.append('../')
-from sparse_classification.utils import efficiency_dict
-from sparse_classification.utils import normal_room_list
+from sparse_classification.utils import efficiency_dict, normal_room_list
 
 warnings.filterwarnings("ignore")
 
@@ -49,7 +48,14 @@ class AC_sparse_separate_dataset(Dataset):
                 self.tensor_list = np.load('{}trn_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
                                            allow_pickle=True).tolist()
             else:
-                room_length = {r: len(self.data_without0[self.data_without0.Location == r]) for r in self.rooms}
+                self.rooms = [r for r in self.rooms if
+                              len(self.data_without0[self.data_without0.Location == r]) >= 5 * group_size]
+                room_length = {r: comb(len(self.data_without0[self.data_without0.Location == r]), group_size) for r in
+                               self.rooms}
+                if sum(room_length.values()) < total_number:
+                    raise Exception(
+                        "Cannot sampling {} data, maximum {}".format(total_number, sum(room_length.values())))
+                print("With group size {}, can sample maximum {} data".format(group_size, sum(room_length.values())))
                 self.trn_sampling_number = {
                     r: room_length[r] / sum(list(room_length.values())) * self.total_number * trn_ratio for r in
                     self.rooms}
@@ -59,57 +65,43 @@ class AC_sparse_separate_dataset(Dataset):
                 for r in tqdm(self.rooms, desc=f"Building dataset for the first time: "):
                     self.data_room = self.data_without0[self.data_without0.Location == r]
                     self.data_room['index'] = self.data_room.index
-                    if r not in efficiency_dict.keys():
-                        if verbose:
-                            print(f'Room {r} not in efficiency record.')
-                    elif len(self.data_room) < 5 * group_size:
-                        if verbose:
-                            print(f'Room {r} doesnot have 5 * {group_size} = {5 * group_size} data')
-                    else:
-                        self.train_data_room = self.data_room.sample(n=int(len(self.data_room) * trn_ratio),
-                                                                     random_state=621).sort_values(by=['index'])
-                        self.val_data_room = self.data_room[
-                            ~self.data_room.index.isin(self.train_data_room['index'].tolist())]
-                        maximum_combination = combinations(self.train_data_room['index'].tolist(), group_size)
-                        if len(maximum_combination) < self.trn_sampling_number[r]:
-                            if verbose:
-                                print(f'Room {r} doesnot have enough data, sampling all of them')
-                            sampled_combination = maximum_combination
-                        else:
-                            sampled_combination = sample(list(maximum_combination), group_size)
-                        for c in sampled_combination:
-                            sampled_data = self.train_data_room.loc(c).sort_values(by=['index'])
+                    trn_index_list, val_index_list = [], []
 
-                            if self.cla:
-                                self.training_tensor_list.append((torch.tensor(sampled_data.drop(
-                                    ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
-                                     'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
-                                                                  int(r in normal_room_list)))
-                            else:
-                                self.training_tensor_list.append((torch.tensor(sampled_data.drop(
-                                    ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
-                                     'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
-                                                                  float(efficiency_dict[r])))
-
-                        maximum_combination = combinations(self.val_data_room['index'].tolist(), group_size)
-                        if len(maximum_combination) < self.val_sampling_number[r]:
-                            if verbose:
-                                print(f'Room {r} doesnot have enough data, sampling all of them')
-                            sampled_combination = list(maximum_combination)
+                    self.train_data_room = self.data_room.sample(n=int(len(self.data_room) * trn_ratio),
+                                                                 random_state=621).sort_values(by=['index'])
+                    self.val_data_room = self.data_room[
+                        ~self.data_room.index.isin(self.train_data_room['index'].tolist())]
+                    while len(trn_index_list) < self.trn_sampling_number[r]:
+                        sampled_data = self.train_data_room.sample(n=group_size).sort_values(by=['index'])
+                        if sampled_data['index'].tolist() in trn_index_list:
+                            continue
+                        if self.cla:
+                            self.training_tensor_list.append((torch.tensor(sampled_data.drop(
+                                ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
+                                 'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
+                                                              int(r in normal_room_list)))
                         else:
-                            sampled_combination = sample(list(maximum_combination), group_size)
-                        for c in sampled_combination:
-                            sampled_data = self.val_data_room.loc[c].sort_values(by=['index'])
-                            if self.cla:
-                                self.validation_tensor_list.append((torch.tensor(sampled_data.drop(
-                                    ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
-                                     'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
-                                                                    int(r in normal_room_list)))
-                            else:
-                                self.validation_tensor_list.append((torch.tensor(sampled_data.drop(
-                                    ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
-                                     'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
-                                                                    float(efficiency_dict[r])))
+                            self.training_tensor_list.append((torch.tensor(sampled_data.drop(
+                                ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
+                                 'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
+                                                              float(efficiency_dict[r])))
+                        trn_index_list.append(sampled_data['index'].tolist())
+
+                    while len(val_index_list) < self.val_sampling_number[r]:
+                        sampled_data = self.val_data_room.sample(n=group_size).sort_values(by=['index'])
+                        if sampled_data['index'].tolist() in val_index_list:
+                            continue
+                        if self.cla:
+                            self.validation_tensor_list.append((torch.tensor(sampled_data.drop(
+                                ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
+                                 'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
+                                                                int(r in normal_room_list)))
+                        else:
+                            self.validation_tensor_list.append((torch.tensor(sampled_data.drop(
+                                ['Weekday', 'Total', 'Lighting', 'Socket', 'WaterHeater', 'Time', 'Location',
+                                 'index'], axis=1).reset_index(drop=True).to_numpy(dtype=float), dtype=torch.float),
+                                                                float(efficiency_dict[r])))
+                        val_index_list.append(sampled_data['index'].tolist())
 
                 self.training_tensor_list = shuffle(self.training_tensor_list, random_state=621)
                 self.validation_tensor_list = shuffle(self.validation_tensor_list, random_state=621)
@@ -120,8 +112,6 @@ class AC_sparse_separate_dataset(Dataset):
                         self.training_tensor_list)
 
                 self.tensor_list = self.training_tensor_list
-                if test:
-                    self.tensor_list = self.tensor_list[:100]
 
         elif mode == 'val':
             print("Loading validation set")
@@ -129,8 +119,9 @@ class AC_sparse_separate_dataset(Dataset):
                 np.load('{}val_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
                         allow_pickle=True).tolist())
             print("Validation set Loaded!\n\n")
-            if test:
-                self.tensor_list = self.tensor_list[:100]
+
+        if test:
+            self.tensor_list = self.tensor_list[:100]
 
     def __getitem__(self, item):
         return self.tensor_list[item][0], self.tensor_list[item][1]

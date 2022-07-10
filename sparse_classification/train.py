@@ -27,11 +27,13 @@ parser.add_argument("--epoch", help="epochs", default=200, type=int)
 parser.add_argument("--bs", help="batch size", default=64, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
                     type=str)
-parser.add_argument("--gs", help="group size for sparse dataset", default=25, type=int)
-parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
-parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
 parser.add_argument("--room", default=1, type=float, help="Room ratio for sampling rooms")
+parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
+
+parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
+parser.add_argument("--gs", help="group size for sparse dataset", default=25, type=int)
 parser.add_argument("--gpu", help="gpu number", default=2, type=int)
+
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
 
 args = parser.parse_args()
@@ -56,10 +58,10 @@ if args.model == 'lstm':
     encoder = simple_LSTM_encoder(bidirectional=False, feature_num=12).to(device)
 elif args.model == 'bilstm':
     encoder = simple_LSTM_encoder(bidirectional=True, feature_num=12).to(device)
+elif args.model == 'transformer':
+    encoder = Transformer_encoder(gs=args.gs, feature_num=12, num_head=6, mode='flat').to(device)
 elif args.model == 'lstm-transformer':
     encoder = Transformer_encoder(gs=args.gs, feature_num=12, num_head=6, mode='lstm', bidirectional=False).to(device)
-elif args.model == 'transformer':
-    encoder = Transformer_encoder(gs=args.gs, feature_num=12, num_head=6).to(device)
 elif args.model == 'bilstm-transformer':
     encoder = Transformer_encoder(gs=args.gs, feature_num=12, num_head=6, mode='lstm', bidirectional=True).to(device)
 else:
@@ -80,10 +82,12 @@ save_path = './ckpt/{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}_roomrat{}_numd
                                                                                                num_epoch,
                                                                                                learning_rate,
                                                                                                data_mode, group_size,
-                                                                                               args.ratio,
+                                                                                               args.ratio, args.room,
                                                                                                args.data)
 
 # Make checkpoint save path
+if not os.path.exists('./ckpt/'):
+    os.mkdir('./ckpt')
 if not os.path.exists(save_path):
     os.mkdir(save_path)
 
