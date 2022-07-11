@@ -6,9 +6,7 @@ from tqdm import tqdm
 sys.path.append('../')
 
 from sparse_classification.dataloader import AC_sparse_separate_dataset
-
-gs_choices = [6, 12, 18, 24, 48, 72, 96, 120, 144, 192]
-data_num_choices = [2000, 5000, 10000, 25000, 50000, 75000, 100000, 150000, 200000, 300000]
+from sparse_classification.utils import gs_choices, data_num_choices
 
 bar = tqdm(range(len(gs_choices) * (len(data_num_choices))))
 

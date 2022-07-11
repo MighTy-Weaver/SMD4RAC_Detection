@@ -3,6 +3,9 @@ import torch
 import torch.nn.functional as F
 from numpy import mean
 
+gs_choices = [6, 12, 18, 24, 48, 72, 96, 120, 144, 192]
+data_num_choices = [2000, 5000, 10000, 25000, 50000, 75000, 100000, 150000, 200000, 300000, 500000, 1000000]
+
 efficiency_dict = dict(np.load('../data/efficiency_dict.npy', allow_pickle=True).item())
 all_room_list = list(efficiency_dict.keys())
 all_room_efficiency_list = list(efficiency_dict.values())

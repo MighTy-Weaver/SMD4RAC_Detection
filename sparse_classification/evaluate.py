@@ -12,11 +12,6 @@ warnings.filterwarnings('ignore')
 
 checkpoints = glob.glob('./ckpt/*checkpoint*/')
 
-gs_choices = [6, 12, 18, 24, 48, 72, 96, 120, 144, 192]
-data_num_choices = [2000, 5000, 10000, 25000, 50000, 75000, 100000, 150000, 200000, 300000]
-
-model_choices = ['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer']
-
 model_dict = {}
 csv_record = pd.DataFrame(
     columns=['model', 'gs', 'data_number', 'best_train_acc', 'best_valid_acc', 'best_train_f1', 'best_valid_f1'])
