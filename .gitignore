@@ -18,6 +18,6 @@
 /model_plot/
 /try.py
 /sparse_classification/plots/
-/contrastive_learning/
 /efficiency_regression/
 /efficiency_classification/
+/sparse_classification/*legacy*
