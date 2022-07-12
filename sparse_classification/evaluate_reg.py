@@ -27,19 +27,28 @@ for f in tqdm(checkpoints):
     epoch_num = int(info[4].replace('e', ''))
     gs = int(info[7].replace('gs', ''))
     data_num = int(info[-1].replace('numdata', '').replace('/', ''))
-    record = np.load(f'{f}/record.npy', allow_pickle=True).item()
-    train_pred = np.load(f'{f}/best_train_pred.npy', allow_pickle=True).tolist()
-    train_label = np.load(f'{f}/best_train_label.npy', allow_pickle=True).tolist()
-    valid_pred = np.load(f'{f}/best_valid_pred.npy', allow_pickle=True).tolist()
-    valid_label = np.load(f'{f}/best_valid_label.npy', allow_pickle=True).tolist()
-    model_dict[(model_version, gs, data_num)] = [train_pred, valid_pred, train_label, valid_label]
-    if len(record['trn_r2']) < epoch_num:
-        print("\nWARNING: model: {} gs: {} data: {} hasn't fully ran".format(model_version, gs, data_num))
-        # os.system("rm -rf {}".format(f))
-    csv_record = csv_record.append(
-        {'model': model_version, 'gs': gs, 'data_number': data_num, 'best_train_r2': max(record['trn_r2']),
-         'best_valid_r2': max(record['val_r2']), 'best_train_rmse': max(record['trn_rmse']),
-         'best_valid_rmse': max(record['val_rmse'])}, ignore_index=True)
+    try:
+        record = np.load(f'{f}/record.npy', allow_pickle=True).item()
+        train_pred = np.load(f'{f}/best_train_pred.npy', allow_pickle=True).tolist()
+        train_label = np.load(f'{f}/best_train_label.npy', allow_pickle=True).tolist()
+        valid_pred = np.load(f'{f}/best_valid_pred.npy', allow_pickle=True).tolist()
+        valid_label = np.load(f'{f}/best_valid_label.npy', allow_pickle=True).tolist()
+        model_dict[(model_version, gs, data_num)] = [train_pred, valid_pred, train_label, valid_label]
+        if len(record['trn_r2']) < epoch_num:
+            print(
+                "\nWARNING: model: {} gs: {} data: {} hasn't fully ran. Currently finished {}/{}".format(model_version,
+                                                                                                         gs,
+                                                                                                         data_num, len(
+                        record['trn_r2']), epoch_num))
+            # os.system("rm -rf {}".format(f))
+        csv_record = csv_record.append(
+            {'model': model_version, 'gs': gs, 'data_number': data_num, 'best_train_r2': max(record['trn_r2']),
+             'best_valid_r2': max(record['val_r2']), 'best_train_rmse': max(record['trn_rmse']),
+             'best_valid_rmse': max(record['val_rmse'])}, ignore_index=True)
+    except FileNotFoundError:
+        print("\nWARNING: model: {} gs: {} data: {} hasn't ran yet. Currently finished 0/{}".format(model_version, gs,
+                                                                                                    data_num,
+                                                                                                    epoch_num))
 csv_record.sort_values(by=['best_valid_r2', 'best_valid_rmse'], ascending=False).to_csv(
     './results/sparse_regression_record.csv', index=False)
 np.save('./results/sparse_regression_statistics.npy', model_dict)
