@@ -35,6 +35,7 @@ for f in tqdm(checkpoints):
     model_dict[(model_version, gs, data_num)] = [train_pred, valid_pred, train_label, valid_label]
     if len(record['trn_r2']) < epoch_num:
         print("\nWARNING: model: {} gs: {} data: {} hasn't fully ran".format(model_version, gs, data_num))
+        # os.system("rm -rf {}".format(f))
     csv_record = csv_record.append(
         {'model': model_version, 'gs': gs, 'data_number': data_num, 'best_train_r2': max(record['trn_r2']),
          'best_valid_r2': max(record['val_r2']), 'best_train_rmse': max(record['trn_rmse']),
