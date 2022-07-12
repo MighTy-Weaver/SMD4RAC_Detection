@@ -1,18 +1,18 @@
 import glob
+import itertools
 import os
+import sys
 
-data = glob.glob('./data/trn*.npy')
+sys.path.append('../')
+from sparse_classification.utils import data_num_choices, gs_choices
 
 models = ['bilstm']
 
-for d in data:
-    setting = d.split('_')
-    data_num = setting[1]
-    gs = setting[3].split('.')[0]
-    for m in models:
-        if not os.path.exists(
-                "./ckpt/{}_checkpoint_bs64_e200_lr5e-05_modesparse_gs{}_rat0.8_roomrat1_numdata{}/".format(m, gs,
-                                                                                                           data_num)):
-            os.system("python train.py --model {} --data {} --gs {} --gpu 0".format(m, data_num, gs))
-        else:
-            print(m, gs, data_num, 'Already trained')
+data = glob.glob('./data/trn*.npy')
+data_settings = [(int(setting.split('_')[1]), int(setting.split('_')[3].split('.')[0])) for setting in data]
+
+for dm, gs, m in itertools.product(data_num_choices, gs_choices, models):
+    if (dm, gs) in data_settings and not os.path.exists(
+            f"./ckpt/{m}_checkpoint_bs64_e200_lr5e-05_modesparse_gs{gs}_rat0.8_roomrat1_numdata{dm}/") and not os.path.exists(
+        f"./ckpt/{m}_checkpoint_bs64_e100_lr5e-05_modesparse_gs{gs}_rat0.8_roomrat1_numdata{dm}/"):
+        os.system(f"python train.py --model {m} --data {dm} --gs {gs} --gpu 0")

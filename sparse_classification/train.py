@@ -10,7 +10,6 @@ from torch.nn import CrossEntropyLoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from tqdm import trange
 from transformers import get_scheduler
 
 from dataloader import AC_sparse_separate_dataset
@@ -23,7 +22,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--model", choices=['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer'],
                     default='lstm')
 parser.add_argument("--lr", help="learning rate", default=5e-5, type=float)
-parser.add_argument("--epoch", help="epochs", default=200, type=int)
+parser.add_argument("--epoch", help="epochs", default=100, type=int)
 parser.add_argument("--bs", help="batch size", default=64, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
                     type=str)
@@ -101,14 +100,16 @@ val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True,
 lr_scheduler = get_scheduler(name='linear', optimizer=optimizer,
                              num_warmup_steps=0, num_training_steps=num_epoch * len(train_loader))
 
+progress_bar = tqdm(range(num_epoch * len(train_loader)))
+
 record = {i: [] for i in ['trn_f1', 'val_f1', 'trn_loss', 'val_loss', 'trn_acc', 'val_acc']}
 # Start training
-for epoch in trange(num_epoch, desc="Epoch: "):
+for epoch in range(num_epoch):
     epoch_loss = 0
 
     model.train()
     trn_total_pred, trn_total_label = [], []
-    for inputs, labels in tqdm(train_loader):
+    for inputs, labels in train_loader:
         inputs = inputs.to(device)
         labels = labels.type(torch.int64).to(device)
         outputs = model(inputs)
@@ -125,6 +126,7 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         truth_answer = labels.detach().cpu()
         trn_total_pred.extend(predicted_answer.tolist())
         trn_total_label.extend(truth_answer.tolist())
+        progress_bar.update(1)
     trn_f1 = f1_score(trn_total_label, trn_total_pred)
     trn_acc = accuracy_score(trn_total_label, trn_total_pred)
 
@@ -169,3 +171,4 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         np.save(os.path.join(save_path, 'best_valid_pred.npy'), val_total_pred)
         torch.save(model.state_dict(), os.path.join(save_path, 'best.pth'.format(epoch + 1)))
     np.save(os.path.join(save_path, 'record.npy'), record)
+

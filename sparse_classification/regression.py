@@ -10,7 +10,6 @@ from torch.nn import MSELoss
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from tqdm import trange
 from transformers import get_scheduler
 
 from dataloader import AC_sparse_separate_dataset
@@ -23,7 +22,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--model", choices=['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer'],
                     default='lstm')
 parser.add_argument("--lr", help="learning rate", default=5e-5, type=float)
-parser.add_argument("--epoch", help="epochs", default=200, type=int)
+parser.add_argument("--epoch", help="epochs", default=100, type=int)
 parser.add_argument("--bs", help="batch size", default=64, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
                     type=str)
@@ -96,14 +95,16 @@ val_loader = DataLoader(validation_dataset, batch_size=batch_size, shuffle=True,
 lr_scheduler = get_scheduler(name='linear', optimizer=optimizer,
                              num_warmup_steps=0, num_training_steps=num_epoch * len(train_loader))
 
+progress_bar = tqdm(range(num_epoch * len(train_loader)))
+
 record = {i: [] for i in ['trn_r2', 'val_r2', 'trn_rmse', 'val_rmse', 'trn_loss', 'val_loss']}
 # Start training
-for epoch in trange(num_epoch, desc="Epoch: "):
+for epoch in range(num_epoch):
     epoch_loss = 0
 
     model.train()
     trn_total_pred, trn_total_label = [], []
-    for inputs, labels in tqdm(train_loader):
+    for inputs, labels in train_loader:
         inputs = inputs.to(device)
         labels = labels.type(torch.float32).to(device)
         encode = encoder(inputs)
@@ -121,6 +122,7 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         truth_answer = labels.detach().cpu()
         trn_total_pred.extend(predicted_answer.tolist())
         trn_total_label.extend(truth_answer.tolist())
+        progress_bar.update(1)
     trn_r2 = r2_score(trn_total_label, trn_total_pred)
     trn_rmse = mean_squared_error(trn_total_label, trn_total_pred, squared=False)
 
@@ -165,3 +167,4 @@ for epoch in trange(num_epoch, desc="Epoch: "):
         np.save(os.path.join(save_path, 'best_valid_pred.npy'), val_total_pred)
         torch.save(model.state_dict(), os.path.join(save_path, 'best.pth'.format(epoch + 1)))
     np.save(os.path.join(save_path, 'record.npy'), record)
+
