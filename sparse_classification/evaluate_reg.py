@@ -19,7 +19,7 @@ model_choices = ['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-tr
 
 model_dict = {}
 csv_record = pd.DataFrame(
-    columns=['model', 'gs', 'data_number', 'best_train_acc', 'best_valid_acc', 'best_train_f1', 'best_valid_f1'])
+    columns=['model', 'gs', 'data_number'])
 
 for f in tqdm(checkpoints):
     info = f.split('_')

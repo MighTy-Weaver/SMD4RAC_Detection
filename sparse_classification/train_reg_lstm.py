@@ -13,6 +13,6 @@ for d in data:
     for m in models:
         if not os.path.exists(
                 "./reg_ckpt/{}_regpoint_bs64_e200_lr5e-05_modesparse_gs{}_rat0.8_numdata{}/".format(m, gs, data_num)):
-            os.system("python regression.py --model {} --data {} --gs {} --gpu 0".format(m, data_num, gs))
+            os.system("python regression.py --model {} --data {} --gs {} --gpu 3".format(m, data_num, gs))
         else:
             print(m, gs, data_num, 'Already trained')

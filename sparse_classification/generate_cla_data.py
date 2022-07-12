@@ -10,8 +10,6 @@ from sparse_classification.utils import gs_choices, data_num_choices
 
 bar = tqdm(range(len(gs_choices) * (len(data_num_choices))))
 
-log = open('./cla_data_record.txt', 'w')
-
 for gs in gs_choices:
     for dm in data_num_choices:
         if os.path.exists(f'./data/val_{dm}_0.8_{gs}.npy'):
@@ -27,9 +25,6 @@ for gs in gs_choices:
             trn_dataset_length = len(dataset)
             val_dataset_length = len(val_dataset)
             bar.update(1)
-            log.write(f"{gs}\t{dm}\t{trn_dataset_length}\t{val_dataset_length}\n")
             print(f"{gs}\t{dm}\t{trn_dataset_length}\t{val_dataset_length}\n")
         except Exception:
             print(gs, dm, 'Failed')
-            log.write(f'{gs} {dm} Failed\n')
-log.close()

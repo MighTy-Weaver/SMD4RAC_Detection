@@ -14,6 +14,6 @@ for d in data:
         if not os.path.exists(
                 "./ckpt/{}_checkpoint_bs64_e200_lr5e-05_modesparse_gs{}_rat0.8_roomrat1_numdata{}/".format(m, gs,
                                                                                                            data_num)):
-            os.system("python train.py --model {} --data {} --gs {} --gpu 0".format(m, data_num, gs))
+            os.system("python train.py --model {} --data {} --gs {} --gpu 2".format(m, data_num, gs))
         else:
             print(m, gs, data_num, 'Already trained')
