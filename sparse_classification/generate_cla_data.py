@@ -10,8 +10,8 @@ from sparse_classification.utils import gs_choices, data_num_choices
 
 bar = tqdm(range(len(gs_choices) * (len(data_num_choices))))
 
-for gs in gs_choices:
-    for dm in data_num_choices:
+for dm in data_num_choices:
+    for gs in gs_choices:
         if os.path.exists(f'./data/val_{dm}_0.8_{gs}.npy'):
             print(f'./data/val_{dm}_0.8_{gs}.npy')
             bar.update(1)
