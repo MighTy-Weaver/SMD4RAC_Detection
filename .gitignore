@@ -21,3 +21,4 @@
 /efficiency_regression/
 /efficiency_classification/
 /sparse_classification/*legacy*
+/sparse_classification/plot/

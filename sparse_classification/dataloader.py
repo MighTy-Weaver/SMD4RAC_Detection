@@ -18,7 +18,7 @@ warnings.filterwarnings("ignore")
 
 
 class AC_sparse_separate_dataset(Dataset):
-    def __init__(self, mode='trn', test=False, trn_ratio=0.8, group_size=200, cla=False, total_number=400000,
+    def __init__(self, mode='trn', test=False, trn_ratio=0.8, group_size=48, cla=False, total_number=100000,
                  verbose=False, data_path='./data/', room_ratio=1):
         if mode not in ['trn', 'val', 'all']:
             raise NotImplementedError("mode must be either 'trn' or 'val'")
@@ -50,18 +50,47 @@ class AC_sparse_separate_dataset(Dataset):
             else:
                 self.rooms = [r for r in self.rooms if
                               len(self.data_without0[self.data_without0.Location == r]) >= 5 * group_size]
-                room_length = {r: comb(len(self.data_without0[self.data_without0.Location == r]), group_size) for r in
+                room_length = {r: len(self.data_without0[self.data_without0.Location == r]) for r in
                                self.rooms}
-                if sum(room_length.values()) < total_number:
-                    raise Exception(
-                        "Cannot sampling {} data, maximum {}".format(total_number, sum(room_length.values())))
-                print("With group size {}, can sample maximum {} data".format(group_size, sum(room_length.values())))
+
                 self.trn_sampling_number = {
                     r: room_length[r] / sum(list(room_length.values())) * self.total_number * trn_ratio for r in
                     self.rooms}
+                while any(
+                        self.trn_sampling_number[r] >= comb(int(trn_ratio * room_length[r]), group_size) for r in
+                        self.trn_sampling_number.keys()):
+
+                    room_to_be_poped = [r for r in self.trn_sampling_number.keys() if
+                                        self.trn_sampling_number[r] >= comb(int(trn_ratio * room_length[r]),
+                                                                            group_size)]
+                    for r in room_to_be_poped:
+                        room_length.pop(r)
+                        self.rooms.remove(r)
+                    self.trn_sampling_number = {
+                        r: room_length[r] / sum(list(room_length.values())) * self.total_number * trn_ratio for r
+                        in self.rooms
+                    }
+
                 self.val_sampling_number = {
-                    r: room_length[r] / sum(list(room_length.values())) * self.total_number * (1 - trn_ratio) for r in
-                    self.rooms}
+                    r: room_length[r] / sum(list(room_length.values())) * self.total_number * (1 - trn_ratio) for r
+                    in self.rooms
+                }
+                while any(
+                        self.val_sampling_number[r] >= comb(int((1 - trn_ratio) * room_length[r]), group_size) for r in
+                        self.val_sampling_number.keys()):
+                    room_to_be_poped = [r for r in self.val_sampling_number.keys() if
+                                        self.val_sampling_number[r] >= comb(int((1-trn_ratio) * room_length[r]),
+                                                                            group_size)]
+                    for r in room_to_be_poped:
+                        room_length.pop(r)
+                        self.rooms.remove(r)
+                    self.val_sampling_number = {
+                        r: room_length[r] / sum(list(room_length.values())) * self.total_number * (1 - trn_ratio)
+                        for r in self.rooms
+                    }
+
+                print(self.trn_sampling_number)
+                print(self.val_sampling_number)
                 for r in tqdm(self.rooms, desc=f"Building dataset for the first time: "):
                     self.data_room = self.data_without0[self.data_without0.Location == r]
                     self.data_room['index'] = self.data_room.index
