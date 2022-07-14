@@ -18,7 +18,7 @@ csv_record = pd.DataFrame(
 
 for f in tqdm(checkpoints):
     info = f.split('_')
-    model_version = info[0].replace("./", '')
+    model_version = info[0].replace("./ckpt/", '')
     epoch_num = int(info[3].replace('e', ''))
     gs = int(info[6].replace('gs', ''))
     data_num = int(info[-1].replace('numdata', '').replace('/', ''))

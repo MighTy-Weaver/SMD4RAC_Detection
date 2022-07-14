@@ -86,7 +86,7 @@ save_path = './ckpt/{}_checkpoint_bs{}_e{}_lr{}_mode{}_gs{}_rat{}_roomrat{}_numd
 
 # Make checkpoint save path
 if not os.path.exists('./ckpt/'):
-    os.mkdir('./ckpt')
+    os.mkdir('./ckpt/')
 if not os.path.exists(save_path):
     os.mkdir(save_path)
 
