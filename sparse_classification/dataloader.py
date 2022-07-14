@@ -84,6 +84,10 @@ class AC_sparse_separate_dataset(Dataset):
                     for r in room_to_be_poped:
                         room_length.pop(r)
                         self.rooms.remove(r)
+                    self.trn_sampling_number = {
+                        r: room_length[r] / sum(list(room_length.values())) * self.total_number * trn_ratio for r
+                        in self.rooms
+                    }
                     self.val_sampling_number = {
                         r: room_length[r] / sum(list(room_length.values())) * self.total_number * (1 - trn_ratio)
                         for r in self.rooms
