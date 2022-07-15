@@ -5,8 +5,8 @@ from tqdm import tqdm
 
 sys.path.append('../')
 
-from sparse_classification.dataloader import AC_sparse_separate_dataset
-from sparse_classification.utils import gs_choices, data_num_choices
+from new_room_validation.dataloader import AC_sparse_separate_dataset
+from new_room_validation.utils import gs_choices, data_num_choices
 
 bar = tqdm(range(len(gs_choices) * (len(data_num_choices))))
 
