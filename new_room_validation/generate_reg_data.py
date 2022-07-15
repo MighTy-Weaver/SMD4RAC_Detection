@@ -19,9 +19,9 @@ for dm in data_num_choices:
             continue
         try:
             dataset = AC_sparse_separate_dataset('trn', test=False, group_size=gs, trn_ratio=0.8, cla=False,
-                                                 total_number=dm, data_path='./data_reg/')
+                                                 total_number=dm, data_path='./data_reg/', room_ratio=0.8)
             val_dataset = AC_sparse_separate_dataset('val', test=False, group_size=gs, trn_ratio=0.8, cla=False,
-                                                     total_number=dm, data_path='./data_reg/')
+                                                     total_number=dm, data_path='./data_reg/', room_ratio=0.8)
             trn_dataset_length = len(dataset)
             val_dataset_length = len(val_dataset)
             bar.update(1)
