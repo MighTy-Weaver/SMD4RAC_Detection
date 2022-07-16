@@ -31,7 +31,7 @@ class simple_LSTM_encoder(nn.Module):
             return self.bn(torch.cat((seq_avg, h0_avg, c0_avg), dim=-1).unsqueeze(0))
 
     def get_output_length(self):
-        return 3 * self.hidden_size if not self.bidirectional else 4 * self.hidden_size
+        return 4 * self.hidden_size if self.bidirectional else 3 * self.hidden_size
 
 
 class Transformer_encoder(nn.Module):

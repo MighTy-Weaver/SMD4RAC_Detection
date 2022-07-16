@@ -23,7 +23,7 @@ parser.add_argument("--model", choices=['lstm', 'bilstm', 'transformer', 'lstm-t
                     default='lstm')
 parser.add_argument("--lr", help="learning rate", default=5e-5, type=float)
 parser.add_argument("--epoch", help="epochs", default=100, type=int)
-parser.add_argument("--bs", help="batch size", default=64, type=int)
+parser.add_argument("--bs", help="batch size", default=65, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
                     type=str)
 parser.add_argument("--room", default=1, type=float, help="Room ratio for sampling rooms")

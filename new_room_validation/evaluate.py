@@ -44,6 +44,7 @@ for f in tqdm(checkpoints):
         print("\nWARNING: model: {} gs: {} data: {} hasn't ran yet. Currently finished 0/{}".format(model_version, gs,
                                                                                                     data_num,
                                                                                                     epoch_num))
+        # os.system("rm -rf {}".format(f))
 csv_record.sort_values(by=['best_valid_acc', 'best_valid_f1'], ascending=False).to_csv(
     './results/sparse_classification_record.csv', index=False)
 np.save('./results/sparse_classification_statistics.npy', model_dict)

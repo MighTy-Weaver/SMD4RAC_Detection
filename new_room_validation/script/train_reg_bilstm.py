@@ -13,6 +13,7 @@ data_settings = [(int(setting.split('_')[2]), int(setting.split('_')[4].split('.
 
 for dm, gs, m in itertools.product(data_num_choices, gs_choices, models):
     if (dm, gs) in data_settings and not os.path.exists(
-            f"./reg_ckpt/{m}_checkpoint_bs64_e200_lr5e-05_modesparse_gs{gs}_rat0.8_roomrat1_numdata{dm}/") and not os.path.exists(
-        f"./reg_ckpt/{m}_checkpoint_bs64_e100_lr5e-05_modesparse_gs{gs}_rat0.8_roomrat1_numdata{dm}/"):
+            f"./reg_ckpt/{m}_regpoint_bs64_e200_lr5e-05_modesparse_gs{gs}_rat0.8_numdata{dm}/") and not os.path.exists(
+        f"./reg_ckpt/{m}_regpoint_bs64_e100_lr5e-05_modesparse_gs{gs}_rat0.8_numdata{dm}/") and not os.path.exists(
+        f"./reg_ckpt/{m}_regpoint_bs65_e100_lr5e-05_modesparse_gs{gs}_rat0.8_numdata{dm}/"):
         os.system(f"python regression.py --model {m} --data {dm} --gs {gs} --gpu 0")
