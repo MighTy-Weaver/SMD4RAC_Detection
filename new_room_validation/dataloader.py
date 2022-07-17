@@ -118,6 +118,10 @@ class AC_sparse_separate_dataset(Dataset):
                 self.training_tensor_list = shuffle(self.training_tensor_list, random_state=621)
                 self.validation_tensor_list = shuffle(self.validation_tensor_list, random_state=621)
 
+                self.training_tensor_list = sample(self.training_tensor_list, int(total_number * trn_ratio))
+                self.validation_tensor_list = sample(self.validation_tensor_list,
+                                                     total_number - int(total_number * trn_ratio))
+
                 np.save('{}val_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
                         self.validation_tensor_list)
                 np.save('{}trn_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),

@@ -79,7 +79,7 @@ class AC_sparse_separate_dataset(Dataset):
                         self.val_sampling_number[r] >= comb(int((1 - trn_ratio) * room_length[r]), group_size) for r in
                         self.val_sampling_number.keys()):
                     room_to_be_poped = [r for r in self.val_sampling_number.keys() if
-                                        self.val_sampling_number[r] >= comb(int((1-trn_ratio) * room_length[r]),
+                                        self.val_sampling_number[r] >= comb(int((1 - trn_ratio) * room_length[r]),
                                                                             group_size)]
                     for r in room_to_be_poped:
                         room_length.pop(r)
@@ -138,6 +138,10 @@ class AC_sparse_separate_dataset(Dataset):
 
                 self.training_tensor_list = shuffle(self.training_tensor_list, random_state=621)
                 self.validation_tensor_list = shuffle(self.validation_tensor_list, random_state=621)
+
+                self.training_tensor_list = sample(self.training_tensor_list, int(total_number * trn_ratio))
+                self.validation_tensor_list = sample(self.validation_tensor_list,
+                                                     total_number - int(total_number * trn_ratio))
 
                 np.save('{}val_{}_{}_{}.npy'.format(data_path, total_number, trn_ratio, group_size),
                         self.validation_tensor_list)

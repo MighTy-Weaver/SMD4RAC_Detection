@@ -23,3 +23,5 @@
 /sparse_classification/*legacy*
 /sparse_classification/plot/
 /sparse_classification/results/
+/new_room_validation/results/
+/new_room_validation/plot/

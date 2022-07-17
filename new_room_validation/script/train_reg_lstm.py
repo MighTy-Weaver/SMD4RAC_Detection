@@ -4,7 +4,7 @@ import os
 import sys
 
 sys.path.append('../')
-from sparse_classification.utils import data_num_choices, gs_choices
+from new_room_validation.utils import data_num_choices, gs_choices
 
 models = ['lstm']
 
