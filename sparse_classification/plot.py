@@ -168,5 +168,7 @@ for m in cla['model'].unique():
     plt.savefig(f'./plot/{m}_r2.png', bbox_inches='tight', dpi=900)
     plt.clf()
 
+print(cla['data_number'])
 sns.lineplot(data=cla, x='best_valid_acc', style='model', y='gs', hue='data_number')
-plt.show()
+plt.savefig(f'./plot/setting1_all.png', bbox_inches='tight', dpi=900)
+plt.clf()
