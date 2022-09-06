@@ -35,7 +35,7 @@ class simple_LSTM_encoder(nn.Module):
 
 
 class Transformer_encoder(nn.Module):
-    def __init__(self, gs, feature_num=12, num_head=8, num_layers=2, LSTM_hidden_size=32, LSTM_num_layers=4,
+    def __init__(self, gs, feature_num=12, num_head=8, num_layers=2, LSTM_hidden_size=256, LSTM_num_layers=4,
                  LSTM_bias=True, bidirectional=True, dropout=0.2, mode='flat'):
         super(Transformer_encoder, self).__init__()
         self.feature_num = feature_num
