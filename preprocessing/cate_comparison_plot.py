@@ -57,7 +57,7 @@ for i in range(4):
                       (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
                 np.mean(normal_data['AC']),
                 4))
-    plt.xlabel("Hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%".format(ratio), fontsize=16)
+    plt.xlabel("Half-hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%".format(ratio), fontsize=16)
     plt.ylabel("Kernel Density", fontsize=16)
 plt.suptitle("Energy Consumption Comparison Between Different RAC Groups During Four Time Periods", fontsize=18)
 plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=900)
