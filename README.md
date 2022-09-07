@@ -38,6 +38,7 @@ To Be Updated.
 
 ## 5. Result Visualization
 
+![energy_saving](./preprocessing/TOTAL_comparison.png)
 To Be Updated.
 
 ## 6. Acknowledgement
