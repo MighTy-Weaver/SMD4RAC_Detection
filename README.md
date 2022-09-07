@@ -1,8 +1,7 @@
 # Learn from smart electricity meter to evaluate the air conditioner’s efficiency
 
 This is the official code repository for the paper ***Learn from smart electricity meter to evaluate the air
-conditioner’s efficiency***, which is currently under review
-at [Nature Sustainability](https://www.nature.com/natsustain/).
+conditioner’s efficiency***, which is to be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
 
 ## 1. Citing this work
 
