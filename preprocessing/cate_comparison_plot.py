@@ -52,13 +52,12 @@ for i in range(4):
                                                                                 len(poor_data['Location'].unique())),
                  color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
     plt.legend()
-    plt.title(title[i])
+    plt.title(title[i], fontsize=16)
     ratio = "%.2f" % (100 *
-                     (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
+                      (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
                 np.mean(normal_data['AC']),
                 4))
-    plt.xlabel("Hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%".format(ratio))
-    if i % 2 != 0:
-        plt.ylabel("Kernel Density")
-plt.suptitle("Energy Consumption Comparison Between Different RAC Groups During Four Time Periods")
+    plt.xlabel("Hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%".format(ratio), fontsize=16)
+    plt.ylabel("Kernel Density", fontsize=16)
+plt.suptitle("Energy Consumption Comparison Between Different RAC Groups During Four Time Periods", fontsize=18)
 plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=900)
