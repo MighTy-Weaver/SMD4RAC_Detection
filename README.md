@@ -26,7 +26,7 @@ pip install -r requirements.txt
 ***Due to the privacy issues, the dataset will not be made open to public.***
 
 However, we provide a 200
-lines [sample version](https://github.com/MighTy-Weaver/Inefficient-AC-detection/blob/main/demo/sample_data.csv) of the
+lines [sample version](https://github.com/MighTy-Weaver/SMD4RAC_Detection/blob/main/sample_data.csv) of the
 full dataset to demonstrate the formation of our experimenting data, and you can check the `data_compilation.py` for how
 our data is compiled from different categories of data.
 
