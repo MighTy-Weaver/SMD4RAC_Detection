@@ -10,7 +10,7 @@ import pandas as pd
 
 plt.rc('font', family='Arial')
 plt.rcParams["figure.autolayout"] = True
-plt.rcParams['figure.figsize'] = 20, 10
+plt.rcParams['figure.figsize'] = 20, 12
 plt.rcParams.update({'font.size': 15})
 
 time1 = ['00:00:00', '00:30:00', '01:00:00', '01:30:00', '02:00:00', '02:30:00', '03:00:00', '03:30:00', '04:00:00',
