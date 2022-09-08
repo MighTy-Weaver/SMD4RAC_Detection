@@ -27,8 +27,8 @@ pip install -r requirements.txt
 
 However, we provide a 200
 lines [sample version](https://github.com/MighTy-Weaver/SMD4RAC_Detection/blob/main/sample_data.csv) of the
-full dataset to demonstrate the formation of our experimenting data, and you can check the `data_compilation.py` for how
-our data is compiled from different categories of data.
+full dataset to demonstrate the formation of our experimenting data, and you can check
+the `preprocessing/data_compilation.py` for how our data is compiled from different categories of data.
 
 *Remarks: Please notice that the `Location` in `sample_data.csv` are set to 0 for privacy.*
 
