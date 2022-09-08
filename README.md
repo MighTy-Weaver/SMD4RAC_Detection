@@ -38,8 +38,10 @@ To Be Updated.
 
 ## 5. Result Visualization
 
+![setting1](./sparse_classification/ALL_PLOT.jpg)
+![setting2](./new_room_validation/ALL_PLOT.jpg)
+
 ![energy_saving](./preprocessing/TOTAL_comparison.png)
-To Be Updated.
 
 ## 6. Acknowledgement
 
