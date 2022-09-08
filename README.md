@@ -34,14 +34,13 @@ our data is compiled from different categories of data.
 
 ## 4. Model Training & Evaluation
 
-![setting1](./sparse_classification/ALL_PLOT.jpg)
-![setting2](./new_room_validation/ALL_PLOT.jpg)
+![setting1](./demo/SettingI_all.jpg)
+![setting2](./demo/SettingII_all.jpg)
 
-![setting1_model](./sparse_classification/Model_Plot.png)
-![setting2_model](./new_room_validation/Model_Plot.png)
+![setting1_model](./demo/SettingI_model.jpg)
+![setting2_model](./demo/SettingII_model.jpg)
 
 ## 5. Energy Saving Result
-
 
 ![energy_saving](./preprocessing/TOTAL_comparison.png)
 

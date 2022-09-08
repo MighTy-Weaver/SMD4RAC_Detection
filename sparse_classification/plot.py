@@ -93,6 +93,7 @@ plt.title("Average Highest $R^2$ Score by Five Models in Regression Task")
 
 plt.suptitle("Metrics Statistics on Test Set in Setting I", fontsize=22)
 plt.savefig('./ALL_PLOT.jpg', bbox_inches='tight', dpi=800)
+plt.savefig('../demo/SettingI_all.jpg', bbox_inches='tight', dpi=400)
 plt.clf()
 
 cla.sort_values(by='model', inplace=True)
@@ -123,4 +124,5 @@ plt.suptitle(
     "Comparison between five models in both tasks on test set in Setting I\nwith respect to two parameters in sparse data sampling",
     fontsize=22)
 plt.savefig('./Model_Plot.png', bbox_inches='tight', dpi=800)
+plt.savefig('../demo/SettingI_model.jpg', bbox_inches='tight', dpi=400)
 plt.clf()
