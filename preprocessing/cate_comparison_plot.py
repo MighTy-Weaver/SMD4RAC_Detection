@@ -10,7 +10,7 @@ import pandas as pd
 
 plt.rc('font', family='Arial')
 plt.rcParams["figure.autolayout"] = True
-plt.rcParams['figure.figsize'] = 16, 9
+plt.rcParams['figure.figsize'] = 20, 10
 plt.rcParams.update({'font.size': 15})
 
 time1 = ['00:00:00', '00:30:00', '01:00:00', '01:30:00', '02:00:00', '02:30:00', '03:00:00', '03:30:00', '04:00:00',
@@ -52,12 +52,13 @@ for i in range(4):
                                                                                 len(poor_data['Location'].unique())),
                  color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
     plt.legend()
-    plt.title(title[i], fontsize=18)
-    ratio = "%.2f" % (100 *
-                      (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
-                np.mean(normal_data['AC']),
-                4))
-    plt.xlabel("Half-hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%".format(ratio), fontsize=18)
-    plt.ylabel("Kernel Density", fontsize=18)
-plt.suptitle("Energy Consumption Comparison Between Different RAC Groups During Four Time Periods", fontsize=22)
+    plt.title(title[i], fontsize=22)
+    ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
+        np.mean(normal_data['AC']), 4))
+    plt.xlabel("Half-hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%".format(ratio), fontsize=22)
+    plt.ylabel("Kernel Density", fontsize=22)
+    plt.xticks(fontsize=22)
+    plt.yticks(fontsize=22)
+    plt.legend(fontsize=18)
+plt.suptitle("Energy Consumption Comparison Between Different RAC Groups During Four Time Periods", fontsize=26)
 plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=800)
