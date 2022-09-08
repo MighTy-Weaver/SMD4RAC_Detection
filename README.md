@@ -34,12 +34,14 @@ our data is compiled from different categories of data.
 
 ## 4. Model Training & Evaluation
 
-To Be Updated.
-
-## 5. Result Visualization
-
 ![setting1](./sparse_classification/ALL_PLOT.jpg)
 ![setting2](./new_room_validation/ALL_PLOT.jpg)
+
+![setting1_model](./sparse_classification/Model_Plot.png)
+![setting2_model](./new_room_validation/Model_Plot.png)
+
+## 5. Energy Saving Result
+
 
 ![energy_saving](./preprocessing/TOTAL_comparison.png)
 
