@@ -13,9 +13,9 @@ To Be Updated
 
 ## 2. Environment Setup
 
-Experiments are conducted under Windows 10 with Python 3.7/3.8 as the developing environment.
+Experiments are conducted under Windows 10 with Python 3.9 as the developing environment.
 
-Use the following code segment to install all the required packages:
+Use the following pip command to install all the required packages:
 
 ```commandline
 pip install -r requirements.txt
@@ -34,19 +34,26 @@ the `preprocessing/data_compilation.py` for how our data is compiled from differ
 
 ## 4. Model Training & Evaluation
 
+All codes for Setting I are stored in `sparse_classificaction` directory, and Setting II are stored
+in `new_roow_validation` directory. We also provide the evaluation codes and visualized results as shown below.
 ![setting1](./demo/SettingI_all.jpg)
 ![setting2](./demo/SettingII_all.jpg)
-
+Regarding the performance of different model, we also made the following plots.
 ![setting1_model](./demo/SettingI_model.jpg)
 ![setting2_model](./demo/SettingII_model.jpg)
 
 ## 5. Energy Saving Result
 
+After applying our best model on unlabelled rooms, we acquire the total electricity energy saving results by comparing
+the electricity energy consumption distribution between normal RACs with poorly efficiency RACs.
 ![energy_saving](./preprocessing/TOTAL_comparison.png)
 
 ## 6. Acknowledgement
 
-To Be Updated.
+This project was supported by the Undergraduate Research Opportunity Program (UROP) of The Hong Kong University of
+Science and Technology (HKUST) and the Sustainable Smart Campus project of HKUST. The authors would also like to thank
+the anonymous reviewers for their valuable comments and suggestions. The views and ideas expressed here belong solely to
+the authors and not to the funding agencies.
 
 ## 7. Contact
 
