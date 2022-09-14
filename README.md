@@ -35,10 +35,14 @@ the `preprocessing/data_compilation.py` for how our data is compiled from differ
 ## 4. Model Training & Evaluation
 
 All codes for Setting I are stored in `sparse_classificaction` directory, and Setting II are stored
-in `new_roow_validation` directory. We also provide the evaluation codes and visualized results as shown below.
+in `new_roow_validation` directory. Training codes and scripts are stored separately. We also provide the evaluation
+codes and visualized results as shown below.
+
 ![setting1](./demo/SettingI_all.jpg)
 ![setting2](./demo/SettingII_all.jpg)
+
 Regarding the performance of different model, we also made the following plots.
+
 ![setting1_model](./demo/SettingI_model.jpg)
 ![setting2_model](./demo/SettingII_model.jpg)
 
@@ -46,6 +50,7 @@ Regarding the performance of different model, we also made the following plots.
 
 After applying our best model on unlabelled rooms, we acquire the total electricity energy saving results by comparing
 the electricity energy consumption distribution between normal RACs with poorly efficiency RACs.
+
 ![energy_saving](./preprocessing/TOTAL_comparison.png)
 
 ## 6. Acknowledgement
