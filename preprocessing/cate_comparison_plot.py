@@ -5,7 +5,7 @@ import numpy as np
 import seaborn as sns
 
 sys.path.append('../')
-from sparse_classification.utils import normal_room_list, poor_room_list
+from setting_1.utils import normal_room_list, poor_room_list
 import pandas as pd
 
 plt.rc('font', family='Arial')

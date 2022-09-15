@@ -34,8 +34,8 @@ the `preprocessing/data_compilation.py` for how our data is compiled from differ
 
 ## 4. Model Training & Evaluation
 
-All codes for Setting I are stored in `sparse_classificaction` directory, and Setting II are stored
-in `new_roow_validation` directory. Training codes and scripts are stored separately. We also provide the evaluation
+All codes for Setting I are stored in `setting_1` directory, and Setting II are stored
+in `setting_2` directory. Training codes and scripts are stored separately. We also provide the evaluation
 codes and visualized results as shown below.
 
 ![setting1](./demo/SettingI_all.jpg)
