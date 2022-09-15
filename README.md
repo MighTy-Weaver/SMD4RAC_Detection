@@ -13,7 +13,7 @@ To Be Updated
 
 ## 2. Environment Setup
 
-Experiments are conducted under Windows 10 with Python 3.9 as the developing environment.
+Experiments are conducted under Linux with Anaconda (Python 3.9) as the developing environment.
 
 Use the following pip command to install all the required packages:
 
