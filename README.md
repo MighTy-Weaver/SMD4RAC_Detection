@@ -50,8 +50,8 @@ Comparison between five models in Setting I.
 
 Comparison between five models in Setting II.
 
-![setting2_model_cla](./demo/SettingI_model_classification.jpg)
-![setting2_model_reg](./demo/SettingI_model_regression.jpg)
+![setting2_model_cla](./demo/SettingII_model_classification.jpg)
+![setting2_model_reg](./demo/SettingII_model_regression.jpg)
 
 ## 5. Energy Saving Result
 
