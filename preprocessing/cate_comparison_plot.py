@@ -41,24 +41,25 @@ for i in range(4):
     poor_data = data_temp[data_temp.Location.isin(poor_room_list_final)]
     plt.subplot(2, 2, i + 1)
     sns.distplot(normal_data['AC'], bins=sorted(normal_data['AC'].unique()),
-                 label="Normal efficiency, mean={}kWh, #data={}, #rooms={}".format(round(np.mean(normal_data['AC']), 2),
-                                                                                   len(normal_data),
-                                                                                   len(normal_data[
-                                                                                           'Location'].unique())),
+                 label="Normal efficiency",
                  color="brown", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
     sns.distplot(poor_data['AC'], bins=sorted(poor_data['AC'].unique()),
-                 label="Low efficiency, mean={}kWh, #data={}, #rooms={}".format(round(np.mean(poor_data['AC']), 2),
-                                                                                len(poor_data),
-                                                                                len(poor_data['Location'].unique())),
+                 label="Low efficiency",
                  color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
-    plt.legend()
     plt.title(title[i], fontsize=22)
     ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
         np.mean(normal_data['AC']), 4))
-    plt.xlabel("Half-hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%".format(ratio), fontsize=22)
+    plt.xlabel(
+        "Half-hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%\nNormal Efficiency: Mean={}kWh, #Data={}, #Rooms={}\nLow Efficiency: Mean={}kWh, #Data={}, #Rooms={}".format(
+            ratio, round(np.mean(normal_data['AC']), 2),
+            len(normal_data),
+            len(normal_data[
+                    'Location'].unique()), round(np.mean(poor_data['AC']), 2),
+            len(poor_data),
+            len(poor_data['Location'].unique())), fontsize=22)
     plt.ylabel("Kernel Density", fontsize=22)
     plt.xticks(fontsize=22)
     plt.yticks(fontsize=22)
-    plt.legend(fontsize=18)
+    plt.legend(fontsize=20)
 plt.suptitle("Energy Consumption Comparison Between Different RAC Groups During Four Time Periods", fontsize=26)
 plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=800)

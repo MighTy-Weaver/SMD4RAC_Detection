@@ -1,6 +1,7 @@
 import os.path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import seaborn as sns
 from numpy import mean
@@ -113,33 +114,55 @@ cla['model'] = cla['model'].apply(lambda x: {'bilstm': 'BiLSTM', 'lstm': 'LSTM',
 reg['model'] = reg['model'].apply(lambda x: {'bilstm': 'BiLSTM', 'lstm': 'LSTM', 'transformer': 'Transformer',
                                              'lstm-transformer': 'LSTM-Transformer',
                                              'bilstm-transformer': 'BiLSTM-Transformer'}[x])
-plt.subplot(2, 2, 1)
-sns.lineplot(data=cla, y='best_valid_f1', x='gs', hue='model', ci=None)
-plt.xlabel("Number of data points in one sparse data sample", fontsize=22)
-plt.ylabel("Maximum $f_1$ Score", fontsize=22)
-plt.xticks(fontsize=22)
-plt.yticks(fontsize=22)
-plt.subplot(2, 2, 2)
-sns.lineplot(data=cla, y='best_valid_f1', x='data_number', hue='model', ci=None)
-plt.xlabel("Number of training data", fontsize=22)
-plt.ylabel("Maximum $f_1$ Score", fontsize=22)
-plt.xticks(fontsize=22)
-plt.yticks(fontsize=22)
-plt.subplot(2, 2, 3)
-sns.lineplot(data=reg, y='best_valid_r2', x='gs', hue='model', ci=None)
-plt.xlabel("Number of data points in one sparse data sample", fontsize=22)
-plt.ylabel("Maximum $R^2$ Score", fontsize=22)
-plt.xticks(fontsize=22)
-plt.yticks(fontsize=22)
-plt.subplot(2, 2, 4)
-sns.lineplot(data=reg, y='best_valid_r2', x='data_number', hue='model', ci=None)
-plt.xlabel("Number of training data", fontsize=22)
-plt.ylabel("Maximum $R^2$ Score", fontsize=22)
-plt.xticks(fontsize=22)
-plt.yticks(fontsize=22)
-plt.suptitle(
-    "Comparison between five models in both tasks on test set in Setting II\nwith respect to two parameters in sparse data sampling",
-    fontsize=26)
-plt.savefig('./Model_Plot.png', bbox_inches='tight', dpi=800)
-plt.savefig('../demo/SettingII_model.jpg', bbox_inches='tight', dpi=400)
-plt.clf()
+
+model_dict = {'bilstm': 'BiLSTM', 'lstm': 'LSTM', 'transformer': 'Transformer',
+              'lstm-transformer': 'LSTM-Transformer', 'bilstm-transformer': 'BiLSTM-Transformer'}
+data_dict = {0: cla, 1: reg}
+metric_dict = {0: 'best_valid_f1', 1: 'best_valid_r2'}
+ylabel_dict = {0: 'Maximum $f_1$ Score', 1: 'Maximum $R^2$ Score'}
+title_dict = {0: 'Classification', 1: 'Regression'}
+
+for i in range(2):
+    plt.figure(figsize=(18, 7))
+    plt.subplot(1, 2, 1)
+    data_draw = data_dict[i]
+    gs_csv = pd.DataFrame()
+    for m in model_dict.keys():
+        for gs in gs_choices:
+            metric_avg = np.mean(data_draw[(data_draw.gs == gs) & (data_draw.model == model_dict[m])][metric_dict[i]])
+            gs_csv = gs_csv.append({
+                'model': model_dict[m],
+                'gs': gs,
+                'metric': metric_avg
+            }, ignore_index=True)
+        gs_model_csv = gs_csv[gs_csv.model == model_dict[m]].reset_index(drop=True).sort_values(by=['gs'])
+        plt.plot(gs_model_csv['gs'], gs_model_csv['metric'], linewidth=3)
+    plt.xlabel("Number of data points in one sparse data sample", fontsize=22)
+    plt.ylabel(ylabel_dict[i], fontsize=22)
+    plt.xticks(fontsize=22)
+    plt.yticks(fontsize=22)
+
+    plt.subplot(1, 2, 2)
+    data_num_csv = pd.DataFrame()
+    for m in model_dict.keys():
+        for data_num in data_num_choices:
+            metric_avg = np.mean(
+                data_draw[(data_draw.data_number == data_num) & (data_draw.model == model_dict[m])][metric_dict[i]])
+            data_num_csv = data_num_csv.append({
+                'model': model_dict[m],
+                'data_number': data_num,
+                'metric': metric_avg
+            }, ignore_index=True)
+        data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
+            by=['data_number'])
+        plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
+    plt.xlabel("Number of total data", fontsize=22)
+    plt.ylabel(ylabel_dict[i], fontsize=22)
+    plt.xticks(fontsize=22)
+    plt.yticks(fontsize=22)
+    plt.legend(fontsize=19)
+
+    plt.suptitle("{}".format(title_dict[i]), fontsize=32)
+    plt.savefig('./Model_Plot_{}.png'.format(title_dict[i]), bbox_inches='tight', dpi=700)
+    plt.savefig('../demo/SettingII_model_{}.jpg'.format(title_dict[i]), bbox_inches='tight', dpi=400)
+    plt.clf()

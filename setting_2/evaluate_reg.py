@@ -45,7 +45,7 @@ for f in tqdm(checkpoints):
             {'model': model_version, 'gs': gs, 'data_number': data_num, 'best_train_r2': max(record['trn_r2']),
              'best_valid_r2': max(record['val_r2']), 'best_train_rmse': max(record['trn_rmse']),
              'best_valid_rmse': max(record['val_rmse'])}, ignore_index=True)
-    except FileNotFoundError:
+    except:
         print("\nWARNING: model: {} gs: {} data: {} hasn't ran yet. Currently finished 0/{}".format(model_version, gs,
                                                                                                     data_num,
                                                                                                     epoch_num))

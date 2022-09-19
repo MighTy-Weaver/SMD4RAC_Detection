@@ -43,8 +43,15 @@ codes and visualized results as shown below.
 
 Regarding the performance of different model, we also made the following plots.
 
-![setting1_model](./demo/SettingI_model.jpg)
-![setting2_model](./demo/SettingII_model.jpg)
+Comparison between five models in Setting I.
+
+![setting1_model_cla](./demo/SettingI_model_classification.jpg)
+![setting1_model_reg](./demo/SettingI_model_regression.jpg)
+
+Comparison between five models in Setting II.
+
+![setting2_model_cla](./demo/SettingI_model_classification.jpg)
+![setting2_model_reg](./demo/SettingI_model_regression.jpg)
 
 ## 5. Energy Saving Result
 
