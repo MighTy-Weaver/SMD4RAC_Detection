@@ -61,5 +61,6 @@ for i in range(4):
     plt.xticks(fontsize=22)
     plt.yticks(fontsize=22)
     plt.legend(fontsize=20)
-plt.suptitle("Energy Consumption Comparison Between Different RAC Groups During Four Time Periods", fontsize=26)
+plt.suptitle("Energy Consumption Comparison Between Different RAC Efficiency Groups During Four Time Periods",
+             fontsize=26)
 plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=800)
