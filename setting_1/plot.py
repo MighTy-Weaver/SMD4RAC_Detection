@@ -158,7 +158,7 @@ for i in range(2):
         data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
             by=['data_number'])
         plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
-    plt.xlabel("Number of total data", fontsize=22)
+    plt.xlabel("Data Size", fontsize=22)
     plt.ylabel(ylabel_dict[i], fontsize=22)
     plt.xticks(fontsize=22)
     plt.yticks(fontsize=22)

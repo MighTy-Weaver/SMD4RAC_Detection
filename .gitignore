@@ -5,7 +5,6 @@
 /hour_compiled.csv
 /hour_compiled_without_prev.csv
 /data/room_check.csv
-/utils.py
 /data/
 /occupancy.csv
 /Larger_than_1.csv
@@ -20,6 +19,5 @@
 /setting_1/results/
 /setting_2/results/
 /setting_2/plot/
-/setting_2/prediction_on_no_efficiency_data/trn_2000_1_192.npy
 /setting_2/prediction_on_no_efficiency_data/trn_2000_1_192.npy
 /check_missing_result.py

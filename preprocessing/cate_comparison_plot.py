@@ -50,16 +50,13 @@ for i in range(4):
     ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
         np.mean(normal_data['AC']), 4))
     plt.xlabel(
-        "Half-hourly AC Electricity Consumption/kWh\nEnergy Saving Ratio: {}%\nNormal Efficiency: Mean={}kWh, #Data={}, #Rooms={}\nLow Efficiency: Mean={}kWh, #Data={}, #Rooms={}".format(
-            ratio, round(np.mean(normal_data['AC']), 2),
-            len(normal_data),
-            len(normal_data[
-                    'Location'].unique()), round(np.mean(poor_data['AC']), 2),
-            len(poor_data),
-            len(poor_data['Location'].unique())), fontsize=22)
+        "Half-hourly AC Electricity Consumption/kWh\nPotentially avoidable electricity ratio: {}%\nNormal Efficiency: Mean={}kWh, #Data={}, #Rooms={}\nLow Efficiency: Mean={}kWh, #Data={}, #Rooms={}".format(
+            ratio, round(np.mean(normal_data['AC']), 3), len(normal_data),
+            len(normal_data['Location'].unique()), round(np.mean(poor_data['AC']), 3),
+            len(poor_data), len(poor_data['Location'].unique())), fontsize=22)
     plt.ylabel("Kernel Density", fontsize=22)
     plt.xticks(fontsize=22)
-    plt.yticks(fontsize=22)
+    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=22)
     plt.legend(fontsize=20)
 plt.suptitle("Energy Consumption Comparison Between Different RAC Efficiency Groups During Four Time Periods",
              fontsize=26)
