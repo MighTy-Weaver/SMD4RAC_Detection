@@ -44,7 +44,7 @@ class AC_sparse_separate_dataset(Dataset):
                 self.room_length = {r: len(self.data_without0[self.data_without0.Location == r]) for r in
                                     self.data_without0['Location'].unique()}
                 self.total_rooms = [i for i in self.data_without0['Location'].unique().tolist() if
-                                    i in efficiency_dict.keys() and self.room_length[i] >= 5 * group_size]
+                                    i in efficiency_dict.keys() and self.room_length[i] >= 3 * group_size]
                 self.available_room_length = {r: self.room_length[r] for r in self.total_rooms}
                 self.room_maximum_number = {r: comb(self.room_length[r], group_size) for r in self.total_rooms}
                 self.training_rooms = sample(self.total_rooms, int(room_ratio * len(self.total_rooms)))
