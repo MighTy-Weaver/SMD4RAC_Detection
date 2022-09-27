@@ -29,11 +29,11 @@ for f in tqdm(checkpoints):
     data_num = int(info[-1].replace('numdata', '').replace('/', ''))
     try:
         record = np.load(f'{f}/record.npy', allow_pickle=True).item()
-        train_pred = np.load(f'{f}/best_train_pred.npy', allow_pickle=True).tolist()
-        train_label = np.load(f'{f}/best_train_label.npy', allow_pickle=True).tolist()
-        valid_pred = np.load(f'{f}/best_valid_pred.npy', allow_pickle=True).tolist()
-        valid_label = np.load(f'{f}/best_valid_label.npy', allow_pickle=True).tolist()
-        model_dict[(model_version, gs, data_num)] = [train_pred, valid_pred, train_label, valid_label]
+        # train_pred = np.load(f'{f}/best_train_pred.npy', allow_pickle=True).tolist()
+        # train_label = np.load(f'{f}/best_train_label.npy', allow_pickle=True).tolist()
+        # valid_pred = np.load(f'{f}/best_valid_pred.npy', allow_pickle=True).tolist()
+        # valid_label = np.load(f'{f}/best_valid_label.npy', allow_pickle=True).tolist()
+        # model_dict[(model_version, gs, data_num)] = [train_pred, valid_pred, train_label, valid_label]
         if len(record['trn_acc']) < epoch_num:
             print(
                 "\nWARNING: model: {} gs: {} data: {} hasn't fully ran. Currently finished {}/{}".format(model_version,
@@ -54,4 +54,4 @@ for f in tqdm(checkpoints):
             os.system("rm -rf {}".format(f))
 csv_record.sort_values(by=['best_valid_acc', 'best_valid_f1'], ascending=False).to_csv(
     './results/sparse_classification_record.csv', index=False)
-np.save('./results/sparse_classification_statistics.npy', model_dict)
+# np.save('./results/sparse_classification_statistics.npy', model_dict)

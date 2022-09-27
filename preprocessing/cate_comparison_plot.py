@@ -41,19 +41,16 @@ for i in range(4):
     poor_data = data_temp[data_temp.Location.isin(poor_room_list_final)]
     plt.subplot(2, 2, i + 1)
     sns.distplot(normal_data['AC'], bins=sorted(normal_data['AC'].unique()),
-                 label="Normal efficiency",
+                 label="Normal efficiency: Mean={}kWh".format(round(np.mean(normal_data['AC']), 3)),
                  color="brown", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
     sns.distplot(poor_data['AC'], bins=sorted(poor_data['AC'].unique()),
-                 label="Low efficiency",
+                 label="Low efficiency: Mean={}kWh".format(round(np.mean(poor_data['AC']), 3)),
                  color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
     plt.title(title[i], fontsize=22)
     ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
         np.mean(normal_data['AC']), 4))
-    plt.xlabel(
-        "Half-hourly AC Electricity Consumption/kWh\nPotentially avoidable electricity ratio: {}%\nNormal Efficiency: Mean={}kWh, #Data={}, #Rooms={}\nLow Efficiency: Mean={}kWh, #Data={}, #Rooms={}".format(
-            ratio, round(np.mean(normal_data['AC']), 3), len(normal_data),
-            len(normal_data['Location'].unique()), round(np.mean(poor_data['AC']), 3),
-            len(poor_data), len(poor_data['Location'].unique())), fontsize=22)
+    plt.xlabel("Half-hourly AC Electricity Consumption/kWh\nPotentially avoidable electricity ratio: {}%".format(
+        ratio), fontsize=22)
     plt.ylabel("Kernel Density", fontsize=22)
     plt.xticks(fontsize=22)
     plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=22)
