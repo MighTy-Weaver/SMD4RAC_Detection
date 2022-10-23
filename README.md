@@ -1,11 +1,11 @@
 # Learn from smart electricity meter to evaluate the air conditioner’s efficiency
 
 This is the official code repository for the paper ***Learn from smart electricity meter to evaluate the air
-conditioner’s efficiency***, which is to be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
+conditioner’s efficiency***, which will be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
 
 ## 1. Citing this work
 
-Please use the Bibtex below for citation of this work:
+Please use the Bibtex below for citing our work:
 
 ```
 To Be Updated
@@ -13,7 +13,7 @@ To Be Updated
 
 ## 2. Environment Setup
 
-Experiments are conducted under Linux with Anaconda (Python 3.9) as the developing environment.
+All experiments were conducted under Linux CentOS system with Anaconda (Python 3.9) as the developing environment.
 
 Use the following pip command to install all the required packages:
 
