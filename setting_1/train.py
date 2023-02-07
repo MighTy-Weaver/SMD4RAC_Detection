@@ -20,18 +20,18 @@ from model import simple_LSTM_encoder
 # Argument parser
 parser = argparse.ArgumentParser()
 parser.add_argument("--model", choices=['lstm', 'bilstm', 'transformer', 'lstm-transformer', 'bilstm-transformer'],
-                    default='lstm')
+                    default='lstm-transformer')
 parser.add_argument("--lr", help="learning rate", default=5e-5, type=float)
-parser.add_argument("--epoch", help="epochs", default=100, type=int)
+parser.add_argument("--epoch", help="epochs", default=200, type=int)
 parser.add_argument("--bs", help="batch size", default=64, type=int)
 parser.add_argument("--data_mode", help="use sparse data or daily data", choices=['daily', 'sparse'], default='sparse',
                     type=str)
 parser.add_argument("--room", default=1, type=float, help="Room ratio for sampling rooms")
 parser.add_argument("--ratio", default=0.8, type=float, help="train data ratio")
 
-parser.add_argument("--data", default=100000, type=int, help="The number of data to be trained")
-parser.add_argument("--gs", help="group size for sparse dataset", default=25, type=int)
-parser.add_argument("--gpu", help="gpu number", default=2, type=int)
+parser.add_argument("--data", default=2000000, type=int, help="The number of data to be trained")
+parser.add_argument("--gs", help="group size for sparse dataset", default=192, type=int)
+parser.add_argument("--gpu", help="gpu number", default=3, type=int)
 
 parser.add_argument("--test", help="run in test mode", default=0, type=int)
 
