@@ -14,7 +14,6 @@ plt.rcParams['figure.figsize'] = 21, 14
 plt.rcParams.update({'font.size': 15})
 
 predictions = pd.read_csv('./prediction.csv', index_col=None).sort_values(by=['pred'], ascending=True)
-print(predictions)
 rooms = predictions['room'].tolist()
 bottom_rooms = rooms[:int(len(rooms) * 0.5)]
 top_rooms = rooms[int(len(rooms) * 0.5):]
@@ -38,6 +37,10 @@ original_dict = efficiency_dict
 
 normal_room_list_final = [i for i in top_rooms if i in normal_room_list]
 poor_room_list_final = [i for i in bottom_rooms if i in poor_room_list]
+
+avg_normal = np.mean(data[data.Location.isin(normal_room_list_final)]['AC'])
+avg_poor = np.mean(data[data.Location.isin(poor_room_list_final)]['AC'])
+print(avg_normal, avg_poor, avg_poor - avg_normal)
 
 for i in range(4):
     # add lightgray gridline with --

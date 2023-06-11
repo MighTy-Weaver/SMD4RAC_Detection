@@ -8,9 +8,9 @@ sys.path.append('../')
 from setting_1.utils import normal_room_list, poor_room_list
 import pandas as pd
 
-plt.rc('font', family='Arial')
+plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams["figure.autolayout"] = True
-plt.rcParams['figure.figsize'] = 20, 12
+plt.rcParams['figure.figsize'] = 21, 14
 plt.rcParams.update({'font.size': 15})
 
 time1 = ['00:00:00', '00:30:00', '01:00:00', '01:30:00', '02:00:00', '02:30:00', '03:00:00', '03:30:00', '04:00:00',
@@ -51,10 +51,16 @@ for i in range(4):
         np.mean(normal_data['AC']), 4))
     plt.xlabel("Half-hourly AC Electricity Consumption/kWh\nPotentially avoidable electricity ratio: {}%".format(
         ratio), fontsize=22)
-    plt.ylabel("Kernel Density", fontsize=22)
+    if i % 2 == 0:
+        plt.ylabel("Kernel Density", fontsize=22)
+    else:
+        plt.ylabel("")
+    plt.grid(color='lightgray', linestyle='--', linewidth=0.8)
     plt.xticks(fontsize=22)
-    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=22)
-    plt.legend(fontsize=20)
-plt.suptitle("Energy Consumption Comparison Between Different RAC Efficiency Groups During Four Time Periods",
-             fontsize=26)
+    plt.ylim(0, 11)
+    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fontsize=22)
+    plt.legend(fontsize=21, frameon=False)
+plt.suptitle(
+    "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2020/2021",
+    fontsize=26)
 plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=800)
