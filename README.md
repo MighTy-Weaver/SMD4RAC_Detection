@@ -1,17 +1,9 @@
 # Learn from smart electricity meter to evaluate the air conditioner’s efficiency
 
 This is the official code repository for the paper ***Learn from smart electricity meter to evaluate the air
-conditioner’s efficiency***, which will be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
+conditioner’s efficiency***, which will be submitted to [Nature Communications](https://www.nature.com/ncomms/).
 
-## 1. Citing this work
-
-Please use the Bibtex below for citing our work:
-
-```
-To Be Updated
-```
-
-## 2. Environment Setup
+## 1. Environment Setup
 
 All experiments were conducted under Linux CentOS system with Anaconda (Python 3.9) as the developing environment.
 
@@ -21,7 +13,7 @@ Use the following pip command to install all the required packages:
 pip install -r requirements.txt
 ```
 
-## 3. Data Compilation
+## 2. Data Compilation
 
 ***Due to the privacy issues, the dataset will not be made open to public.***
 
@@ -32,7 +24,7 @@ the `preprocessing/data_compilation.py` for how our data is compiled from differ
 
 *Remarks: Please notice that the `Location` in `sample_data.csv` are set to 0 for privacy.*
 
-## 4. Model Training & Evaluation
+## 3. Model Training & Evaluation
 
 All codes for Setting I are stored in `setting_1` directory, and Setting II are stored
 in `setting_2` directory. Training codes and scripts are stored separately. We also provide the evaluation
@@ -53,7 +45,7 @@ Comparison between five models in Setting II.
 ![setting2_model_cla](./demo/SettingII_model_classification.jpg)
 ![setting2_model_reg](./demo/SettingII_model_regression.jpg)
 
-## 5. Energy Saving Result
+## 4. Energy Saving Result
 
 After applying our best model on unlabelled rooms, we acquire the total electricity energy saving results by comparing
 the electricity energy consumption distribution between normal RACs with poorly efficiency RACs.
@@ -64,13 +56,13 @@ We further verify our models on the data collected in 2022/2023, and the results
 
 ![energy_saving_2022](./2022_2023_verification/TOTAL_comparison.png)
 
-## 6. Acknowledgement
+## 5. Acknowledgement
 
 This project was supported by the Undergraduate Research Opportunity Program (UROP) of The Hong Kong University of
 Science and Technology (HKUST) and the Sustainable Smart Campus project of HKUST. The authors would also like to thank
 the anonymous reviewers for their valuable comments and suggestions. The views and ideas expressed here belong solely to
 the authors and not to the funding agencies.
 
-## 7. Contact
+## 6. Contact
 
-If you have any question, feel free to email me at `1874240442@qq.com`. This email will be active all the time. 
+If you have any question, feel free to email me at `mightyweaver829 [at] gmail.com`. This email will be active all the time. 
