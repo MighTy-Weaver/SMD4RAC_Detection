@@ -2,20 +2,22 @@ import sys
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
 
 sys.path.append('../')
-import pandas as pd
+from setting_1.utils import efficiency_dict, normal_room_list, poor_room_list
 
 plt.rcParams["font.family"] = "Times New Roman"
 plt.rcParams["figure.autolayout"] = True
-plt.rcParams['figure.figsize'] = 20, 12
+plt.rcParams['figure.figsize'] = 21, 14
 plt.rcParams.update({'font.size': 15})
 
 predictions = pd.read_csv('./prediction.csv', index_col=None).sort_values(by=['pred'], ascending=True)
+print(predictions)
 rooms = predictions['room'].tolist()
-top_rooms = rooms[:int(len(rooms) * 0.5)]
-bottom_rooms = rooms[int(len(rooms) * 0.5):]
+bottom_rooms = rooms[:int(len(rooms) * 0.5)]
+top_rooms = rooms[int(len(rooms) * 0.5):]
 
 time1 = range(0, 8)
 time2 = range(8, 14)
@@ -29,13 +31,20 @@ data = data[data.AC > 0.01]
 data['Time'] = pd.to_datetime(data['Time'])
 data['Hour'] = data['Time'].apply(lambda x: int(x.hour))
 
-normal_room_list_final = top_rooms
-poor_room_list_final = bottom_rooms
+# make the AC column to two decimal floats
+data['AC'] = data['AC'].apply(lambda x: round(x, 2))
+
+original_dict = efficiency_dict
+
+normal_room_list_final = [i for i in top_rooms if i in normal_room_list]
+poor_room_list_final = [i for i in bottom_rooms if i in poor_room_list]
 
 for i in range(4):
+    # add lightgray gridline with --
+
     data_temp = data[data.Hour.isin(time_period[i])]
-    normal_data = data_temp[data_temp.Location.isin(normal_room_list_final)].sample(frac=0.2)
-    poor_data = data_temp[data_temp.Location.isin(poor_room_list_final)].sample(frac=0.2)
+    normal_data = data_temp[data_temp.Location.isin(normal_room_list_final)]
+    poor_data = data_temp[data_temp.Location.isin(poor_room_list_final)]
     plt.subplot(2, 2, i + 1)
     sns.distplot(normal_data['AC'], bins=sorted(normal_data['AC'].unique()),
                  label="Normal efficiency: Mean={}kWh".format(round(np.mean(normal_data['AC']), 3)),
@@ -48,10 +57,16 @@ for i in range(4):
         np.mean(normal_data['AC']), 4))
     plt.xlabel("Half-hourly AC Electricity Consumption/kWh\nPotentially avoidable electricity ratio: {}%".format(
         ratio), fontsize=22)
-    plt.ylabel("Kernel Density", fontsize=22)
+    if i % 2 == 0:
+        plt.ylabel("Kernel Density", fontsize=22)
+    else:
+        plt.ylabel("")
+    plt.grid(color='lightgray', linestyle='--', linewidth=0.8)
     plt.xticks(fontsize=22)
+    plt.ylim(0, 10)
     plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=22)
-    plt.legend(fontsize=20)
-plt.suptitle("Energy Consumption Comparison Between Different RAC Efficiency Groups During Four Time Periods",
-             fontsize=26)
+    plt.legend(fontsize=21, frameon=False)
+plt.suptitle(
+    "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2022/2023",
+    fontsize=26)
 plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=1000)
