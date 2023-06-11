@@ -60,6 +60,10 @@ the electricity energy consumption distribution between normal RACs with poorly 
 
 ![energy_saving](./preprocessing/TOTAL_comparison.png)
 
+We further verify our models on the data collected in 2022/2023, and the results are shown below.
+
+![energy_saving_2022](./2022_2023_verification/TOTAL_comparison.png)
+
 ## 6. Acknowledgement
 
 This project was supported by the Undergraduate Research Opportunity Program (UROP) of The Hong Kong University of
