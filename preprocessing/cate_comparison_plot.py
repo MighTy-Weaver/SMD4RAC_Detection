@@ -63,4 +63,4 @@ for i in range(4):
 plt.suptitle(
     "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2020/2021",
     fontsize=26)
-plt.savefig('./TOTAL_comparison.png', bbox_inches='tight', dpi=800)
+plt.savefig('./2223_efficiency_comparison.png', bbox_inches='tight', dpi=800)

@@ -1,7 +1,8 @@
 # Learn from smart electricity meter to evaluate the air conditioner’s efficiency
 
-This is the official code repository for the paper ***Learn from smart electricity meter to evaluate the air
-conditioner’s efficiency***, which will be submitted to [Nature Communications](https://www.nature.com/ncomms/).
+This is the official code repository for the paper
+***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Number of
+Units***, which will be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
 
 ## 1. Environment Setup
 
@@ -50,11 +51,11 @@ Comparison between five models in Setting II.
 After applying our best model on unlabelled rooms, we acquire the total electricity energy saving results by comparing
 the electricity energy consumption distribution between normal RACs with poorly efficiency RACs.
 
-![energy_saving](./preprocessing/TOTAL_comparison.png)
+![energy_saving](./preprocessing/2021_efficiency_comparison.png)
 
 We further verify our models on the data collected in 2022/2023, and the results are shown below.
 
-![energy_saving_2022](./2022_2023_verification/TOTAL_comparison.png)
+![energy_saving_2022](./2022_2023_verification/2223_efficiency_comparison.png)
 
 ## 5. Acknowledgement
 
@@ -65,4 +66,5 @@ the authors and not to the funding agencies.
 
 ## 6. Contact
 
-If you have any question, feel free to email me at `mightyweaver829 [at] gmail.com`. This email will be active all the time. 
+If you have any question, feel free to email me at `mightyweaver829 [at] gmail.com`. This email will be active all the
+time. 

@@ -105,8 +105,8 @@ plt.yticks(fontsize=22)
 plt.title("Average Highest $R^2$ Score by Five Models in Regression Task", fontsize=20, pad=15)
 
 plt.suptitle("Metrics Statistics on Test Set in Setting I", fontsize=26)
-plt.savefig('./ALL_PLOT.jpg', bbox_inches='tight', dpi=800)
-plt.savefig('../demo/SettingI_all.jpg', bbox_inches='tight', dpi=400)
+plt.savefig('./ALL_PLOT.jpg', bbox_inches='tight', dpi=1000)
+plt.savefig('../demo/SettingI_all.jpg', bbox_inches='tight', dpi=1000)
 plt.clf()
 
 cla.sort_values(by='model', inplace=True)
@@ -123,7 +123,7 @@ model_dict = {'bilstm': 'BiLSTM', 'lstm': 'LSTM', 'transformer': 'Transformer',
 data_dict = {0: cla, 1: reg}
 metric_dict = {0: 'best_valid_f1', 1: 'best_valid_r2'}
 ylabel_dict = {0: 'Maximum $f_1$ Score', 1: 'Maximum $R^2$ Score'}
-title_dict = {0: 'Classification', 1: 'Regression'}
+title_dict = {0: 'Setting I Classification', 1: 'Setting I Regression'}
 for i in range(2):
     plt.figure(figsize=(18, 7))
     plt.subplot(1, 2, 1)
@@ -165,6 +165,6 @@ for i in range(2):
     plt.legend(fontsize=19)
 
     plt.suptitle("{}".format(title_dict[i]), fontsize=32)
-    plt.savefig('./Model_Plot_{}.png'.format(title_dict[i]), bbox_inches='tight', dpi=700)
-    plt.savefig('../demo/SettingI_model_{}.jpg'.format(title_dict[i]), bbox_inches='tight', dpi=400)
+    plt.savefig('./Model_Plot_{}.png'.format(title_dict[i]), bbox_inches='tight', dpi=1000)
+    plt.savefig('../demo/SettingI_model_{}.jpg'.format(title_dict[i]), bbox_inches='tight', dpi=1000)
     plt.clf()
