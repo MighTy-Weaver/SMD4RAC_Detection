@@ -7,8 +7,10 @@ import seaborn as sns
 sys.path.append('../')
 from setting_1.utils import normal_room_list, poor_room_list
 import pandas as pd
+import os
 
-plt.rcParams["font.family"] = "Times New Roman"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+plt.rcParams["font.family"] = "Arial"
 plt.rcParams["figure.autolayout"] = True
 plt.rcParams['figure.figsize'] = 21, 14
 plt.rcParams.update({'font.size': 15})
@@ -63,4 +65,4 @@ for i in range(4):
 plt.suptitle(
     "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2020/2021",
     fontsize=26)
-plt.savefig('./2021_efficiency_comparison.png', bbox_inches='tight', dpi=800)
+plt.savefig('./2021_efficiency_comparison.png', bbox_inches='tight', dpi=500)

@@ -106,8 +106,8 @@ plt.yticks(fontsize=22)
 plt.title("Average Highest $R^2$ Score by Five Models in Regression Task", fontsize=20, pad=15)
 
 plt.suptitle("Metrics Statistics on Test Set in Setting II", fontsize=26)
-plt.savefig('./ALL_PLOT.jpg', bbox_inches='tight', dpi=1000)
-plt.savefig('../demo/SettingII_all.jpg', bbox_inches='tight', dpi=1000)
+plt.savefig('./ALL_PLOT.jpg', bbox_inches='tight', dpi=600)
+plt.savefig('../demo/SettingII_all.jpg', bbox_inches='tight', dpi=600)
 plt.clf()
 
 cla.sort_values(by='model', inplace=True)
@@ -167,6 +167,6 @@ for i in range(2):
     plt.legend(fontsize=19)
 
     plt.suptitle("{}".format(title_dict[i]), fontsize=32)
-    plt.savefig('./Model_Plot_{}.png'.format(title_dict[i]), bbox_inches='tight', dpi=1000)
-    plt.savefig('../demo/SettingII_model_{}.jpg'.format(title_dict[i]), bbox_inches='tight', dpi=1000)
+    plt.savefig('./Model_Plot_{}.png'.format(title_dict[i]), bbox_inches='tight', dpi=600)
+    plt.savefig('../demo/SettingII_model_{}.jpg'.format(title_dict[i]), bbox_inches='tight', dpi=600)
     plt.clf()

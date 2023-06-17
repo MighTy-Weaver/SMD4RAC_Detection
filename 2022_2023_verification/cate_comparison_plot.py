@@ -1,3 +1,4 @@
+import os
 import sys
 
 import matplotlib.pyplot as plt
@@ -8,7 +9,8 @@ import seaborn as sns
 sys.path.append('../')
 from setting_1.utils import efficiency_dict, normal_room_list, poor_room_list
 
-plt.rcParams["font.family"] = "Times New Roman"
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+plt.rcParams["font.family"] = "Arial"
 plt.rcParams["figure.autolayout"] = True
 plt.rcParams['figure.figsize'] = 21, 14
 plt.rcParams.update({'font.size': 15})
@@ -72,4 +74,4 @@ for i in range(4):
 plt.suptitle(
     "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2022/2023",
     fontsize=26)
-plt.savefig('./2223_efficiency_comparison.png', bbox_inches='tight', dpi=1000)
+plt.savefig('./2223_efficiency_comparison.png', bbox_inches='tight', dpi=500)
