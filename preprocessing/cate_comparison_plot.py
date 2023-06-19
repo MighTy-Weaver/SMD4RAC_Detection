@@ -63,6 +63,6 @@ for i in range(4):
     plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fontsize=22)
     plt.legend(fontsize=21, frameon=False)
 plt.suptitle(
-    "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2020/2021",
+    "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2020/12/30 - 2021/08/15",
     fontsize=26)
 plt.savefig('./2021_efficiency_comparison.png', bbox_inches='tight', dpi=500)
