@@ -59,21 +59,21 @@ for i in range(4):
     sns.distplot(poor_data['AC'], bins=sorted(poor_data['AC'].unique()),
                  label="Low efficiency: Mean={}kWh".format(round(np.mean(poor_data['AC']), 3)),
                  color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
-    plt.title(title[i], fontsize=23, loc='left')
+    plt.title(title[i], fontsize=28, loc='left')
     ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
         np.mean(poor_data['AC']), 4))
-    plt.xlabel("Half-hourly AC Electricity Consumption/kWh", fontsize=21)
-    plt.text(0.025, 0.78, "Potentially savable electricity: {}%".format(
-        ratio), ha='left', va='center', transform=plt.gca().transAxes, fontsize=21)
+    plt.xlabel("Half-hourly AC Electricity Consumption/kWh", fontsize=26)
+    plt.text(0.028, 0.76, "Potentially savable electricity: {}%".format(
+        ratio), ha='left', va='center', transform=plt.gca().transAxes, fontsize=23)
     if i % 2 == 0:
-        plt.ylabel("Kernel Density", fontsize=21)
+        plt.ylabel("Kernel Density", fontsize=26)
     else:
         plt.ylabel("")
     plt.grid(color='lightgray', linestyle='--', linewidth=0.8)
-    plt.xticks(fontsize=21)
+    plt.xticks(fontsize=26)
     plt.ylim(0, 10)
-    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=21)
-    plt.legend(fontsize=21, frameon=False,loc='upper left')
+    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fontsize=26)
+    plt.legend(fontsize=23, frameon=False, loc='upper left')
 # plt.suptitle(
 #     "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2022/01/01 - 2022/12/31",
 #     fontsize=26)

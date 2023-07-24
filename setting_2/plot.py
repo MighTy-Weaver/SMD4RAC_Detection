@@ -70,41 +70,49 @@ plt.subplot(2, 2, 1)
 ax1 = sns.heatmap(heatmap_df_acc_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
                   yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu", fmt=".2f", linewidths=linewidth,
                   cbar_kws={"format": '%.2f'})
-plt.xlabel("Sample Size", fontsize=21)
-plt.ylabel("Training Data Size", fontsize=21)
-plt.xticks(fontsize=21)
-plt.yticks(fontsize=21)
-plt.title("(a) Average Max Accuracy in Classification", fontsize=23, pad=15, loc='left')
+cbar = ax1.collections[0].colorbar
+cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
+plt.xlabel("Sample Size", fontsize=23)
+plt.ylabel("Training Data Size", fontsize=23)
+plt.xticks(fontsize=23)
+plt.yticks(fontsize=23)
+plt.title("(a) Average Max Accuracy in Classification", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 2)
-sns.heatmap(heatmap_df_f1_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
-            yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu", fmt=".2f", linewidths=linewidth,
-            cbar_kws={"format": '%.2f'})
-plt.xlabel("Sample Size", fontsize=21)
-plt.ylabel("Training Data Size", fontsize=21)
-plt.xticks(fontsize=21)
-plt.yticks(fontsize=21)
-plt.title("(b) Average Max $F_1$ Score in Classification", fontsize=23, pad=15, loc='left')
+ax2 = sns.heatmap(heatmap_df_f1_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
+                  yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu", fmt=".2f", linewidths=linewidth,
+                  cbar_kws={"format": '%.2f'})
+cbar = ax2.collections[0].colorbar
+cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
+plt.xlabel("Sample Size", fontsize=23)
+plt.ylabel("Training Data Size", fontsize=23)
+plt.xticks(fontsize=23)
+plt.yticks(fontsize=23)
+plt.title("(b) Average Max $F_1$ Score in Classification", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 3)
-sns.heatmap(heatmap_df_rmse_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
-            yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu_r", fmt=".2f", linewidths=linewidth,
-            cbar_kws={"format": '%.2f'})
-plt.xlabel("Sample Size", fontsize=21)
-plt.ylabel("Training Data Size", fontsize=21)
-plt.xticks(fontsize=21)
-plt.yticks(fontsize=21)
-plt.title("(c) Average Min RMSE in Regression", fontsize=23, pad=15, loc='left')
+ax3 = sns.heatmap(heatmap_df_rmse_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
+                  yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu_r", fmt=".2f",
+                  linewidths=linewidth, cbar_kws={"format": '%.2f'})
+cbar = ax3.collections[0].colorbar
+cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
+plt.xlabel("Sample Size", fontsize=23)
+plt.ylabel("Training Data Size", fontsize=23)
+plt.xticks(fontsize=23)
+plt.yticks(fontsize=23)
+plt.title("(c) Average Min RMSE in Regression", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 4)
-sns.heatmap(heatmap_df_r2_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
-            yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu", fmt=".2f", linewidths=linewidth,
-            cbar_kws={"format": '%.2f'})
-plt.xlabel("Sample Size", fontsize=21)
-plt.ylabel("Training Data Size", fontsize=21)
-plt.xticks(fontsize=21)
-plt.yticks(fontsize=21)
-plt.title("(d) Average Max $R^2$ Score in Regression", fontsize=23, pad=15, loc='left')
+ax4 = sns.heatmap(heatmap_df_r2_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
+                  yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu", fmt=".2f", linewidths=linewidth,
+                  cbar_kws={"format": '%.2f'})
+cbar = ax4.collections[0].colorbar
+cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
+plt.xlabel("Sample Size", fontsize=23)
+plt.ylabel("Training Data Size", fontsize=23)
+plt.xticks(fontsize=23)
+plt.yticks(fontsize=23)
+plt.title("(d) Average Max $R^2$ Score in Regression", fontsize=26, pad=15, loc='left')
 
 # plt.suptitle("Metrics Statistics on Test Set in Setting II", fontsize=26)
 plt.savefig('./ALL_PLOT.jpg', bbox_inches='tight', dpi=600)
@@ -127,50 +135,50 @@ metric_dict = {0: 'best_valid_f1', 1: 'best_valid_r2'}
 ylabel_dict = {0: 'Maximum $F_1$ Score', 1: 'Maximum $R^2$ Score'}
 title_dict = {0: 'Setting II Classification', 1: 'Setting II Regression'}
 
-for i in range(2):
-    plt.figure(figsize=(18, 7))
-    plt.subplot(1, 2, 1)
-    data_draw = data_dict[i]
-    gs_csv = pd.DataFrame()
-    for m in model_dict.keys():
-        for gs in gs_choices:
-            metric_avg = np.mean(data_draw[(data_draw.gs == gs) & (data_draw.model == model_dict[m])][metric_dict[i]])
-            gs_csv = gs_csv.append({
-                'model': model_dict[m],
-                'gs': gs,
-                'metric': metric_avg
-            }, ignore_index=True)
-        gs_model_csv = gs_csv[gs_csv.model == model_dict[m]].reset_index(drop=True).sort_values(by=['gs'])
-        plt.plot(gs_model_csv['gs'], gs_model_csv['metric'], linewidth=3)
-    plt.xlabel("Sample Size", fontsize=22)
-    plt.ylabel(ylabel_dict[i], fontsize=22)
-    plt.xticks(fontsize=22)
-    plt.yticks(fontsize=22)
-
-    plt.subplot(1, 2, 2)
-    data_num_csv = pd.DataFrame()
-    for m in model_dict.keys():
-        for data_num in data_num_choices:
-            metric_avg = np.mean(
-                data_draw[(data_draw.data_number == data_num) & (data_draw.model == model_dict[m])][metric_dict[i]])
-            data_num_csv = data_num_csv.append({
-                'model': model_dict[m],
-                'data_number': data_num,
-                'metric': metric_avg
-            }, ignore_index=True)
-        data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
-            by=['data_number'])
-        plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
-    plt.xlabel("Data Size", fontsize=22)
-    plt.ylabel(ylabel_dict[i], fontsize=22)
-    plt.xticks(fontsize=22)
-    plt.yticks(fontsize=22)
-    plt.legend(fontsize=19)
-
-    plt.suptitle("{}".format(title_dict[i]), fontsize=32)
-    plt.savefig('./Model_Plot_{}.png'.format(title_dict[i]), bbox_inches='tight', dpi=600)
-    plt.savefig('../demo/SettingII_model_{}.jpg'.format(title_dict[i]), bbox_inches='tight', dpi=600)
-    plt.clf()
+# for i in range(2):
+#     plt.figure(figsize=(18, 7))
+#     plt.subplot(1, 2, 1)
+#     data_draw = data_dict[i]
+#     gs_csv = pd.DataFrame()
+#     for m in model_dict.keys():
+#         for gs in gs_choices:
+#             metric_avg = np.mean(data_draw[(data_draw.gs == gs) & (data_draw.model == model_dict[m])][metric_dict[i]])
+#             gs_csv = gs_csv.append({
+#                 'model': model_dict[m],
+#                 'gs': gs,
+#                 'metric': metric_avg
+#             }, ignore_index=True)
+#         gs_model_csv = gs_csv[gs_csv.model == model_dict[m]].reset_index(drop=True).sort_values(by=['gs'])
+#         plt.plot(gs_model_csv['gs'], gs_model_csv['metric'], linewidth=3)
+#     plt.xlabel("Sample Size", fontsize=22)
+#     plt.ylabel(ylabel_dict[i], fontsize=22)
+#     plt.xticks(fontsize=22)
+#     plt.yticks(fontsize=22)
+#
+#     plt.subplot(1, 2, 2)
+#     data_num_csv = pd.DataFrame()
+#     for m in model_dict.keys():
+#         for data_num in data_num_choices:
+#             metric_avg = np.mean(
+#                 data_draw[(data_draw.data_number == data_num) & (data_draw.model == model_dict[m])][metric_dict[i]])
+#             data_num_csv = data_num_csv.append({
+#                 'model': model_dict[m],
+#                 'data_number': data_num,
+#                 'metric': metric_avg
+#             }, ignore_index=True)
+#         data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
+#             by=['data_number'])
+#         plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
+#     plt.xlabel("Data Size", fontsize=22)
+#     plt.ylabel(ylabel_dict[i], fontsize=22)
+#     plt.xticks(fontsize=22)
+#     plt.yticks(fontsize=22)
+#     plt.legend(fontsize=19)
+#
+#     plt.suptitle("{}".format(title_dict[i]), fontsize=32)
+#     plt.savefig('./Model_Plot_{}.png'.format(title_dict[i]), bbox_inches='tight', dpi=600)
+#     plt.savefig('../demo/SettingII_model_{}.jpg'.format(title_dict[i]), bbox_inches='tight', dpi=600)
+#     plt.clf()
 
 y_ticks = [[0.45, 0.54, 0.63, 0.72, 0.81, 0.90], [-2, -1.5, -1, -0.5, 0, 0.5]]
 alphabet = ['(a)', '(b)', '(c)', '(d)']
@@ -190,12 +198,12 @@ for i in range(2):
             }, ignore_index=True)
         gs_model_csv = gs_csv[gs_csv.model == model_dict[m]].reset_index(drop=True).sort_values(by=['gs'])
         plt.plot(gs_model_csv['gs'], gs_model_csv['metric'], linewidth=3)
-    plt.xlabel("Sample Size", fontsize=21)
-    plt.ylabel(ylabel_dict[i], fontsize=21)
-    plt.xticks(fontsize=21)
-    plt.yticks(y_ticks[i], fontsize=21)
+    plt.xlabel("Sample Size", fontsize=24)
+    plt.ylabel(ylabel_dict[i], fontsize=24)
+    plt.xticks(fontsize=24)
+    plt.yticks(y_ticks[i], fontsize=24)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
-    plt.title("{} {} w.r.t. Sample Size".format(alphabet[2 * i], ylabel_dict[i]), fontsize=23, loc='left')
+    plt.title("{} {} w.r.t. Sample Size".format(alphabet[2 * i], ylabel_dict[i]), fontsize=27, loc='left')
 
     plt.subplot(2, 2, 2 * i + 2)
     data_num_csv = pd.DataFrame()
@@ -211,14 +219,14 @@ for i in range(2):
         data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
             by=['data_number'])
         plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
-    plt.xlabel("Training Data Size", fontsize=21)
-    plt.ylabel(ylabel_dict[i], fontsize=21)
-    plt.xticks(fontsize=21)
-    plt.yticks(y_ticks[i], fontsize=21)
+    plt.xlabel("Training Data Size", fontsize=24)
+    plt.ylabel(ylabel_dict[i], fontsize=24)
+    plt.xticks(fontsize=24)
+    plt.yticks(y_ticks[i], fontsize=24)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
-    plt.title("{} {} w.r.t. Training Data Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=23, loc='left')
+    plt.title("{} {} w.r.t. Training Data Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=27, loc='left')
     if i == 1:
-        plt.legend(fontsize=21)
+        plt.legend(fontsize=26)
 
 # plt.suptitle("{}".format(title_dict[i]), fontsize=32)
 plt.savefig('./Model_Plot_both_tasks.png', bbox_inches='tight', dpi=600)
