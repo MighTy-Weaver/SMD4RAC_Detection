@@ -72,11 +72,11 @@ ax1 = sns.heatmap(heatmap_df_acc_mean.to_numpy(), annot=add_annot, xticklabels=g
                   cbar_kws={"format": '%.2f'})
 cbar = ax1.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
-plt.xlabel("Sample Size", fontsize=23)
-plt.ylabel("Training Data Size", fontsize=23)
+plt.xlabel("Number of Sampled Points", fontsize=23)
+plt.ylabel("Training Sample Size", fontsize=23)
 plt.xticks(fontsize=23)
 plt.yticks(fontsize=23)
-plt.title("(a) Average Max Accuracy in Classification", fontsize=26, pad=15, loc='left')
+plt.title("(a) Average Accuracy in Classification", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 2)
 ax2 = sns.heatmap(heatmap_df_f1_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
@@ -84,11 +84,11 @@ ax2 = sns.heatmap(heatmap_df_f1_mean.to_numpy(), annot=add_annot, xticklabels=gs
                   cbar_kws={"format": '%.2f'})
 cbar = ax2.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
-plt.xlabel("Sample Size", fontsize=23)
-plt.ylabel("Training Data Size", fontsize=23)
+plt.xlabel("Number of Sampled Points", fontsize=23)
+plt.ylabel("Training Sample Size", fontsize=23)
 plt.xticks(fontsize=23)
 plt.yticks(fontsize=23)
-plt.title("(b) Average Max $F_1$ Score in Classification", fontsize=26, pad=15, loc='left')
+plt.title("(b) Average $F_1$ Score in Classification", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 3)
 ax3 = sns.heatmap(heatmap_df_rmse_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
@@ -96,11 +96,11 @@ ax3 = sns.heatmap(heatmap_df_rmse_mean.to_numpy(), annot=add_annot, xticklabels=
                   linewidths=linewidth, cbar_kws={"format": '%.2f'})
 cbar = ax3.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
-plt.xlabel("Sample Size", fontsize=23)
-plt.ylabel("Training Data Size", fontsize=23)
+plt.xlabel("Number of Sampled Points", fontsize=23)
+plt.ylabel("Training Sample Size", fontsize=23)
 plt.xticks(fontsize=23)
 plt.yticks(fontsize=23)
-plt.title("(c) Average Min RMSE in Regression", fontsize=26, pad=15, loc='left')
+plt.title("(c) Average RMSE in Regression", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 4)
 ax4 = sns.heatmap(heatmap_df_r2_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
@@ -108,11 +108,11 @@ ax4 = sns.heatmap(heatmap_df_r2_mean.to_numpy(), annot=add_annot, xticklabels=gs
                   cbar_kws={"format": '%.2f'})
 cbar = ax4.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
-plt.xlabel("Sample Size", fontsize=23)
-plt.ylabel("Training Data Size", fontsize=23)
+plt.xlabel("Number of Sampled Points", fontsize=23)
+plt.ylabel("Training Sample Size", fontsize=23)
 plt.xticks(fontsize=23)
 plt.yticks(fontsize=23)
-plt.title("(d) Average Max $R^2$ Score in Regression", fontsize=26, pad=15, loc='left')
+plt.title("(d) Average $R^2$ Score in Regression", fontsize=26, pad=15, loc='left')
 
 # plt.suptitle("Metrics Statistics on Test Set in Setting II", fontsize=26)
 plt.savefig('./ALL_PLOT.jpg', bbox_inches='tight', dpi=600)

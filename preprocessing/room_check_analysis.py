@@ -1,11 +1,20 @@
 import math
 
-import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
 
-from utils import replace_dict
+replace_2016 = [714, 503, 1012, 235, 520, 735, 220, 335, 619, 817, 807, 202, 424, 801, 211, 402, 201, 326, 306, 429,
+                414, 715, 311, 330]
+replace_2017 = [432, 802, 227, 231, 733, 210, 315, 427, 430, 612, 613, 626, 630, 704, 914, 123, 307, 903]
+replace_2018 = [219, 516, 417, 605, 816, 703, 803, 818, 915, 122, 207, 310, 320, 824, 518, 530, 913]
+replace_2019 = [822, 730, 608, 617, 708, 825, 204, 216, 413, 703, 725, 810, 410, 830, 523, 618, 415, 328, 1007, 821,
+                332]
+replace_2020 = [808, 819, 403, 716, 303, 334, 832, 401, 622]
+replace_2021 = [604, 702, 735, 217, 517, 710]
+
+replace_dict = {2016: replace_2016, 2017: replace_2017, 2018: replace_2018, 2019: replace_2019, 2020: replace_2020,
+                2021: replace_2021}
 
 
 def calculate_vapor_density(temp: float):
@@ -115,12 +124,24 @@ Efficiency = sorted(Efficiency)
 
 # print(room_data.corr())
 
-sns.histplot(data=room_data, x="Efficiency")
-plt.savefig('./efficiency_distribution.png')
+plt.rcParams["font.family"] = "Arial"
+plt.rcParams.update({'font.size': 16})
+plt.rcParams['figure.figsize'] = 9, 7
+plt.rcParams["figure.autolayout"] = True
 
-efficiency_dict = {room_data.loc[i, 'room']: room_data.loc[i, 'Efficiency']
-                   for i in range(len(room_data))}
-np.save('../data/efficiency_dict.npy', efficiency_dict)
+# normalize efficiency
+# Efficiency = [(i - min(Efficiency)) / (max(Efficiency) - min(Efficiency)) for i in Efficiency]
+room_data['Efficiency'] = [(i - min(Efficiency)) / (max(Efficiency) - min(Efficiency)) for i in room_data['Efficiency']]
+sns.histplot(data=room_data, x="Efficiency")
+plt.xlabel("Efficiency", fontsize=23)
+plt.ylabel("Count", fontsize=23)
+plt.xticks(fontsize=23)
+plt.yticks(fontsize=23)
+plt.savefig('./efficiency_distribution.jpg', dpi=600, bbox_inches='tight')
+
+# efficiency_dict = {room_data.loc[i, 'room']: room_data.loc[i, 'Efficiency']
+#                    for i in range(len(room_data))}
+# np.save('../data/efficiency_dict.npy', efficiency_dict)
 
 # high_class = [int(i.split('\\')[-1].split('.')[0]) for i in
 #               glob.glob(
