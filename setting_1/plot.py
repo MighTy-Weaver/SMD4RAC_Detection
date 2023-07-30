@@ -196,12 +196,12 @@ for i in range(2):
             }, ignore_index=True)
         gs_model_csv = gs_csv[gs_csv.model == model_dict[m]].reset_index(drop=True).sort_values(by=['gs'])
         plt.plot(gs_model_csv['gs'], gs_model_csv['metric'], linewidth=3)
-    plt.xlabel("Sample Size", fontsize=24)
+    plt.xlabel("Number of Sampled Points", fontsize=24)
     plt.ylabel(ylabel_dict[i], fontsize=24)
     plt.xticks(fontsize=24)
     plt.yticks(y_ticks[i], fontsize=24)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
-    plt.title("{} {} w.r.t. Sample Size".format(alphabet[2 * i], ylabel_dict[i]), fontsize=27, loc='left')
+    plt.title("{} {} w.r.t. Number of Sampled Points".format(alphabet[2 * i], ylabel_dict[i]), fontsize=27, loc='left')
 
     plt.subplot(2, 2, 2 * i + 2)
     data_num_csv = pd.DataFrame()
@@ -224,7 +224,7 @@ for i in range(2):
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
     plt.title("{} {} w.r.t. Training Sample Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=27, loc='left')
     if i == 1:
-        plt.legend(fontsize=26)
+        plt.legend(fontsize=24)
 
 # plt.suptitle("{}".format(title_dict[i]), fontsize=32)
 plt.savefig('./Model_Plot_both_tasks.png', bbox_inches='tight', dpi=600)

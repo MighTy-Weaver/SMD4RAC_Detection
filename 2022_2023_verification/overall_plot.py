@@ -14,7 +14,7 @@ from setting_1.utils import efficiency_dict, normal_room_list, poor_room_list
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 plt.rcParams["font.family"] = "Arial"
 plt.rcParams["figure.autolayout"] = True
-plt.rcParams['figure.figsize'] = 21, 14
+plt.rcParams['figure.figsize'] = 10, 7
 plt.rcParams.update({'font.size': 15})
 
 predictions = pd.read_csv('./prediction.csv', index_col=None).sort_values(by=['pred'], ascending=True)
@@ -46,35 +46,27 @@ avg_normal = np.mean(data[data.Location.isin(normal_room_list_final)]['AC'])
 avg_poor = np.mean(data[data.Location.isin(poor_room_list_final)]['AC'])
 print(avg_normal, avg_poor, avg_poor - avg_normal)
 
-for i in range(4):
-
-    data_temp = data[data.Hour.isin(time_period[i])]
-    normal_data = data_temp[data_temp.Location.isin(normal_room_list_final)]
-    poor_data = data_temp[data_temp.Location.isin(poor_room_list_final)]
-    plt.subplot(2, 2, i + 1)
-    sns.distplot(normal_data['AC'], bins=sorted(normal_data['AC'].unique()),
-                 label="Normal efficiency: Mean={}kWh".format(round(np.mean(normal_data['AC']), 3)),
-                 color="brown", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
-    sns.distplot(poor_data['AC'], bins=sorted(poor_data['AC'].unique()),
-                 label="Low efficiency: Mean={}kWh".format(round(np.mean(poor_data['AC']), 3)),
-                 color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
-    plt.title(title[i], fontsize=28, loc='left')
-    ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
-        np.mean(poor_data['AC']), 4))
-    plt.xlabel("Half-hourly AC Electricity Consumption/kWh", fontsize=26)
-    plt.text(0.028, 0.76, "Potentially savable electricity: {}%".format(
-        ratio), ha='left', va='center', transform=plt.gca().transAxes, fontsize=23)
-    if i % 2 == 0:
-        plt.ylabel("Kernel Density", fontsize=26)
-    else:
-        plt.ylabel("")
-    plt.grid(color='lightgray', linestyle='--', linewidth=0.8)
-    plt.xticks(fontsize=26)
-    plt.ylim(0, 10)
-    plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10], fontsize=26)
-    plt.legend(fontsize=23, frameon=False, loc='upper left')
+normal_data = data[data.Location.isin(normal_room_list_final)]
+poor_data = data[data.Location.isin(poor_room_list_final)]
+sns.distplot(normal_data['AC'], bins=sorted(normal_data['AC'].unique()),
+             label="Normal efficiency AC: Mean={}kWh".format(round(np.mean(normal_data['AC']), 3)),
+             color="brown", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
+sns.distplot(poor_data['AC'], bins=sorted(poor_data['AC'].unique()),
+             label="Low efficiency AC: Mean={}kWh".format(round(np.mean(poor_data['AC']), 3)),
+             color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
+# plt.title(title[i], fontsize=28, loc='left')
+ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
+    np.mean(poor_data['AC']), 4))
+plt.xlabel("Half-hourly AC Electricity Consumption/kWh", fontsize=26)
+plt.text(0.028, 0.76, "Potentially savable electricity: {}%".format(
+    ratio), ha='left', va='center', transform=plt.gca().transAxes, fontsize=23)
+plt.ylabel("Kernel Density", fontsize=26)
+plt.grid(color='lightgray', linestyle='--', linewidth=0.8)
+plt.xticks(fontsize=26)
+plt.ylim(0, 9)
+plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8,9], fontsize=26)
+plt.legend(fontsize=23, frameon=False, loc='upper left')
 # plt.suptitle(
 #     "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2022/01/01 - 2022/12/31",
 #     fontsize=26)
-plt.savefig('./22-23_efficiency_comparison.png', bbox_inches='tight', dpi=600)
-plt.clf()
+plt.savefig('./22-23_efficiency_comparison_overall.png', bbox_inches='tight', dpi=600)

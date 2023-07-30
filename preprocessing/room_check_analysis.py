@@ -138,6 +138,7 @@ plt.ylabel("Count", fontsize=23)
 plt.xticks(fontsize=23)
 plt.yticks(fontsize=23)
 plt.savefig('./efficiency_distribution.jpg', dpi=600, bbox_inches='tight')
+plt.clf()
 
 # efficiency_dict = {room_data.loc[i, 'room']: room_data.loc[i, 'Efficiency']
 #                    for i in range(len(room_data))}

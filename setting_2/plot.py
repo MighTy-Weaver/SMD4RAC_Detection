@@ -132,7 +132,7 @@ model_dict = {'bilstm': 'BiLSTM', 'lstm': 'LSTM', 'transformer': 'Transformer',
               'lstm-transformer': 'LSTM-Transformer', 'bilstm-transformer': 'BiLSTM-Transformer'}
 data_dict = {0: cla, 1: reg}
 metric_dict = {0: 'best_valid_f1', 1: 'best_valid_r2'}
-ylabel_dict = {0: 'Maximum $F_1$ Score', 1: 'Maximum $R^2$ Score'}
+ylabel_dict = {0: 'Max $F_1$ Score', 1: 'Max $R^2$ Score'}
 title_dict = {0: 'Setting II Classification', 1: 'Setting II Regression'}
 
 # for i in range(2):
@@ -198,12 +198,12 @@ for i in range(2):
             }, ignore_index=True)
         gs_model_csv = gs_csv[gs_csv.model == model_dict[m]].reset_index(drop=True).sort_values(by=['gs'])
         plt.plot(gs_model_csv['gs'], gs_model_csv['metric'], linewidth=3)
-    plt.xlabel("Sample Size", fontsize=24)
+    plt.xlabel("Number of Sampled Points", fontsize=24)
     plt.ylabel(ylabel_dict[i], fontsize=24)
     plt.xticks(fontsize=24)
     plt.yticks(y_ticks[i], fontsize=24)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
-    plt.title("{} {} w.r.t. Sample Size".format(alphabet[2 * i], ylabel_dict[i]), fontsize=27, loc='left')
+    plt.title("{} {} w.r.t. Number of Sampled Points".format(alphabet[2 * i], ylabel_dict[i]), fontsize=27, loc='left')
 
     plt.subplot(2, 2, 2 * i + 2)
     data_num_csv = pd.DataFrame()
@@ -219,14 +219,14 @@ for i in range(2):
         data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
             by=['data_number'])
         plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
-    plt.xlabel("Training Data Size", fontsize=24)
+    plt.xlabel("Training Sample Size", fontsize=24)
     plt.ylabel(ylabel_dict[i], fontsize=24)
     plt.xticks(fontsize=24)
     plt.yticks(y_ticks[i], fontsize=24)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
-    plt.title("{} {} w.r.t. Training Data Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=27, loc='left')
+    plt.title("{} {} w.r.t. Training Sample Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=27, loc='left')
     if i == 1:
-        plt.legend(fontsize=26)
+        plt.legend(fontsize=24)
 
 # plt.suptitle("{}".format(title_dict[i]), fontsize=32)
 plt.savefig('./Model_Plot_both_tasks.png', bbox_inches='tight', dpi=600)
