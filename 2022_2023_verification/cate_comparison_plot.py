@@ -14,7 +14,7 @@ from setting_1.utils import efficiency_dict, normal_room_list, poor_room_list
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 plt.rcParams["font.family"] = "Arial"
 plt.rcParams["figure.autolayout"] = True
-plt.rcParams['figure.figsize'] = 21, 14
+plt.rcParams['figure.figsize'] = 21, 15
 plt.rcParams.update({'font.size': 15})
 
 predictions = pd.read_csv('./prediction.csv', index_col=None).sort_values(by=['pred'], ascending=True)
@@ -62,7 +62,7 @@ for i in range(4):
     ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
         np.mean(poor_data['AC']), 4))
     plt.xlabel("Half-hourly AC Electricity Consumption/kWh", fontsize=26)
-    plt.text(0.028, 0.76, "Potentially savable electricity: {}%".format(
+    plt.text(0.028, 0.78, "Potentially savable electricity: {}%".format(
         ratio), ha='left', va='center', transform=plt.gca().transAxes, fontsize=23)
     if i % 2 == 0:
         plt.ylabel("Kernel Density", fontsize=26)

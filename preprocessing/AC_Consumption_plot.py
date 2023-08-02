@@ -21,7 +21,7 @@ for r in sampled_Location + [621]:
     plt.subplot(2, 1, (sampled_Location + [621]).index(r) + 1)
     data_temp = data[data.Location == r].reset_index(drop=True)
     data_temp = data_temp[(data_temp.Time >= date_start) & (data_temp.Time <= date_end)]
-    plt.plot(data_temp['Time'], data_temp['AC'], label='AC', color='tab:blue', linewidth=5)
+    plt.plot(data_temp['Time'], data_temp['AC'], label='AC', color='#002060' if r == 804 else '#002060', linewidth=5)
     # plt.title("Room: {}".format(r), fontsize=23, loc='left')
     plt.yticks([0.0, 0.1, 0.2, 0.3, 0.4, 0.5], fontsize=26)
     plt.xticks([pd.to_datetime('2021-05-14'), pd.to_datetime('2021-05-15'), pd.to_datetime('2021-05-16')], fontsize=26)

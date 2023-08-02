@@ -50,10 +50,10 @@ normal_data = data[data.Location.isin(normal_room_list_final)]
 poor_data = data[data.Location.isin(poor_room_list_final)]
 sns.distplot(normal_data['AC'], bins=sorted(normal_data['AC'].unique()),
              label="Normal efficiency AC: Mean={}kWh".format(round(np.mean(normal_data['AC']), 3)),
-             color="brown", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
+             color="brown", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})  # brown
 sns.distplot(poor_data['AC'], bins=sorted(poor_data['AC'].unique()),
              label="Low efficiency AC: Mean={}kWh".format(round(np.mean(poor_data['AC']), 3)),
-             color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})
+             color="skyblue", hist_kws={"edgecolor": "black"}, kde_kws={"linewidth": "3"})  # skyblue
 # plt.title(title[i], fontsize=28, loc='left')
 ratio = "%.2f" % (100 * (round(np.mean(poor_data['AC']), 4) - round(np.mean(normal_data['AC']), 4)) / round(
     np.mean(poor_data['AC']), 4))
@@ -64,7 +64,7 @@ plt.ylabel("Kernel Density", fontsize=26)
 plt.grid(color='lightgray', linestyle='--', linewidth=0.8)
 plt.xticks(fontsize=26)
 plt.ylim(0, 9)
-plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8,9], fontsize=26)
+plt.yticks([0, 1, 2, 3, 4, 5, 6, 7, 8, 9], fontsize=26)
 plt.legend(fontsize=23, frameon=False, loc='upper left')
 # plt.suptitle(
 #     "Energy Consumption Comparison Between Different RAC Efficiency Groups\nDuring Four Time Periods in 2022/01/01 - 2022/12/31",

@@ -16,7 +16,7 @@ location_nonzero_ratio = [100 * location_number_nonzero_data[i] / location_numbe
 avg = mean(location_nonzero_ratio)
 location_nonzero_ratio, Location = zip(*sorted(zip(location_nonzero_ratio, Location), reverse=False))
 # plot a barplot containing len(Location) bars, each with the value in location_number_data
-plt.bar(range(len(Location)), location_nonzero_ratio, color='tab:blue', zorder=2)
+plt.bar(range(len(Location)), location_nonzero_ratio, color='#002060', zorder=2)
 plt.yticks(fontsize=26)
 plt.xticks([], fontsize=26)
 plt.ylabel("Ratio of Non-zero values (%)\nAverage = {}%".format(round(avg, 2)), fontsize=26)
