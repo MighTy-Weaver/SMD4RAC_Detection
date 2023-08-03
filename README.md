@@ -1,8 +1,7 @@
-# Learn from smart electricity meter to evaluate the air conditioner’s efficiency
+# Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample
 
 This is the official code repository for the paper
-***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Number of
-Units***, which will be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
+***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample***, which will be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
 
 ## 1. Environment Setup
 
@@ -28,23 +27,28 @@ the `preprocessing/data_compilation.py` for how our data is compiled from differ
 ## 3. Model Training & Evaluation
 
 All codes for Setting I are stored in `setting_1` directory, and Setting II are stored
-in `setting_2` directory. Training codes and scripts are stored separately. We also provide the evaluation
-codes and visualized results as shown below.
+in `setting_2` directory. Training codes are in their respective folders, and scripts used for training are stored
+in `setting_1/script` and `setting_2/script`.
+
+We also provide the evaluation codes and visualized results as shown below.
+
+Setting I overall performances:
 
 ![setting1](./demo/SettingI_all.jpg)
+
+Setting II overall performances:
+
 ![setting2](./demo/SettingII_all.jpg)
 
-Regarding the performance of different model, we also made the following plots.
+Regarding the performance of different models, we also made the following visualization plots for comparisons.
 
 Comparison between five models in Setting I.
 
-![setting1_model_cla](./demo/SettingI_model_classification.jpg)
-![setting1_model_reg](./demo/SettingI_model_regression.jpg)
+![setting1_model_cla](./demo/SettingI_model_both_tasks.jpg)
 
 Comparison between five models in Setting II.
 
-![setting2_model_cla](./demo/SettingII_model_classification.jpg)
-![setting2_model_reg](./demo/SettingII_model_regression.jpg)
+![setting2_model_cla](./demo/SettingII_model_both_tasks.jpg)
 
 ## 4. Energy Saving Result
 
@@ -55,7 +59,7 @@ the electricity energy consumption distribution between normal RACs with poorly 
 
 We further verify our models on the data collected in 2022/2023, and the results are shown below.
 
-![energy_saving_2022](./2022_2023_verification/2223_efficiency_comparison.png)
+![energy_saving_2022](./2022_2023_verification/22-23_efficiency_comparison.png)
 
 ## 5. Acknowledgement
 
