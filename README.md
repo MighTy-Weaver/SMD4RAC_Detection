@@ -1,7 +1,7 @@
 # Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample
 
 This is the official code repository for the paper
-***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample***, which will be submitted to [Nature Sustainability](https://www.nature.com/natsustain/).
+***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample***, which will be submitted to [Nature Computational Science](https://www.nature.com/natcomputsci/).
 
 ## 1. Environment Setup
 
