@@ -67,14 +67,16 @@ plt.rcParams["figure.autolayout"] = True
 
 plt.subplot(2, 2, 1)
 ax1 = sns.heatmap(heatmap_df_acc_mean.to_numpy(), annot=add_annot, xticklabels=gs_choices,
-                  yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu", fmt=".2f", linewidths=linewidth,
+                  yticklabels=[int(i * 0.8) for i in data_num_choices], cmap="YlGnBu", linewidths=linewidth,
                   cbar_kws={"format": '%.2f'})
 cbar = ax1.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
 plt.xlabel("Number of Sampled Points", fontsize=23)
-plt.ylabel("Training Sample Size", fontsize=23)
-plt.xticks(fontsize=23)
-plt.yticks(fontsize=23)
+plt.ylabel("Training Sample Size (~10K)", fontsize=23)
+plt.xticks(fontsize=23, rotation=30)
+plt.yticks(labels=['0.16', '0.4', '0.8', '2', '4', '6', '8', '12', '16', '24', '40',
+                   '80', '160'], ticks=[0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5],
+           fontsize=23)
 plt.title("(a) Average Accuracy in Classification", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 2)
@@ -84,9 +86,11 @@ ax2 = sns.heatmap(heatmap_df_f1_mean.to_numpy(), annot=add_annot, xticklabels=gs
 cbar = ax2.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
 plt.xlabel("Number of Sampled Points", fontsize=23)
-plt.ylabel("Training Sample Size", fontsize=23)
-plt.xticks(fontsize=23)
-plt.yticks(fontsize=23)
+plt.ylabel("Training Sample Size (~10K)", fontsize=23)
+plt.xticks(fontsize=23, rotation=30)
+plt.yticks(labels=['0.16', '0.4', '0.8', '2', '4', '6', '8', '12', '16', '24', '40',
+                   '80', '160'], ticks=[0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5],
+           fontsize=23)
 plt.title("(b) Average $F_1$ Score in Classification", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 3)
@@ -96,9 +100,11 @@ ax3 = sns.heatmap(heatmap_df_rmse_mean.to_numpy(), annot=add_annot, xticklabels=
 cbar = ax3.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
 plt.xlabel("Number of Sampled Points", fontsize=23)
-plt.ylabel("Training Sample Size", fontsize=23)
-plt.xticks(fontsize=23)
-plt.yticks(fontsize=23)
+plt.ylabel("Training Sample Size (~10K)", fontsize=23)
+plt.xticks(fontsize=23, rotation=30)
+plt.yticks(labels=['0.16', '0.4', '0.8', '2', '4', '6', '8', '12', '16', '24', '40',
+                   '80', '160'], ticks=[0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5],
+           fontsize=23)
 plt.title("(c) Average RMSE in Regression", fontsize=26, pad=15, loc='left')
 
 plt.subplot(2, 2, 4)
@@ -108,9 +114,11 @@ ax4 = sns.heatmap(heatmap_df_r2_mean.to_numpy(), annot=add_annot, xticklabels=gs
 cbar = ax4.collections[0].colorbar
 cbar.ax.set_yticklabels(cbar.ax.get_yticklabels(), fontsize=23)
 plt.xlabel("Number of Sampled Points", fontsize=23)
-plt.ylabel("Training Sample Size", fontsize=23)
-plt.xticks(fontsize=23)
-plt.yticks(fontsize=23)
+plt.ylabel("Training Sample Size (~10K)", fontsize=23)
+plt.xticks(fontsize=23, rotation=30)
+plt.yticks(labels=['0.16', '0.4', '0.8', '2', '4', '6', '8', '12', '16', '24', '40',
+                   '80', '160'], ticks=[0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5],
+           fontsize=23)
 plt.title("(d) Average $R^2$ Score in Regression", fontsize=26, pad=15, loc='left')
 
 # plt.suptitle("Metrics Statistics on Test Set in Setting I", fontsize=26)
@@ -217,9 +225,11 @@ for i in range(2):
         data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
             by=['data_number'])
         plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
-    plt.xlabel("Training Sample Size", fontsize=24)
+    plt.xlabel("Training Sample Size (~1M)", fontsize=24)
     plt.ylabel(ylabel_dict[i], fontsize=24)
-    plt.xticks(fontsize=24)
+    plt.xticks(ticks=[ 0., 250000., 500000., 750000., 1000000.,
+                      1250000., 1500000., 1750000., 2000000.],
+               labels=[0.00, 0.25, 0.50, 0.75, 1.00, 1.25, 1.50, 1.75, 2.00], fontsize=24)
     plt.yticks(y_ticks[i], fontsize=24)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
     plt.title("{} {} w.r.t. Training Sample Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=27, loc='left')
