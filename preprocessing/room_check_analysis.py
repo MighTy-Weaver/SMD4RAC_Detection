@@ -137,6 +137,7 @@ plt.xlabel("Efficiency", fontsize=23)
 plt.ylabel("Count", fontsize=23)
 plt.xticks(fontsize=23)
 plt.yticks(fontsize=23)
+plt.axvline(x=0.71, color='r', linestyle='--')
 plt.savefig('./efficiency_distribution.jpg', dpi=600, bbox_inches='tight')
 plt.clf()
 

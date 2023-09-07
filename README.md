@@ -1,7 +1,7 @@
 # Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample
 
 This is the official code repository for the paper
-***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample***, which will be submitted to [Nature Computational Science](https://www.nature.com/natcomputsci/).
+***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample***, which is under review at [Applied Energy](https://www.sciencedirect.com/journal/applied-energy).
 
 ## 1. Environment Setup
 
@@ -14,6 +14,7 @@ pip install -r requirements.txt
 ```
 
 ## 2. Data Compilation
+
 
 ***Due to the privacy issues, the dataset will not be made open to public.***
 
