@@ -1,7 +1,7 @@
-# Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample
+# Deep Learning Analysis of Smart Meter Data from a Small Sample of Room Air Conditioners Facilitates Routine Assessment of their Operational Efficiency
 
 This is the official code repository for the paper
-***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample***, which is under review at [Applied Energy](https://www.sciencedirect.com/journal/applied-energy).
+***Deep Learning Analysis of Smart Meter Data from a Small Sample of Room Air Conditioners Facilitates Routine Assessment of their Operational Efficiency***, which is under review at [Energy and AI](https://www.sciencedirect.com/journal/energy-and-ai).
 
 ![overview](./demo/overview.jpg)
 
