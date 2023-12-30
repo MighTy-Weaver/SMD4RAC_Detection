@@ -190,7 +190,7 @@ title_dict = {0: 'Setting II Classification', 1: 'Setting II Regression'}
 
 y_ticks = [[0.45, 0.54, 0.63, 0.72, 0.81, 0.90], [-2, -1.5, -1, -0.5, 0, 0.5]]
 alphabet = ['(a)', '(b)', '(c)', '(d)']
-plt.figure(figsize=(18, 14))
+plt.figure(figsize=(20, 14))
 
 for i in range(2):
     plt.subplot(2, 2, 2 * i + 1)
@@ -206,12 +206,13 @@ for i in range(2):
             }, ignore_index=True)
         gs_model_csv = gs_csv[gs_csv.model == model_dict[m]].reset_index(drop=True).sort_values(by=['gs'])
         plt.plot(gs_model_csv['gs'], gs_model_csv['metric'], linewidth=3)
-    plt.xlabel("Number of Sampled Points", fontsize=24)
-    plt.ylabel(ylabel_dict[i], fontsize=24)
-    plt.xticks(fontsize=24)
-    plt.yticks(y_ticks[i], fontsize=24)
+    plt.xlabel("Number of Sampled Points", fontsize=26)
+    plt.ylabel(ylabel_dict[i], fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(y_ticks[i], fontsize=26)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
-    plt.title("{} {} w.r.t. Number of Sampled Points".format(alphabet[2 * i], ylabel_dict[i]), fontsize=27, loc='left')
+    plt.title("{} {} w.r.t. Number of Sampled Points".format(alphabet[2 * i], ylabel_dict[i]), fontsize=27, loc='left',
+              fontweight='bold', pad=14)
 
     plt.subplot(2, 2, 2 * i + 2)
     data_num_csv = pd.DataFrame()
@@ -227,18 +228,19 @@ for i in range(2):
         data_num_model_csv = data_num_csv[data_num_csv.model == model_dict[m]].reset_index(drop=True).sort_values(
             by=['data_number'])
         plt.plot(data_num_model_csv['data_number'], data_num_model_csv['metric'], linewidth=3, label=model_dict[m])
-    plt.xlabel("Training Sample Size (~10000)", fontsize=24)
-    plt.ylabel(ylabel_dict[i], fontsize=24)
+    plt.xlabel("Training Sample Size (~10000)", fontsize=26)
+    plt.ylabel(ylabel_dict[i], fontsize=26)
     plt.xticks(ticks=[0., 250000., 500000., 750000., 1000000.,
                       1250000., 1500000., 1750000., 2000000.],
-               labels=[0, 25, 50, 75, 100, 125, 150, 175, 200], fontsize=24)
-    plt.yticks(y_ticks[i], fontsize=24)
+               labels=[0, 25, 50, 75, 100, 125, 150, 175, 200], fontsize=26)
+    plt.yticks(y_ticks[i], fontsize=26)
     plt.ylim(y_ticks[i][0], y_ticks[i][-1])
-    plt.title("{} {} w.r.t. Training Sample Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=27, loc='left')
+    plt.title("{} {} w.r.t. Training Sample Size".format(alphabet[2 * i + 1], ylabel_dict[i]), fontsize=27, loc='left',
+              fontweight='bold', pad=14)
     if i == 1:
         plt.legend(fontsize=24)
 
 # plt.suptitle("{}".format(title_dict[i]), fontsize=32)
 plt.savefig('./Model_Plot_both_tasks.png', bbox_inches='tight', dpi=600)
-plt.savefig('../demo/SettingII_model_both_tasks.jpg', bbox_inches='tight', dpi=600)
+plt.savefig('../demo/SettingII_model_both_tasks.jpg', bbox_inches='tight', dpi=300)
 plt.clf()

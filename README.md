@@ -3,6 +3,8 @@
 This is the official code repository for the paper
 ***Preventing Efficiency Loss in Air Conditioners: Deep Learning Analysis of Smart Meter Data from a Small Sample***, which is under review at [Applied Energy](https://www.sciencedirect.com/journal/applied-energy).
 
+![overview](./demo/overview.jpg)
+
 ## 1. Environment Setup
 
 All experiments were conducted under Linux CentOS system with Anaconda (Python 3.9) as the developing environment.
@@ -55,10 +57,7 @@ Comparison between five models in Setting II.
 
 After applying our best model on unlabelled rooms, we acquire the total electricity energy saving results by comparing
 the electricity energy consumption distribution between normal RACs with poorly efficiency RACs.
-
-![energy_saving](./preprocessing/2021_efficiency_comparison.png)
-
-We further verify our models on the data collected in 2022/2023, and the results are shown below.
+We verify our models on the data collected in 2022/2023, and the results are shown below.
 
 ![energy_saving_2022](./2022_2023_verification/22-23_efficiency_comparison.png)
 
