@@ -1,7 +1,7 @@
 # Deep Learning Analysis of Smart Meter Data from a Small Sample of Room Air Conditioners Facilitates Routine Assessment of their Operational Efficiency
 
 This is the official code repository for the paper
-***Deep Learning Analysis of Smart Meter Data from a Small Sample of Room Air Conditioners Facilitates Routine Assessment of their Operational Efficiency***, which is under review at [Energy and AI](https://www.sciencedirect.com/journal/energy-and-ai).
+***Deep Learning Analysis of Smart Meter Data from a Small Sample of Room Air Conditioners Facilitates Routine Assessment of their Operational Efficiency***, which is accepted by [Energy and AI](https://www.sciencedirect.com/journal/energy-and-ai).
 
 ![overview](./demo/overview.jpg)
 
